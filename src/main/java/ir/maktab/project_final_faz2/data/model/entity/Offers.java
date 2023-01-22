@@ -1,11 +1,11 @@
 package ir.maktab.project_final_faz2.data.model.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.Date;
@@ -24,7 +24,7 @@ public class Offers {
     private BigDecimal offerPriceByExpert;
 
     @Temporal(value = TemporalType.TIMESTAMP)
-    private Date submitAnOfferDate;
+    private Date startTime;
 
     @OneToOne
     private Expert expert;

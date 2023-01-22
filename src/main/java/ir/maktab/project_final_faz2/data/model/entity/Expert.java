@@ -1,13 +1,13 @@
 package ir.maktab.project_final_faz2.data.model.entity;
 
-import ir.maktab.data.model.enums.SpecialtyStatus;
+import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

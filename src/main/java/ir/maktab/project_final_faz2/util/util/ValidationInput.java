@@ -1,6 +1,7 @@
-package ir.maktab.util;
+package ir.maktab.project_final_faz2.util.util;
 
-import ir.maktab.exception.ValidationException;
+
+import ir.maktab.project_final_faz2.exception.ValidationException;
 
 public class ValidationInput {
     private final static InterFaceValid valid = (v, r, e) -> {

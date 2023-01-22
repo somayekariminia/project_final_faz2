@@ -19,17 +19,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderRegistration {
+public class OrderCustomer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @OneToOne(cascade = CascadeType.PERSIST)
     Address address;
-
     @OneToMany
     List<Offers> offersList = new ArrayList<>();
-
     private BigDecimal offerPrice;
     private String aboutWork;
     @Column(unique = true)
@@ -40,5 +37,7 @@ public class OrderRegistration {
     private OrderStatus orderStatus;
     @OneToOne
     private SubJob subJob;
+    @OneToOne
+    Expert expert;
 
 }

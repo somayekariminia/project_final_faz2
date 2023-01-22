@@ -1,7 +1,7 @@
-package ir.maktab.data.model.enums;
+package ir.maktab.project_final_faz2.data.model.enums;
 
 public enum OrderStatus {
-    WaitingForTheExperts, WaitingSelectTheExpert, WaitingForTheExpertToComeToYourLocation, DoItsBeen,
+    WaitingForOfferTheExperts, WaitingSelectTheExpert, WaitingForTheExpertToComeToYourLocation, DoItsBeen,
     Paid, Started
 }
 

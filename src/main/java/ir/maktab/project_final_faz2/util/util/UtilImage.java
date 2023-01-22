@@ -1,6 +1,8 @@
-package ir.maktab.util;
+package ir.maktab.project_final_faz2.util.util;
 
-import ir.maktab.exception.PhotoValidationException;
+
+
+import ir.maktab.project_final_faz2.exception.PhotoValidationException;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
