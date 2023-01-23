@@ -32,7 +32,7 @@ public class OrderCustomer {
     @Column(unique = true)
     private String codeOrder;
     @Temporal(value = TemporalType.DATE)
-    private Date doWorkDate;
+    private Date offerStartDateByCustomer;
     @Enumerated
     private OrderStatus orderStatus;
     @OneToOne

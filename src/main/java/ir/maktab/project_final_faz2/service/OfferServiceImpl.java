@@ -86,8 +86,8 @@ public class OfferServiceImpl {
         orderCustomerDb.setOrderStatus(OrderStatus.Started);
         updateStatusOrder(orderCustomerDb);
     }
-    public void endDoWork(OrderCustomer orderCustomer){
 
+    public void endDoWork(OrderCustomer orderCustomer) {
     }
 
 }
