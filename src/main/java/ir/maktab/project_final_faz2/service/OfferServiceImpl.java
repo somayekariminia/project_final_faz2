@@ -9,6 +9,7 @@ import ir.maktab.project_final_faz2.data.model.repository.OrderCustomerRepositor
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,15 +21,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class OfferServiceImpl {
     private final OfferRepository offerRepository;
     private final OrderCustomerRepository orderCustomerRepository;
-
-    public OfferServiceImpl(OfferRepository offerRepository, OrderCustomerRepository orderCustomerRepository) {
-        this.offerRepository = offerRepository;
-        this.orderCustomerRepository = orderCustomerRepository;
-    }
-
     public List<OrderCustomer> findAllOrdersForAExpert(Expert expert) {
         //chek expert null nabashad
         List<OrderCustomer> allBySubJobForAExpert = orderCustomerRepository.findAllBySubJobForAExpert(expert.getId());

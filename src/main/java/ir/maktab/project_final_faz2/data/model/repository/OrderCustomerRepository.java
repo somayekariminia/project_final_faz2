@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
-
+@Repository
 public interface OrderCustomerRepository extends JpaRepository<OrderCustomer,Long> {
 
     @Query("select  o from OrderCustomer o where (o.subJob.id=: id) order by o.offerPrice asc ")
