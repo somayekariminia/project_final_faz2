@@ -12,6 +12,7 @@ import ir.maktab.project_final_faz2.util.util.UtilDate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -73,7 +74,7 @@ public class OfferServiceImpl {
     public void updateStatusOrder(OrderCustomer orderCustomer) {
         if (Objects.isNull(orderCustomer))
             throw new NotFoundException("there arent orderCustomer to id" + orderCustomer.getId());
-        orderCustomerRepository.update(String.valueOf(orderCustomer.getOrderStatus()), orderCustomer.getId());
+        orderCustomerRepository.updateOrderState(String.valueOf(orderCustomer.getOrderStatus()), orderCustomer.getId());
     }
 
     public void changeOrderToStartByCustomer(Offers offers, OrderCustomer orderCustomer) {
@@ -87,7 +88,12 @@ public class OfferServiceImpl {
         updateStatusOrder(orderCustomerDb);
     }
 
-    public void endDoWork(OrderCustomer orderCustomer) {
+    public void endDoWork(OrderCustomer orderCustomer, LocalDateTime endDoWork) {
+        OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer);
+        orderCustomerDb.setEndDate(UtilDate.changeLocalDateToDate(LocalDate.from(endDoWork)));
+        orderCustomerDb.setOrderStatus(OrderStatus.DoItsBeen);
+        orderCustomerRepository.updateOrderStateAndEndDate(String.valueOf(orderCustomerDb.getCodeOrder()), orderCustomerDb.getEndDate(), orderCustomerDb.getId());
     }
+
 
 }
