@@ -11,28 +11,28 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class BasicJubServiceImpl {
-   private final BasicJobRepository basicJobRepository;
+    private final BasicJobRepository basicJobRepository;
     private final SubJobRepository subJobRepository;
 
-    public void save(BasicJob basicJob) {
-        BasicJob basicJobDb = findByName(basicJob.getNameBase());
-        if (Objects.nonNull(basicJobDb))
-            throw new RepeatException("this basicService already in db");
-        basicJobRepository.save(basicJob);
-    }
-    public BasicJob findByName(String name) {
-        return basicJobRepository.findBasicJobByNameBase(name).orElseThrow(() -> new NotFoundException("SubJob is Null!!!"));
+    public BasicJob save(BasicJob basicJob) {
+        if (basicJobRepository.findBasicJobByNameBase(basicJob.getNameBase()).isPresent())
+            throw new RepeatException("already basicJob to exist name: " + basicJob.getNameBase());
+        return basicJobRepository.save(basicJob);
     }
     public List<SubJob> findAllSubJobsABasicJob(String nameBasicJob) {
         return subJobRepository.findAllByBasicJob_NameBase(nameBasicJob);
     }
     public List<BasicJob> findAllBasicJobs() {
         return basicJobRepository.findAll();
+    }
+    public BasicJob findBasicJobByName(String name){
+        return basicJobRepository.findBasicJobByNameBase(name).orElseThrow(()->new NotFoundException("is not exist"));
+
     }
 }

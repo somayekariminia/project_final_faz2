@@ -26,4 +26,8 @@ class CustomerServiceImplTest {
         Customer customerSave = customerService.save(customer);
         assertNotNull(customerSave.getId());
     }
+    @Test
+    void dontSaveTest(){
+
+    }
 }

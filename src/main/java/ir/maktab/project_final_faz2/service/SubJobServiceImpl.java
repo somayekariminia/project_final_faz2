@@ -1,11 +1,9 @@
 package ir.maktab.project_final_faz2.service;
 
-import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.repository.BasicJobRepository;
 import ir.maktab.project_final_faz2.data.model.repository.SubJobRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.NullableException;
 import ir.maktab.project_final_faz2.exception.RepeatException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,18 +14,18 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class SubJobServiceImpl {
-   private final SubJobRepository subJobRepository;
-  private final BasicJobRepository basicJobRepository;
-    public void saveSubJob(SubJob subJob) {
+    private final SubJobRepository subJobRepository;
+    private final BasicJobRepository basicJobRepository;
+
+    public SubJob saveSubJob(SubJob subJob) {
         checkSubJob(subJob);
-        subJobRepository.save(subJob);
+        return subJobRepository.save(subJob);
     }
+
     private void checkSubJob(SubJob subJob) {
-        BasicJob basicJob = basicJobRepository.findBasicJobByNameBase(subJob.getBasicJob().getNameBase()).orElseThrow(()->new NotFoundException("is not exist basicJob to name"+subJob.getBasicJob().getNameBase()));
-        if (Objects.isNull(basicJob))
-            throw new NotFoundException("basic job is null");
-        SubJob subJob1 = findSubJobByName(subJob.getSubJobName());
-        if (Objects.nonNull(subJob1))
+        if (basicJobRepository.findBasicJobByNameBase(subJob.getBasicJob().getNameBase()).isEmpty())
+            throw new NotFoundException("is not exist basicJob to name" + subJob.getBasicJob().getNameBase());
+        if (subJobRepository.findBySubJobName(subJob.getSubJobName()).isPresent())
             throw new RepeatException("this subService Already saved");
     }
 
@@ -35,14 +33,15 @@ public class SubJobServiceImpl {
         return subJobRepository.findAll();
     }
 
-    public void updateSubJob(SubJob subJob) {
-        SubJob subJobDb=findSubJobByName(subJob.getSubJobName());
+    public SubJob updateSubJob(SubJob subJob) {
+        SubJob subJobDb = findSubJobByName(subJob.getSubJobName());
         subJobDb.setDescription(subJob.getDescription());
         subJobDb.setPrice(subJob.getPrice());
-        subJobRepository.save(subJobDb);
+        return subJobRepository.save(subJobDb);
     }
+
     public SubJob findSubJobByName(String name) {
-        return subJobRepository.findBySubJobName(name).orElseThrow(() -> new NotFoundException("is not exist subJob to name"+name));
+        return subJobRepository.findBySubJobName(name).orElseThrow(() -> new NotFoundException("is not exist subJob to name" + name));
     }
-    }
+}
 
