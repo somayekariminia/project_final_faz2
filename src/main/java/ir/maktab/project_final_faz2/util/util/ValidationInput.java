@@ -10,15 +10,15 @@ public class ValidationInput {
     };
 
     public static void validatePassword(String userName) {
-        valid.accept(userName, "(?=.{8}$)(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9]).*$", "Your Username Is Invalid");
+        valid.accept(userName, "(?=.{8}$)(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9]).*$", "Your informant Is Invalid");
     }
 
     public static void validateEmail(String email) {
-        valid.accept(email, "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.]+@[a-zA-Z0-9.]+$", "Your email Is Invalid");
+        valid.accept(email, "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.]+@[a-zA-Z0-9.]+$", "Your informant Is Invalid");
     }
 
     public static void validateName(String name) {
-        valid.accept(name, "[a-zA-Z]+", "your name is invalid");
+        valid.accept(name, "[a-zA-Z]+", "Your informant Is Invalid");
     }
 
 }
