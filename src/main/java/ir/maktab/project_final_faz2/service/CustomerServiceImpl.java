@@ -43,7 +43,7 @@ public class CustomerServiceImpl {
         return login(userName, newPassword);
     }
     public Customer findByUserName(String userName) {
-        return customerRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException("customer not found with this userName"));
+        return customerRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException("customer not found with this userName "+userName));
     }
 
 }

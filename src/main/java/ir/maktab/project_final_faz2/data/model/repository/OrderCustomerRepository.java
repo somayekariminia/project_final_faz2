@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface OrderCustomerRepository extends JpaRepository<OrderCustomer,Long> {
 
@@ -21,5 +23,6 @@ public interface OrderCustomerRepository extends JpaRepository<OrderCustomer,Lon
     @Modifying
     @Query("update OrderCustomer o set  o.orderStatus=?1,o.endDate=?1 where o.id =? 2")
     void updateOrderStateAndEndDate(@Param("orderStatues") String orderStatus, @Param("endDate") Date endDate, @Param("id") Long id);
+    Optional<OrderCustomer> findByCodeOrder(String codeOrder);
 
 }
