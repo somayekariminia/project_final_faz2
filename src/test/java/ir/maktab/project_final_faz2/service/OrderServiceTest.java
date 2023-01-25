@@ -39,7 +39,7 @@ public class OrderServiceTest {
                     offerPrice(new BigDecimal(3000))
                     .codeOrder("order1").address(Address.builder()
                             .city("kerman").street("hashtBehesht")
-                            .no("512").build()).aboutWork("cleanHomeAndCooking").offerStartDateCustomer(dateStartC).build();
+                            .pelak("512").build()).aboutWork("cleanHomeAndCooking").offerStartDateCustomer(dateStartC).build();
         }
     }
 

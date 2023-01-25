@@ -42,5 +42,8 @@ public class SubJobServiceImpl {
     public SubJob findSubJobByName(String name) {
         return subJobRepository.findBySubJobName(name).orElseThrow(() -> new NotFoundException("is not exist subJob to name" + name));
     }
+    public SubJob findById(Long id) {
+        return subJobRepository.findById(id).orElseThrow(() -> new NotFoundException("is not exist subJob to name"));
+    }
 }
 

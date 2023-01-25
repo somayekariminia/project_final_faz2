@@ -3,6 +3,7 @@ package ir.maktab.project_final_faz2.service;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OrderCustomerRepository;
+import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.RepeatException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
@@ -29,5 +30,8 @@ public class OrderCustomerServiceImpl {
             throw new ValidationException("You can't order before today ");
         orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
         return orderCustomerRepository.save(orderCustomer);
+    }
+    public OrderCustomer findByCode(String codeOrder){
+        return orderCustomerRepository.findByCodeOrder(codeOrder).orElseThrow(()->new NotFoundException("there arent any orderCustomer to code "+codeOrder));
     }
 }

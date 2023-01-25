@@ -25,39 +25,5 @@ import java.time.LocalDateTime;
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
 class ProjectFinalFaz2ApplicationTests {
-    @Autowired
-    static OrderCustomerRepository orderCustomerRepository;
-    @Autowired
-    static CustomerRepository customerRepository;
-    @Autowired
-    static ExpertRepository expertRepository;
-    @Autowired
-    static SubJobRepository subJobRepository;
-    @Autowired
-    private static OfferServiceImpl offerService;
-
-    @BeforeAll
-    static void set() {
-        Customer customer = Customer.builder().firstName("somaye").lastName("karimi").email("somaye@yahoo.com").password("Sok31200").build();
-        Expert expert = Expert.builder().firstName("morteza").lastName("karimi").email("morteza@yahoo.com").password("Mok31200").build();
-        SubJob subJob = SubJob.builder().subJobName("sofa").price(new BigDecimal(2000)).description("washing").build();
-        expertRepository.save(expert);
-        customerRepository.save(customer);
-        subJobRepository.save(subJob);
-        LocalDate start = LocalDate.of(2023, 01, 27);
-        OrderCustomer orderCustomer = OrderCustomer.
-                builder().codeOrder("order1").
-                offerStartDateCustomer(UtilDate.changeLocalDateToDate(start)).
-                aboutWork("clean thehome").address(Address.builder().
-                        city("kerman").build()).subJob(subJob).offerPrice(new BigDecimal(3000)).build();
-        orderCustomerRepository.save(orderCustomer);
-        LocalDateTime startExpert = LocalDateTime.of(2023, 01, 28, 8, 0, 0);
-        Offers offers = Offers.builder().expert(expert).offerPriceByExpert(new BigDecimal(3200)).durationWork(Duration.ofHours(8)).startTime(UtilDate.changeLocalDateToDate(LocalDate.from(startExpert))).build();
-        offerService.save(offers, orderCustomer);
-    }
-
-    @Test
-    void contextLoads() {
-    }
 
 }

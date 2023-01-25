@@ -88,8 +88,4 @@ class CustomerServiceImplTest {
         Exception exceptionPassword = Assertions.assertThrows(NotFoundException.class, () -> customerService.findByUserName("somaye@yahoo.com"));
         assertEquals("customer not found with this userName "+"somaye@yahoo.com", exceptionPassword.getMessage());
     }
-    @Test
-    void saveOrderTest(){
-
-    }
 }

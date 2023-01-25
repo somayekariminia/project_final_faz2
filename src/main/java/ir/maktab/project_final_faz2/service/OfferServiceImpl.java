@@ -25,15 +25,17 @@ import java.util.stream.Collectors;
 public class OfferServiceImpl {
     private final OfferRepository offerRepository;
     private final OrderCustomerRepository orderCustomerRepository;
+    private final ExpertServiceImpl expertService;
+    private final OrderCustomerServiceImpl orderCustomerService;
+
     public List<OrderCustomer> findAllOrdersForAExpert(Expert expert) {
-        //chek expert null nabashad
-        List<OrderCustomer> allBySubJobForAExpert = orderCustomerRepository.findAllBySubJobForAExpert(expert.getId());
-        if (allBySubJobForAExpert.isEmpty()) throw new NotFoundException("There is no specialty for this specialist");
-        return allBySubJobForAExpert.stream().filter(orderCustomer -> orderCustomer.getOrderStatus().equals(OrderStatus.WaitingForOfferTheExperts) || orderCustomer.getOrderStatus().equals(OrderStatus.WaitingSelectTheExpert)).collect(Collectors.toList());
+        Expert expertDb = expertService.findByUserName(expert.getEmail());
+        return orderCustomerRepository.findAllBySubJobForAExpert(expertDb.getId());
     }
 
-    public Offers save(Offers offers, OrderCustomer orderCustomer) {
+    public Offers save(Offers offers, String codeOrder) {
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
+        OrderCustomer orderCustomer = orderCustomerService.findByCode(codeOrder);
         if (offers.getOfferPriceByExpert().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException("offerPrice lower of basePrice");
         if (UtilDate.compareTwoDate(offers.getStartTime(), today) < 0) throw new ValidationException("");
@@ -49,9 +51,9 @@ public class OfferServiceImpl {
         return orderCustomerRepository.save(orderCustomerDb);
     }
 
-    public List<Offers> viewAllOffersOrdersByCustomer(OrderCustomer orderCustomer) {
-        OrderCustomer orderCustomer1 = getOrderCustomerById(orderCustomer);
-        return orderCustomer1.getOffersList().stream().sorted(Comparator.comparing(Offers::getOfferPriceByExpert)).collect(Collectors.toList());
+    public List<Offers> viewAllOffersOrdersByCustomer(String orderCode) {
+        OrderCustomer orderCustomer = orderCustomerService.findByCode(orderCode);
+        return orderCustomer.getOffersList().stream().sorted(Comparator.comparing(Offers::getOfferPriceByExpert)).collect(Collectors.toList());
     }
 
     private OrderCustomer getOrderCustomerById(OrderCustomer orderCustomer) {

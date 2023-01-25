@@ -38,7 +38,7 @@ public class OrderCustomer {
     @Temporal(value = TemporalType.DATE)
     private Date offerStartDateCustomer;
 
-    @Enumerated
+    @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
     @Temporal(value = TemporalType.TIMESTAMP)
