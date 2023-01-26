@@ -23,6 +23,8 @@ public class SubJob {
 
     @Column(nullable = false)
     private String subJobName;
+
     private BigDecimal price;
+
     private String description;
 }

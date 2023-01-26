@@ -25,7 +25,7 @@ public class OrderCustomer {
     @OneToOne(cascade = CascadeType.PERSIST)
     Address address;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     List<Offers> offersList = new ArrayList<>();
 
     private BigDecimal offerPrice;

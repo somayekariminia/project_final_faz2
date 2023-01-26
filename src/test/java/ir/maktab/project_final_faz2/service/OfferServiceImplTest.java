@@ -3,6 +3,7 @@ package ir.maktab.project_final_faz2.service;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.Offers;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
+import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -78,19 +80,32 @@ class OfferServiceImplTest {
         Assertions.assertTrue(offersForOrder.size() > 0);
     }
 
+    @Order(4)
     @Test
     void selectAnOfferByCustomer() {
+        Offers offerExist = offerService.findById(1L);
+        OrderCustomer orderCustomer = orderCustomerService.findByCode("order1");
+        Offers offers = offerService.selectAnOfferByCustomer(offerExist, orderCustomer);
+        Assertions.assertTrue(offers.isAccept());
+
     }
 
-    @Test
-    void updateStatusOrder() {
-    }
-
+    @Order(5)
     @Test
     void changeOrderToStartByCustomer() {
+        Offers offerExist = offerService.findById(1L);
+        OrderCustomer orderCustomer = orderCustomerService.findByCode("order1");
+        offerService.changeOrderToStartByCustomer(offerExist, orderCustomer);
+        OrderCustomer orderCustomerNew = orderCustomerService.findByCode("order1");
+        Assertions.assertEquals(orderCustomerNew.getOrderStatus(), OrderStatus.Started);
     }
 
+    @Order(6)
     @Test
     void endDoWork() {
+        OrderCustomer orderCustomer = orderCustomerService.findByCode("order1");
+        offerService.endDoWork(orderCustomer, LocalDateTime.now());
+        OrderCustomer newOrderCustomer = orderCustomerService.findByCode("order1");
+        Assertions.assertEquals(newOrderCustomer.getOrderStatus(), OrderStatus.DoItsBeen);
     }
 }
