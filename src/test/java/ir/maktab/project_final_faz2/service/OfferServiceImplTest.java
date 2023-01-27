@@ -83,7 +83,7 @@ class OfferServiceImplTest {
     @Order(4)
     @Test
     void selectAnOfferByCustomer() {
-        Offers offerExist = offerService.findById(1L);
+        Offers offerExist = offerService.findById(2l);
         OrderCustomer orderCustomer = orderCustomerService.findByCode("order1");
         Offers offers = offerService.selectAnOfferByCustomer(offerExist, orderCustomer);
         Assertions.assertTrue(offers.isAccept());
@@ -93,7 +93,7 @@ class OfferServiceImplTest {
     @Order(5)
     @Test
     void changeOrderToStartByCustomer() {
-        Offers offerExist = offerService.findById(1L);
+        Offers offerExist = offerService.findById(2L);
         OrderCustomer orderCustomer = orderCustomerService.findByCode("order1");
         offerService.changeOrderToStartByCustomer(offerExist, orderCustomer);
         OrderCustomer orderCustomerNew = orderCustomerService.findByCode("order1");
@@ -107,5 +107,12 @@ class OfferServiceImplTest {
         offerService.endDoWork(orderCustomer, LocalDateTime.now());
         OrderCustomer newOrderCustomer = orderCustomerService.findByCode("order1");
         Assertions.assertEquals(newOrderCustomer.getOrderStatus(), OrderStatus.DoItsBeen);
+    }
+    @Order(7)
+    @Test
+    void findOfferIsAccept(){
+        OrderCustomer orderCustomer = orderCustomerService.findByCode("order1");
+        Offers offersIsAccept = offerService.findOffersIsAccept(orderCustomer);
+       Assertions.assertTrue(offersIsAccept.isAccept());
     }
 }

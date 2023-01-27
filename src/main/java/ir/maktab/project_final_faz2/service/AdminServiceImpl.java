@@ -8,6 +8,7 @@ import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.RepeatException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class AdminServiceImpl {
     private ExpertRepository expertRepository;
     private AdminRepository adminRepository;
 
+    @Transactional
     public void addExpertToSubJob(Expert expert, SubJob subJob) {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
         SubJob subJobDb = subJobService.findSubJobByName(subJob.getSubJobName());

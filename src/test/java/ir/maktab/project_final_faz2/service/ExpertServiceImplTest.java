@@ -120,4 +120,10 @@ class ExpertServiceImplTest {
         List<Expert> allExpertIsNotConfirm = expertService.findAllExpertsIsNotConfirm();
         assertTrue(allExpertIsNotConfirm.size()>0);
     }
+    @Order(9)
+    @Test
+    void viewImageTest(){
+        Expert expert1 = expertService.findByUserName("morteza@yahoo.com");
+        expertService.viewImage(expert1);
+    }
 }

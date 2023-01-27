@@ -10,16 +10,14 @@ import ir.maktab.project_final_faz2.exception.NotAccept;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,38 +32,41 @@ public class OfferServiceImpl {
         return orderCustomerRepository.findAllBySubJobForAExpert(expertDb.getId());
     }
 
+    @Transactional
     public Offers save(Offers offers, String codeOrder) {
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         OrderCustomer orderCustomer = orderCustomerService.findByCode(codeOrder);
         if (offers.getOfferPriceByExpert().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException("offerPrice lower of basePrice");
         if (UtilDate.compareTwoDate(offers.getStartTime(), today) < 0) throw new ValidationException("");
+        orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
+        orderCustomerRepository.save(orderCustomer);
         offers.setAccept(false);
-        Offers offerSave = offerRepository.save(offers);
-        updateOrder(orderCustomer, offerSave);
-        return offers;
+        offers.setOrderCustomer(orderCustomer);
+        return offerRepository.save(offers);
     }
 
-    private OrderCustomer updateOrder(OrderCustomer orderCustomer, Offers offerSave) {
-        OrderCustomer orderCustomerDb = orderCustomerRepository.findById(orderCustomer.getId()).orElseThrow(() -> new NotFoundException(""));
-        orderCustomerDb.getOffersList().add(offerSave);
-        orderCustomerDb.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
-        return orderCustomerRepository.save(orderCustomerDb);
-    }
 
     public List<Offers> viewAllOffersOrdersByCustomer(String orderCode) {
         OrderCustomer orderCustomer = orderCustomerService.findByCode(orderCode);
-        return orderCustomer.getOffersList().stream().sorted(Comparator.comparing(Offers::getOfferPriceByExpert)).collect(Collectors.toList());
+        List<Offers> allOffersAOrder = offerRepository.findAllByOrderCustomer(orderCustomer);
+        if (allOffersAOrder.isEmpty())
+            throw new NotFoundException("not found");
+        return allOffersAOrder;
     }
 
-    private OrderCustomer getOrderCustomerById(OrderCustomer orderCustomer) {
-        return orderCustomerRepository.findById(orderCustomer.getId()).orElseThrow(() -> new NotFoundException("is not find"));
+    private OrderCustomer getOrderCustomerById(Long id) {
+        return orderCustomerService.findById(id);
     }
 
+    @Transactional
     public Offers selectAnOfferByCustomer(Offers offers, OrderCustomer orderCustomer) {
-        OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer);
-        if (orderCustomerDb.getOffersList().stream().noneMatch(offers1 -> offers1.getId() == offers.getId()))
-            throw new NotFoundException("there arent the offer for this order");
+        OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
+        Offers offersDb = findById(offers.getId());
+        if (offersDb.getOrderCustomer().getId() != orderCustomerDb.getId())
+            throw new NotAccept("offers is not accept because the offer isn't its orderCustomer ");
+        if (!(orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingForOfferTheExperts) || orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingSelectTheExpert)))
+            throw new NotAccept("Order an offer has already accepted ");
         orderCustomerDb.setOrderStatus(OrderStatus.WaitingForTheExpertToComeToYourLocation);
         orderCustomerRepository.save(orderCustomerDb);
         offers.setAccept(true);
@@ -73,11 +74,10 @@ public class OfferServiceImpl {
     }
 
     public void changeOrderToStartByCustomer(Offers offers, OrderCustomer orderCustomer) {
-        OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer);
-        if (orderCustomerDb.getOffersList().stream().noneMatch(offers1 -> offers1.getId() == offers.getId()))
-            throw new NotFoundException("there arent the offer for this order");
+        OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
+        Offers offersDb = findById(offers.getId());
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
-        if (UtilDate.compareTwoDate(offers.getStartTime(), today) < 0)
+        if (UtilDate.compareTwoDate(offersDb.getStartTime(), today) < 0)
             throw new ValidationException("time bigger of time offer");
         if (!offers.isAccept())
             throw new NotAccept("the offer isnt accept");
@@ -86,7 +86,7 @@ public class OfferServiceImpl {
     }
 
     public void endDoWork(OrderCustomer orderCustomer, LocalDateTime endDoWork) {
-        OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer);
+        OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
         orderCustomerDb.setEndDate(UtilDate.changeLocalDateToDate(LocalDate.from(endDoWork)));
         orderCustomerDb.setOrderStatus(OrderStatus.DoItsBeen);
         orderCustomerRepository.save(orderCustomerDb);
@@ -94,6 +94,10 @@ public class OfferServiceImpl {
 
     public Offers findById(Long id) {
         return offerRepository.findById(id).orElseThrow(() -> new NotFoundException("is not found"));
+    }
+
+    public Offers findOffersIsAccept(OrderCustomer orderCustomer) {
+        return offerRepository.findOffersIsAccept(orderCustomer).orElseThrow(() -> new NotAccept("is not Offer accept"));
     }
 
 }

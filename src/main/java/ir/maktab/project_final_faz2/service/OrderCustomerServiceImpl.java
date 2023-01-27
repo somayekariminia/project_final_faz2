@@ -34,4 +34,8 @@ public class OrderCustomerServiceImpl {
     public OrderCustomer findByCode(String codeOrder){
         return orderCustomerRepository.findByCodeOrder(codeOrder).orElseThrow(()->new NotFoundException("there arent any orderCustomer to code "+codeOrder));
     }
+
+    public OrderCustomer findById(Long id) {
+       return orderCustomerRepository.findById(id).orElseThrow(()->new NotFoundException("not found Order "+ id));
+    }
 }

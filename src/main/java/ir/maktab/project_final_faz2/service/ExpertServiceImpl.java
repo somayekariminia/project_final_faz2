@@ -80,5 +80,9 @@ public class ExpertServiceImpl {
     public List<Expert> findAllExpertsIsNotConfirm() {
         return expertRepository.findAllExpertIsntConfirm(SpecialtyStatus.NewState);
     }
+    public void viewImage(Expert expert){
+        File file=new File("C:\\Users\\Lenovo\\Desktop\\PIO.jpg");
+        UtilImage.getFileImage(expert.getExpertImage(),file);
+    }
 
 }

@@ -29,5 +29,7 @@ public class Offers {
     @OneToOne
     private Expert expert;
     boolean isAccept;
+    @ManyToOne
+    OrderCustomer orderCustomer;
 
 }
