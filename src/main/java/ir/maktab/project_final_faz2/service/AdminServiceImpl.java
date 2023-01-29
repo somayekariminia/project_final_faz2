@@ -3,11 +3,11 @@ package ir.maktab.project_final_faz2.service;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
-import ir.maktab.project_final_faz2.data.model.repository.AdminRepository;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.RepeatException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.service.interfaces.AdminService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,14 +15,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class AdminServiceImpl {
+public class AdminServiceImpl implements AdminService {
     @Autowired
     private ExpertServiceImpl expertService;
     @Autowired
     private SubJobServiceImpl subJobService;
     @Autowired
     private ExpertRepository expertRepository;
-
+   @Override
     @Transactional
     public void addExpertToSubJob(Expert expert, SubJob subJob) {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
@@ -34,7 +34,7 @@ public class AdminServiceImpl {
         expertDb.getServicesList().add(subJobDb);
         expertRepository.save(expertDb);
     }
-
+@Override
     @Transactional
     public void deleteExpertOfSubJob(Expert expert, SubJob subJob) {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
@@ -44,7 +44,7 @@ public class AdminServiceImpl {
         expertDb.getServicesList().remove(subJob);
         expertRepository.save(expertDb);
     }
-
+    @Override
     public void isConfirmExpertByAdmin(String userName) {
         Expert expertDb = expertService.findByUserName(userName);
         if (expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
@@ -52,11 +52,11 @@ public class AdminServiceImpl {
         expertDb.setSpecialtyStatus(SpecialtyStatus.Confirmed);
         expertRepository.save(expertDb);
     }
-
+    @Override
     public List<Expert> findAllExpertIsNtConFirm() {
         return expertService.findAllExpertsApproved();
     }
-
+    @Override
     public List<Expert> findAllIsConfirm() {
         return expertService.findAllExpertsIsNotConfirm();
     }

@@ -10,6 +10,7 @@ import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
 import ir.maktab.project_final_faz2.exception.NotAccept;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.service.interfaces.OfferService;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class OfferServiceImpl {
+public class OfferServiceImpl implements OfferService {
     private final OfferRepository offerRepository;
     private final ExpertServiceImpl expertService;
     private final OrderCustomerServiceImpl orderCustomerService;
-
+@Override
     public List<OrderCustomer> findAllOrdersForAExpert(Expert expert) {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
         if(!expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
@@ -43,7 +44,7 @@ public class OfferServiceImpl {
             throw new NotFoundException("list orders is null");
         return list;
     }
-
+    @Override
     public List<OrderCustomer> findAllOrdersForAnSubJobOfExpert(Expert expert, SubJob subJob) {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
         if(!expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
@@ -56,7 +57,7 @@ public class OfferServiceImpl {
         return list;
 
     }
-
+    @Override
     @Transactional
     public Offers save(Offers offers, String codeOrder) {
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
@@ -72,7 +73,7 @@ public class OfferServiceImpl {
         return offerRepository.save(offers);
     }
 
-
+    @Override
     public List<Offers> viewAllOffersOrdersByCustomerOrderByPrice(String orderCode) {
         OrderCustomer orderCustomer = orderCustomerService.findByCode(orderCode);
         List<Offers> allOffersAOrder = offerRepository.findAllByOrderCustomerOrderByPriceOrder(orderCustomer);
@@ -80,7 +81,7 @@ public class OfferServiceImpl {
             throw new NotFoundException("not found");
         return allOffersAOrder;
     }
-
+    @Override
     public List<Offers> viewAllOffersOrdersByCustomerOrderByPerformanceExpert(String orderCode) {
         OrderCustomer orderCustomer = orderCustomerService.findByCode(orderCode);
         List<Offers> allOffersAOrder = offerRepository.findAllOffersAnOrderOrderByScoreExpert(orderCustomer);
@@ -92,7 +93,7 @@ public class OfferServiceImpl {
     private OrderCustomer getOrderCustomerById(Long id) {
         return orderCustomerService.findById(id);
     }
-
+    @Override
     @Transactional
     public Offers selectAnOfferByCustomer(Offers offers, OrderCustomer orderCustomer) {
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
@@ -106,7 +107,7 @@ public class OfferServiceImpl {
         offers.setAccept(true);
         return offerRepository.save(offers);
     }
-
+    @Override
     public void changeOrderToStartByCustomer(Offers offers, OrderCustomer orderCustomer) {
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
         Offers offersDb = findById(offers.getId());
@@ -118,18 +119,18 @@ public class OfferServiceImpl {
         orderCustomerDb.setOrderStatus(OrderStatus.Started);
         orderCustomerService.updateOrder(orderCustomerDb);
     }
-
+    @Override
     public void endDoWork(OrderCustomer orderCustomer, LocalDateTime endDoWork) {
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
         orderCustomerDb.setEndDate(UtilDate.changeLocalDateToDate(LocalDate.from(endDoWork)));
         orderCustomerDb.setOrderStatus(OrderStatus.DoItsBeen);
         orderCustomerService.updateOrder(orderCustomerDb);
     }
-
+    @Override
     public Offers findById(Long id) {
         return offerRepository.findById(id).orElseThrow(() -> new NotFoundException("is not found"));
     }
-
+    @Override
     public Offers findOffersIsAccept(OrderCustomer orderCustomer) {
         return offerRepository.findOffersIsAccept(orderCustomer).orElseThrow(() -> new NotAccept("is not Offer accept"));
     }

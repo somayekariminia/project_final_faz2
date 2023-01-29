@@ -6,6 +6,7 @@ import ir.maktab.project_final_faz2.data.model.repository.BasicJobRepository;
 import ir.maktab.project_final_faz2.data.model.repository.SubJobRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.RepeatException;
+import ir.maktab.project_final_faz2.service.interfaces.BasicService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,23 +16,30 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class BasicJubServiceImpl {
+public class BasicJubServiceImpl implements BasicService {
     private final BasicJobRepository basicJobRepository;
     private final SubJobRepository subJobRepository;
 
+    @Override
     public BasicJob save(BasicJob basicJob) {
         if (basicJobRepository.findBasicJobByNameBase(basicJob.getNameBase()).isPresent())
             throw new RepeatException("already basicJob to exist name: " + basicJob.getNameBase());
         return basicJobRepository.save(basicJob);
     }
+
+    @Override
     public List<SubJob> findAllSubJobsABasicJob(String nameBasicJob) {
         return subJobRepository.findAllByBasicJobNameBase(nameBasicJob);
     }
+
+    @Override
     public List<BasicJob> findAllBasicJobs() {
         return basicJobRepository.findAll();
     }
-    public BasicJob findBasicJobByName(String name){
-        return basicJobRepository.findBasicJobByNameBase(name).orElseThrow(()->new NotFoundException("is not exist"));
+
+    @Override
+    public BasicJob findBasicJobByName(String name) {
+        return basicJobRepository.findBasicJobByNameBase(name).orElseThrow(() -> new NotFoundException("is not exist"));
 
     }
 }

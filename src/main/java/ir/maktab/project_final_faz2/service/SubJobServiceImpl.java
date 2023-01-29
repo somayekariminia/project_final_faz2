@@ -12,10 +12,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SubJobServiceImpl {
+public class SubJobServiceImpl implements SubJobService {
     private final SubJobRepository subJobRepository;
     private final BasicJobRepository basicJobRepository;
 
+    @Override
     public SubJob saveSubJob(SubJob subJob) {
         checkSubJob(subJob);
         return subJobRepository.save(subJob);
@@ -28,10 +29,12 @@ public class SubJobServiceImpl {
             throw new RepeatException("this subService Already saved");
     }
 
+    @Override
     public List<SubJob> findAllSubJob() {
         return subJobRepository.findAll();
     }
 
+    @Override
     public SubJob updateSubJob(SubJob subJob) {
         SubJob subJobDb = findSubJobByName(subJob.getSubJobName());
         subJobDb.setDescription(subJob.getDescription());
@@ -39,9 +42,12 @@ public class SubJobServiceImpl {
         return subJobRepository.save(subJobDb);
     }
 
+    @Override
     public SubJob findSubJobByName(String name) {
         return subJobRepository.findBySubJobName(name).orElseThrow(() -> new NotFoundException("is not exist subJob to name" + name));
     }
+
+    @Override
     public SubJob findById(Long id) {
         return subJobRepository.findById(id).orElseThrow(() -> new NotFoundException("is not exist subJob to name"));
     }

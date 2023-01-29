@@ -128,4 +128,13 @@ class OfferServiceImplTest {
         Comparator<Offers> comparator = Comparator.comparing(offers -> offers.getExpert().getPerformance());
         Assertions.assertTrue(comparator.compare(offersForOrder.get(0), offersForOrder.get(1)) <= 0);
     }
+
+    @Order(9)
+    @Test
+    void findAllOrdersForAnSubJobOfExpert() {
+        Expert expert = expertService.findById(1L);
+        List<OrderCustomer> allOrdersForAExpert = offerService.findAllOrdersForAnSubJobOfExpert(expert, expert.getServicesList().get(0));
+        Assertions.assertTrue(allOrdersForAExpert.size() > 0);
+    }
+
 }
