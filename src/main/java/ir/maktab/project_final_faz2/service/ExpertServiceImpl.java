@@ -25,7 +25,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public Expert save(Expert expert, File file) {
         if (expertRepository.findByEmail(expert.getEmail()).isPresent())
-            throw new RepeatException("exist is expert to userName " + expert.getEmail());
+            throw new RepeatException(String.format("already Exist is Expert %s " + expert.getEmail()));
         validateInfoPerson(expert);
         expert.setExpertImage(UtilImage.validateImage(file));
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);
@@ -44,7 +44,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
 
     public Expert login(String userName, String password) {
-        Expert expert = expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException("Expert not found with this userName " + userName));
+        Expert expert = expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format("Not Fount Expert %s" + userName)));
         if (!expert.getPassword().equals(password))
             throw new ValidationException("Your password is incorrect");
         return expert;
@@ -62,19 +62,19 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public Expert findById(Long id) {
-        return expertRepository.findById(id).orElseThrow(() -> new NotFoundException("Person not found with this userName "));
+        return expertRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Fount Expert %s" + id)));
     }
 
     @Override
     public Expert findByUserName(String userName) {
-        return expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException("Person not found with this userName " + userName));
+        return expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format("Not Fount Expert %s" + userName)));
     }
 
     @Override
     public List<Expert> findAllPerson() {
         List<Expert> listExpert = expertRepository.findAll();
         if (listExpert.isEmpty())
-            throw new NotFoundException("there arent experts");
+            throw new NotFoundException("!!!!List Experts is Null!!!!");
         return listExpert;
     }
 
@@ -83,16 +83,16 @@ public class ExpertServiceImpl implements ExpertService {
     public List<Expert> findAllExpertsApproved() {
         List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsntConfirm(SpecialtyStatus.Confirmed);
         if (allExpertIsNtConfirm.isEmpty())
-            throw new NotFoundException("list is null");
+            throw new NotFoundException("There arent Expert Confirmed !!!!!!");
         return allExpertIsNtConfirm;
     }
 
     @Override
     public List<Expert> findAllExpertsIsNotConfirm() {
-        List<Expert> allExpertIsntConfirm = expertRepository.findAllExpertIsntConfirm(SpecialtyStatus.NewState);
-        if (allExpertIsntConfirm.isEmpty())
-            throw new NotFoundException("list is null");
-        return allExpertIsntConfirm;
+        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsntConfirm(SpecialtyStatus.NewState);
+        if (allExpertIsNtConfirm.isEmpty())
+            throw new NotFoundException("There arent Experts Is Not Confirm!!!!!!!");
+        return allExpertIsNtConfirm;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package ir.maktab.project_final_faz2.service;
 
-import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.RepeatException;

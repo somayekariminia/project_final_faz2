@@ -14,14 +14,14 @@ public class UtilDate {
 
     }
 
-    public static LocalDate getLocalDateTime(Date date) {
+    public static LocalDateTime getLocalDateTime(Date date) {
         LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
-        return ldt.toLocalDate();
+        return ldt.toLocalDate().atStartOfDay();
     }
 
     public static int compareTwoDate(Date dateFirst, Date dateTwo) {
-        LocalDate localDateFirst = getLocalDateTime(dateFirst);
-        LocalDate localDateSecond = getLocalDateTime(dateTwo);
+        LocalDateTime localDateFirst = getLocalDateTime(dateFirst);
+        LocalDateTime localDateSecond = getLocalDateTime(dateTwo);
         return localDateFirst.compareTo(localDateSecond);
     }
 }

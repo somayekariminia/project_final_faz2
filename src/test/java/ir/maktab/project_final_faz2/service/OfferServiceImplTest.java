@@ -77,7 +77,7 @@ class OfferServiceImplTest {
     @Order(4)
     @Test
     void selectAnOfferByCustomer() {
-        Offers offerExist = offerService.findById(2l);
+        Offers offerExist = offerService.findById(2L);
         OrderCustomer orderCustomer = orderCustomerService.findByCode("order1");
         Offers offers = offerService.selectAnOfferByCustomer(offerExist, orderCustomer);
         Assertions.assertTrue(offers.isAccept());

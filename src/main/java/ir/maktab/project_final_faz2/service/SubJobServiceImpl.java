@@ -5,6 +5,7 @@ import ir.maktab.project_final_faz2.data.model.repository.BasicJobRepository;
 import ir.maktab.project_final_faz2.data.model.repository.SubJobRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.RepeatException;
+import ir.maktab.project_final_faz2.service.interfaces.SubJobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +25,9 @@ public class SubJobServiceImpl implements SubJobService {
 
     private void checkSubJob(SubJob subJob) {
         if (basicJobRepository.findBasicJobByNameBase(subJob.getBasicJob().getNameBase()).isEmpty())
-            throw new NotFoundException("is not exist basicJob to name" + subJob.getBasicJob().getNameBase());
+            throw new NotFoundException(String.format("is not exist basicJob %s" + subJob.getBasicJob().getNameBase()));
         if (subJobRepository.findBySubJobName(subJob.getSubJobName()).isPresent())
-            throw new RepeatException("this subService Already saved");
+            throw new RepeatException(String.format("this subService %s Already saved" + subJob.getBasicJob().getNameBase()));
     }
 
     @Override
@@ -44,12 +45,12 @@ public class SubJobServiceImpl implements SubJobService {
 
     @Override
     public SubJob findSubJobByName(String name) {
-        return subJobRepository.findBySubJobName(name).orElseThrow(() -> new NotFoundException("is not exist subJob to name" + name));
+        return subJobRepository.findBySubJobName(name).orElseThrow(() -> new NotFoundException(String.format("Not Found %s !!!!!!!!", name)));
     }
 
     @Override
     public SubJob findById(Long id) {
-        return subJobRepository.findById(id).orElseThrow(() -> new NotFoundException("is not exist subJob to name"));
+        return subJobRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Found %d !!!!!!!!", id)));
     }
 }
 
