@@ -1,6 +1,8 @@
 package ir.maktab.project_final_faz2.service;
 
+import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
+import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OrderCustomerRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +40,11 @@ public class OrderCustomerServiceImpl {
 
     public OrderCustomer findById(Long id) {
        return orderCustomerRepository.findById(id).orElseThrow(()->new NotFoundException("not found Order "+ id));
+    }
+    public List<OrderCustomer> findAllOrdersBySubJob(SubJob subJob){
+        return orderCustomerRepository.findAllBySubJobForAExpert(subJob);
+    }
+    public void updateOrder(OrderCustomer orderCustomer){
+        orderCustomerRepository.save(orderCustomer);
     }
 }

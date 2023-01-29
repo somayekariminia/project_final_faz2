@@ -12,6 +12,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AdminServiceImpl {
     @Autowired
@@ -20,7 +22,6 @@ public class AdminServiceImpl {
     private SubJobServiceImpl subJobService;
     @Autowired
     private ExpertRepository expertRepository;
-    private AdminRepository adminRepository;
 
     @Transactional
     public void addExpertToSubJob(Expert expert, SubJob subJob) {
@@ -34,7 +35,7 @@ public class AdminServiceImpl {
         expertRepository.save(expertDb);
     }
 
-
+    @Transactional
     public void deleteExpertOfSubJob(Expert expert, SubJob subJob) {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
         if (expertDb.getServicesList().stream().noneMatch(subJob1 -> subJob1.getSubJobName().equals(subJob.getSubJobName())))
@@ -50,6 +51,14 @@ public class AdminServiceImpl {
             throw new ValidationException("expert is confirm");
         expertDb.setSpecialtyStatus(SpecialtyStatus.Confirmed);
         expertRepository.save(expertDb);
+    }
+
+    public List<Expert> findAllExpertIsNtConFirm() {
+        return expertService.findAllExpertsApproved();
+    }
+
+    public List<Expert> findAllIsConfirm() {
+        return expertService.findAllExpertsIsNotConfirm();
     }
 
 }

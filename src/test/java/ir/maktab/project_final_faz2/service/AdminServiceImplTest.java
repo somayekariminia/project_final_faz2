@@ -13,6 +13,9 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -27,13 +30,13 @@ class AdminServiceImplTest {
     @BeforeAll
     static void setup(@Autowired DataSource dataSource) {
         try (Connection connection = dataSource.getConnection()) {
-            ScriptUtils.executeSqlScript(connection, new ClassPathResource("AdminData.sql"));
+            ScriptUtils.executeSqlScript(connection, new ClassPathResource("adminData.sql"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    @Order(2)
+    @Order(4)
     @Test
     void addExpertToSubJob() {
         Expert expert = expertService.findById(1L);
@@ -44,7 +47,7 @@ class AdminServiceImplTest {
         Assertions.assertEquals(size + 1, expertNew.getServicesList().size());
     }
 
-    @Order(3)
+    @Order(5)
     @Test
     void deleteExpertOfSubJob() {
         Expert expert = expertService.findById(1L);
@@ -52,7 +55,7 @@ class AdminServiceImplTest {
         int size = expert.getServicesList().size();
         adminService.deleteExpertOfSubJob(expert, subJob);
         Expert expertNew = expertService.findById(1L);
-        Assertions.assertEquals(size -1, expertNew.getServicesList().size());
+        Assertions.assertEquals(size - 1, expertNew.getServicesList().size());
     }
 
     @Test
@@ -62,6 +65,20 @@ class AdminServiceImplTest {
         adminService.isConfirmExpertByAdmin(expert.getEmail());
         Expert expertNew = expertService.findById(1L);
         Assertions.assertTrue(expertNew.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed));
+    }
+
+    @Order(2)
+    @Test
+    void findAllExpertIsNtConFirm() {
+        List<Expert> allExpertsApproved = adminService.findAllExpertIsNtConFirm();
+        assertTrue(allExpertsApproved.size() > 0);
+    }
+
+    @Order(3)
+    @Test
+    void findAllIsConfirm() {
+        List<Expert> allExpertsApproved = adminService.findAllIsConfirm();
+        assertTrue(allExpertsApproved.size() > 0);
     }
 
 }

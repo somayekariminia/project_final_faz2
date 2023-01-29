@@ -13,8 +13,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 
+import javax.sql.DataSource;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +32,12 @@ class ExpertServiceImplTest {
     private static File file;
 
     @BeforeAll
-    static void set() {
+    static void set(@Autowired DataSource dataSource) {
+        try (Connection connection = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(connection, new ClassPathResource("expertData.sql"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         expert = Expert.builder().
                 firstName("somaye").lastName("karimi").
                 email("somaye@yahoo.com").password("Sok31200").build();
@@ -107,14 +117,20 @@ class ExpertServiceImplTest {
         Exception exceptionPassword = Assertions.assertThrows(NotFoundException.class, () -> expertService.findByUserName("salman@yahoo.com"));
         assertEquals("Person not found with this userName " + "salman@yahoo.com", exceptionPassword.getMessage());
     }
+    @Order(8)
+    @Test
+    void findAllExpertTest() {
+        List<Expert> allExpert = expertService.findAllPerson();
+        assertTrue(allExpert.size()>0);
+    }
 
     @Order(8)
     @Test
-    void findAllExpertsApprovedTest() {
-        List<Expert> allExpertsApproved = expertService.findAllExpertsApproved();
-        assertTrue(allExpertsApproved.size()>0);
-
+    void findAllExpertsConfirmTest() {
+        List<Expert> allExpertIsConfirm = expertService.findAllExpertsApproved();
+        assertTrue(allExpertIsConfirm.size()>0);
     }
+    @Order(8)
     @Test
     void findAllExpertsIsNotConfirmTest() {
         List<Expert> allExpertIsNotConfirm = expertService.findAllExpertsIsNotConfirm();
@@ -123,7 +139,9 @@ class ExpertServiceImplTest {
     @Order(9)
     @Test
     void viewImageTest(){
-        Expert expert1 = expertService.findByUserName("morteza@yahoo.com");
-        expertService.viewImage(expert1);
+        File file=new File("C:\\Users\\Lenovo\\Desktop\\PIO.jpg");
+        File outPutFile = expertService.viewImage("morteza@yahoo.com", file);
+        Expert expert=expertService.findByUserName("morteza@yahoo.com");
+        Assertions.assertEquals(outPutFile.length()/1024,expert.getExpertImage().length/1024);
     }
 }

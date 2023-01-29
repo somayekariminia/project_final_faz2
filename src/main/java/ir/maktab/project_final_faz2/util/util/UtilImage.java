@@ -49,7 +49,7 @@ public class UtilImage {
             throw new PhotoValidationException(e.getMessage());
         }
     }
-    public static void getFileImage(byte[] imageData,File outPutFile){
+    public static File getFileImage(byte[] imageData,File outPutFile){
         ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
         BufferedImage read;
         try {
@@ -59,6 +59,7 @@ public class UtilImage {
         }
         try {
             ImageIO.write(read, "jpg", outPutFile);
+            return outPutFile;
         } catch (IOException e) {
             throw new PhotoValidationException(e.getMessage());
         }

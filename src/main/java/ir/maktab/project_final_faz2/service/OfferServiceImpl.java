@@ -3,6 +3,7 @@ package ir.maktab.project_final_faz2.service;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.Offers;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
+import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
 import ir.maktab.project_final_faz2.data.model.repository.OrderCustomerRepository;
@@ -16,8 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,27 +32,41 @@ public class OfferServiceImpl {
 
     public List<OrderCustomer> findAllOrdersForAExpert(Expert expert) {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
-        return orderCustomerRepository.findAllBySubJobForAExpert(expertDb.getId());
+        List<OrderCustomer>list=new ArrayList<>();
+        for (SubJob subJob :expertDb.getServicesList()) {
+            List<OrderCustomer> listSub=orderCustomerService.findAllOrdersBySubJob(subJob);
+            listSub.parallelStream().collect(Collectors.toCollection(()->list));
+        }
+        if(list.isEmpty())
+            throw new NotFoundException("list orders is null");
+        return list;
     }
-
     @Transactional
     public Offers save(Offers offers, String codeOrder) {
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         OrderCustomer orderCustomer = orderCustomerService.findByCode(codeOrder);
         if (offers.getOfferPriceByExpert().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException("offerPrice lower of basePrice");
-        if (UtilDate.compareTwoDate(offers.getStartTime(), today) < 0) throw new ValidationException("");
+        if (UtilDate.compareTwoDate(offers.getStartTime(), today) < 0)
+            throw new ValidationException("Time Enter is Expired");
         orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
-        orderCustomerRepository.save(orderCustomer);
+        orderCustomerService.updateOrder(orderCustomer);
         offers.setAccept(false);
         offers.setOrderCustomer(orderCustomer);
         return offerRepository.save(offers);
     }
 
 
-    public List<Offers> viewAllOffersOrdersByCustomer(String orderCode) {
+    public List<Offers> viewAllOffersOrdersByCustomerOrderByPrice(String orderCode) {
         OrderCustomer orderCustomer = orderCustomerService.findByCode(orderCode);
-        List<Offers> allOffersAOrder = offerRepository.findAllByOrderCustomer(orderCustomer);
+        List<Offers> allOffersAOrder = offerRepository.findAllByOrderCustomerOrderByPriceOrder(orderCustomer);
+        if (allOffersAOrder.isEmpty())
+            throw new NotFoundException("not found");
+        return allOffersAOrder;
+    }
+    public List<Offers> viewAllOffersOrdersByCustomerOrderByPerformanceExpert(String orderCode) {
+        OrderCustomer orderCustomer = orderCustomerService.findByCode(orderCode);
+        List<Offers> allOffersAOrder = offerRepository.findAllOffersAnOrderOrderByScoreExpert(orderCustomer);
         if (allOffersAOrder.isEmpty())
             throw new NotFoundException("not found");
         return allOffersAOrder;

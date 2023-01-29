@@ -22,8 +22,8 @@ public class ExpertServiceImpl {
     private final ExpertRepository expertRepository;
 
     public Expert save(Expert expert, File file) {
-        if(expertRepository.findByEmail(expert.getEmail()).isPresent())
-            throw new RepeatException("exist is expert to userName "+expert.getEmail());
+        if (expertRepository.findByEmail(expert.getEmail()).isPresent())
+            throw new RepeatException("exist is expert to userName " + expert.getEmail());
         validateInfoPerson(expert);
         expert.setExpertImage(UtilImage.validateImage(file));
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);
@@ -60,8 +60,9 @@ public class ExpertServiceImpl {
     public Expert findById(Long id) {
         return expertRepository.findById(id).orElseThrow(() -> new NotFoundException("Person not found with this userName "));
     }
+
     public Expert findByUserName(String userName) {
-        return expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException("Person not found with this userName " +userName));
+        return expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException("Person not found with this userName " + userName));
     }
 
     public List<Expert> findAllPerson() {
@@ -73,16 +74,23 @@ public class ExpertServiceImpl {
 
 
     public List<Expert> findAllExpertsApproved() {
-        return expertRepository.findAllExpertIsntConfirm(SpecialtyStatus.Confirmed);
+        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsntConfirm(SpecialtyStatus.Confirmed);
+        if (allExpertIsNtConfirm.isEmpty())
+            throw new NotFoundException("list is null");
+        return allExpertIsNtConfirm;
     }
 
 
     public List<Expert> findAllExpertsIsNotConfirm() {
-        return expertRepository.findAllExpertIsntConfirm(SpecialtyStatus.NewState);
+        List<Expert> allExpertIsntConfirm = expertRepository.findAllExpertIsntConfirm(SpecialtyStatus.NewState);
+        if (allExpertIsntConfirm.isEmpty())
+            throw new NotFoundException("list is null");
+        return allExpertIsntConfirm;
     }
-    public void viewImage(Expert expert){
-        File file=new File("C:\\Users\\Lenovo\\Desktop\\PIO.jpg");
-        UtilImage.getFileImage(expert.getExpertImage(),file);
+
+    public File viewImage(String userName, File file) {
+        Expert expert = findByUserName(userName);
+        return UtilImage.getFileImage(expert.getExpertImage(), file);
     }
 
 }

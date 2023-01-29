@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -26,7 +25,7 @@ public class BasicJubServiceImpl {
         return basicJobRepository.save(basicJob);
     }
     public List<SubJob> findAllSubJobsABasicJob(String nameBasicJob) {
-        return subJobRepository.findAllByBasicJob_NameBase(nameBasicJob);
+        return subJobRepository.findAllByBasicJobNameBase(nameBasicJob);
     }
     public List<BasicJob> findAllBasicJobs() {
         return basicJobRepository.findAll();

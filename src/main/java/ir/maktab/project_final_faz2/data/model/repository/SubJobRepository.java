@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface SubJobRepository extends JpaRepository<SubJob,Long> {
     Optional<SubJob> findBySubJobName(String name);
-    List<SubJob> findAllByBasicJob_NameBase(String name);
+    List<SubJob> findAllByBasicJobNameBase(String name);
 }

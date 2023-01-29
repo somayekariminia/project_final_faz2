@@ -13,6 +13,6 @@ import java.util.Optional;
 @Repository
 public interface ExpertRepository extends JpaRepository<Expert,Long> {
     Optional<Expert> findByEmail(String email);
-    @Query("from Expert e where e.specialtyStatus=?1")
-    List<Expert> findAllExpertIsntConfirm(@Param("") SpecialtyStatus specialtyStatus);
+    @Query("from Expert e where e.specialtyStatus=:SpecialtyStatus")
+    List<Expert> findAllExpertIsntConfirm(@Param("SpecialtyStatus") SpecialtyStatus specialtyStatus);
 }
