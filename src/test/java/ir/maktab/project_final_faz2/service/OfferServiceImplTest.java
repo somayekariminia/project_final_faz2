@@ -74,15 +74,6 @@ class OfferServiceImplTest {
         });
     }
 
-    @Order(3)
-    @Test
-    void viewAllOffersOrdersByCustomer() {
-        List<Offers> offersForOrder = offerService.viewAllOffersOrdersByCustomer("order1");
-        Assertions.assertTrue(offersForOrder.size() > 0);
-        Comparator<Offers> comparator= Comparator.comparing(Offers::getOfferPriceByExpert);
-       Assertions.assertTrue(comparator.compare(offersForOrder.get(0),offersForOrder.get(1))<0);
-    }
-
     @Order(4)
     @Test
     void selectAnOfferByCustomer() {
@@ -111,19 +102,30 @@ class OfferServiceImplTest {
         OrderCustomer newOrderCustomer = orderCustomerService.findByCode("order1");
         Assertions.assertEquals(newOrderCustomer.getOrderStatus(), OrderStatus.DoItsBeen);
     }
+
     @Order(7)
     @Test
-    void findOfferIsAccept(){
+    void findOfferIsAccept() {
         OrderCustomer orderCustomer = orderCustomerService.findByCode("order1");
         Offers offersIsAccept = offerService.findOffersIsAccept(orderCustomer);
-       Assertions.assertTrue(offersIsAccept.isAccept());
+        Assertions.assertTrue(offersIsAccept.isAccept());
     }
 
+    @Order(3)
     @Test
     void viewAllOffersOrdersByCustomerOrderByPriceTest() {
+        List<Offers> offersForOrder = offerService.viewAllOffersOrdersByCustomerOrderByPrice("order1");
+        Assertions.assertTrue(offersForOrder.size() > 0);
+        Comparator<Offers> comparator = Comparator.comparing(Offers::getOfferPriceByExpert);
+        Assertions.assertTrue(comparator.compare(offersForOrder.get(0), offersForOrder.get(1)) <= 0);
     }
 
+    @Order(3)
     @Test
     void viewAllOffersOrdersByCustomerOrderByPerformanceExpertTest() {
+        List<Offers> offersForOrder = offerService.viewAllOffersOrdersByCustomerOrderByPerformanceExpert("order1");
+        Assertions.assertTrue(offersForOrder.size() > 0);
+        Comparator<Offers> comparator = Comparator.comparing(offers -> offers.getExpert().getPerformance());
+        Assertions.assertTrue(comparator.compare(offersForOrder.get(0), offersForOrder.get(1)) <= 0);
     }
 }
