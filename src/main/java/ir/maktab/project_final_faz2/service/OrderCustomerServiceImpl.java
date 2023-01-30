@@ -27,7 +27,7 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     @Override
     public OrderCustomer saveOrder(OrderCustomer orderCustomer) {
         if (orderCustomerRepository.findByCodeOrder(orderCustomer.getCodeOrder()).isPresent())
-            throw new RepeatException(String.format("the order is exist already to code: %s" ,orderCustomer.getCodeOrder()));
+            throw new RepeatException(String.format("the order is exist already to code: %s", orderCustomer.getCodeOrder()));
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         if (orderCustomer.getOfferPrice().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException(String.format("The offer price by Customer for this sub-service %s is lower than the original price", orderCustomer.getSubJob().getSubJobName()));
@@ -39,24 +39,25 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
 
     @Override
     public OrderCustomer findByCode(String codeOrder) {
-        return orderCustomerRepository.findByCodeOrder(codeOrder).orElseThrow(() -> new NotFoundException(String.format("there arent any orderCustomer to code " , codeOrder)));
+        return orderCustomerRepository.findByCodeOrder(codeOrder).orElseThrow(() -> new NotFoundException(String.format("there arent any orderCustomer to code %s ", codeOrder)));
     }
 
     @Override
     public OrderCustomer findById(Long id) {
-        return orderCustomerRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Found Order %d " ,id)));
+        return orderCustomerRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Found Order %d ", id)));
     }
 
     @Override
     public List<OrderCustomer> findAllOrdersBySubJob(SubJob subJob) {
         List<OrderCustomer> allOrderBySubJobForAExpert = orderCustomerRepository.findAllBySubJobForAExpert(subJob);
         if (allOrderBySubJobForAExpert.isEmpty())
-            throw new NotFoundException("No Order for This SubJob");
+            throw new NotFoundException(String.format("!!!No Order for This SubJob %s",subJob.getSubJobName()));
         return allOrderBySubJobForAExpert;
     }
 
     @Override
     public void updateOrder(OrderCustomer orderCustomer) {
-        orderCustomerRepository.save(orderCustomer);
+        OrderCustomer orderCustomerDb = findByCode(orderCustomer.getCodeOrder());
+        orderCustomerRepository.save(orderCustomerDb);
     }
 }

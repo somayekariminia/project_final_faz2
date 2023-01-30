@@ -3,6 +3,7 @@ package ir.maktab.project_final_faz2.service;
 import ir.maktab.project_final_faz2.data.model.entity.Address;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.RepeatException;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
@@ -87,7 +88,13 @@ public class OrderServiceTest {
         Assertions.assertTrue(orderCustomerService.findAllOrdersBySubJob(subJob).size() > 0);
         ;
     }
-
+    @Order(5)
+    @Test
+    void notFindAllOrdersBySubJobTest() {
+        SubJob subJob=subJobService.findById(3L);
+        Exception exception = Assertions.assertThrows(NotFoundException.class, () -> orderCustomerService.findAllOrdersBySubJob(subJob));
+        Assertions.assertEquals(String.format("!!!No Order for This SubJob %s",subJob.getSubJobName()),exception.getMessage());
+    }
     @Order(6)
     @Test
     void findOrderById() {
@@ -99,5 +106,11 @@ public class OrderServiceTest {
     void findOrderByOrderCode() {
         OrderCustomer orderCustomerDb = orderCustomerService.findByCode("order1");
         Assertions.assertNotNull(orderCustomerDb.getId());
+    }
+    @Order(7)
+    @Test
+    void notFindOrderByOrderCode() {
+        Exception exception = Assertions.assertThrows(NotFoundException.class, () -> orderCustomerService.findByCode("order6"));
+        Assertions.assertEquals(String.format("there arent any orderCustomer to code %s ", "order6"),exception.getMessage());
     }
 }
