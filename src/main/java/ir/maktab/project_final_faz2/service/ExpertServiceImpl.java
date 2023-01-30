@@ -81,7 +81,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
 
     public List<Expert> findAllExpertsApproved() {
-        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsntConfirm(SpecialtyStatus.Confirmed);
+        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsNtConfirm(SpecialtyStatus.Confirmed);
         if (allExpertIsNtConfirm.isEmpty())
             throw new NotFoundException("There arent Expert Confirmed !!!!!!");
         return allExpertIsNtConfirm;
@@ -89,7 +89,7 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public List<Expert> findAllExpertsIsNotConfirm() {
-        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsntConfirm(SpecialtyStatus.NewState);
+        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsNtConfirm(SpecialtyStatus.NewState);
         if (allExpertIsNtConfirm.isEmpty())
             throw new NotFoundException("There arent Experts Is Not Confirm!!!!!!!");
         return allExpertIsNtConfirm;

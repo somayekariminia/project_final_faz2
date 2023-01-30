@@ -8,9 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Data
@@ -32,13 +30,13 @@ public class OrderCustomer {
     private String codeOrder;
 
     @Temporal(value = TemporalType.DATE)
-    private Date offerStartDateCustomer;
+    private Date StartDateDoWork;
 
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
     @Temporal(value = TemporalType.TIMESTAMP)
-    private Date endDate;
+    private Date endDateDoWork;
 
     @OneToOne
     private SubJob subJob;

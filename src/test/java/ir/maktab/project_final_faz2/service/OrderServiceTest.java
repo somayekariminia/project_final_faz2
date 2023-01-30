@@ -39,7 +39,7 @@ public class OrderServiceTest {
                     offerPrice(new BigDecimal(3000))
                     .codeOrder("order1").address(Address.builder()
                             .city("kerman").street("hashtBehesht")
-                            .pelak("512").build()).aboutWork("cleanHomeAndCooking").offerStartDateCustomer(dateStartC).build();
+                            .pelak("512").build()).aboutWork("cleanHomeAndCooking").StartDateDoWork(dateStartC).build();
         }
     }
 
@@ -63,7 +63,7 @@ public class OrderServiceTest {
     void testExceptionValidationsSaveOrder() {
         OrderCustomer orderCustomer1 = orderCustomer;
         orderCustomer1.setCodeOrder("order2");
-        orderCustomer1.setOfferStartDateCustomer(UtilDate.changeLocalDateToDate(LocalDate.of(2023,01,22)));
+        orderCustomer1.setStartDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.of(2023,01,22)));
         Exception exceptionDate = Assertions.assertThrows(ValidationException.class, () -> orderCustomerService.saveOrder(orderCustomer1));
         Assertions.assertEquals("You can't order before today ", exceptionDate.getMessage());
 

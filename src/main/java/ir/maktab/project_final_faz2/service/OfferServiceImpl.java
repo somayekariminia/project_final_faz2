@@ -7,7 +7,7 @@ import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
-import ir.maktab.project_final_faz2.exception.NotAccept;
+import ir.maktab.project_final_faz2.exception.NotAcceptedException;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
@@ -105,9 +105,9 @@ public class OfferServiceImpl implements OfferService {
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
         Offers offersDb = findById(offers.getId());
         if (!Objects.equals(offersDb.getOrderCustomer().getId(), orderCustomerDb.getId()))
-            throw new NotAccept("offers is not accept because the offer isn't its orderCustomer ");
+            throw new NotAcceptedException("offers is not accept because the offer isn't its orderCustomer ");
         if (!(orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingForOfferTheExperts) || orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingSelectTheExpert)))
-            throw new NotAccept("Order an offer has already accepted ");
+            throw new NotAcceptedException("Order an offer has already accepted ");
         orderCustomerDb.setOrderStatus(OrderStatus.WaitingForTheExpertToComeToYourLocation);
         orderCustomerService.updateOrder(orderCustomerDb);
         offers.setAccept(true);
@@ -122,7 +122,7 @@ public class OfferServiceImpl implements OfferService {
         if (UtilDate.compareTwoDate(offersDb.getStartTime(), today) < 0)
             throw new TimeOutException("The current date is less than the proposed date!!!");
         if (!offers.isAccept())
-            throw new NotAccept("The selected offer has not been accepted !!!!");
+            throw new NotAcceptedException("The selected offer has not been accepted !!!!");
         orderCustomerDb.setOrderStatus(OrderStatus.Started);
         orderCustomerService.updateOrder(orderCustomerDb);
     }
@@ -130,7 +130,7 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public void endDoWork(OrderCustomer orderCustomer, LocalDateTime endDoWork) {
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
-        orderCustomerDb.setEndDate(UtilDate.changeLocalDateToDate(LocalDate.from(endDoWork)));
+        orderCustomerDb.setEndDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.from(endDoWork)));
         orderCustomerDb.setOrderStatus(OrderStatus.DoItsBeen);
         orderCustomerService.updateOrder(orderCustomerDb);
     }
@@ -142,7 +142,7 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public Offers findOffersIsAccept(OrderCustomer orderCustomer) {
-        return offerRepository.findOffersIsAccept(orderCustomer).orElseThrow(() -> new NotAccept(String.format("No offers isAccept for OrderCustomer %s",orderCustomer.getCodeOrder())));
+        return offerRepository.findOffersIsAccept(orderCustomer).orElseThrow(() -> new NotAcceptedException(String.format("No offers isAccept for OrderCustomer %s",orderCustomer.getCodeOrder())));
     }
 
 }

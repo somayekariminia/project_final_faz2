@@ -45,7 +45,7 @@ public class AdminServiceImpl implements AdminService {
         if (expertDb.getServicesList().stream().noneMatch(subJob1 -> subJob1.getSubJobName().equals(subJob.getSubJobName())))
             throw new NotFoundException(String.format("there arent subJob for the Expert %s !!! ", expert.getEmail()));
         if (expertDb.getServicesList().isEmpty())
-            throw new NotFoundException(String.format("list subJubs Expert %s is Null !!!",expertDb.getEmail()));
+            throw new NotFoundException(String.format("list subJobs Expert %s is Null !!!", expertDb.getEmail()));
         expertDb.getServicesList().remove(subJob);
         expertRepository.save(expertDb);
     }
@@ -54,19 +54,19 @@ public class AdminServiceImpl implements AdminService {
     public void isConfirmExpertByAdmin(String userName) {
         Expert expertDb = expertService.findByUserName(userName);
         if (expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
-            throw new ValidationException("expert is confirm");
+            throw new ValidationException(String.format("Expert To %s Username Is Confirm", userName));
         expertDb.setSpecialtyStatus(SpecialtyStatus.Confirmed);
         expertRepository.save(expertDb);
     }
 
     @Override
     public List<Expert> findAllExpertIsNtConFirm() {
-        return expertService.findAllExpertsApproved();
+        return expertService.findAllExpertsIsNotConfirm();
     }
 
     @Override
     public List<Expert> findAllIsConfirm() {
-        return expertService.findAllExpertsIsNotConfirm();
+        return expertService.findAllExpertsApproved();
     }
 
 }

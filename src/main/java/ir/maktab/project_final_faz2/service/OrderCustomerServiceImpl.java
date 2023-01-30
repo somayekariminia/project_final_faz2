@@ -31,7 +31,7 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         if (orderCustomer.getOfferPrice().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException(String.format("The offer price by Customer for this sub-service %s is lower than the original price", orderCustomer.getSubJob().getSubJobName()));
-        if (UtilDate.compareTwoDate(orderCustomer.getOfferStartDateCustomer(), today) < 0)
+        if (UtilDate.compareTwoDate(orderCustomer.getStartDateDoWork(), today) < 0)
             throw new TimeOutException("The current date is less than the proposed date");
         orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
         return orderCustomerRepository.save(orderCustomer);
