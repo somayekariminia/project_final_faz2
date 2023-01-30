@@ -1,9 +1,6 @@
 package ir.maktab.project_final_faz2.service.interfaces;
 
-import ir.maktab.project_final_faz2.data.model.entity.Expert;
-import ir.maktab.project_final_faz2.data.model.entity.Offers;
-import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
-import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.entity.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,7 +10,7 @@ public interface OfferService {
 
     Offers save(Offers offers, String codeOrder);
 
-    List<Offers> viewAllOffersOrderByPriceAsc(String orderCode);
+    List<Offers> viewAllOffersOrderByPriceAsc(String codeOrder);
 
     Offers selectAnOfferByCustomer(Offers offers, OrderCustomer orderCustomer);
 

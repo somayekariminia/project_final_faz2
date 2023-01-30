@@ -38,31 +38,31 @@ class AdminServiceImplTest {
     @Order(4)
     @Test
     void addExpertToSubJob() {
-        Expert expert = expertService.findById(1L);
-        SubJob subJob = subJobService.findById(1L);
+        Expert expert = expertService.findById(101L);
+        SubJob subJob = subJobService.findById(3333L);
         int size = expert.getServicesList().size();
         adminService.addExpertToSubJob(expert, subJob);
-        Expert expertNew = expertService.findById(1L);
+        Expert expertNew = expertService.findById(101L);
         Assertions.assertEquals(size + 1, expertNew.getServicesList().size());
     }
 
     @Order(5)
     @Test
     void deleteExpertOfSubJob() {
-        Expert expert = expertService.findById(1L);
-        SubJob subJob = subJobService.findById(1L);
+        Expert expert = expertService.findById(101L);
+        SubJob subJob = subJobService.findById(3333L);
         int size = expert.getServicesList().size();
         adminService.deleteExpertOfSubJob(expert, subJob);
-        Expert expertNew = expertService.findById(1L);
+        Expert expertNew = expertService.findById(101L);
         Assertions.assertEquals(size - 1, expertNew.getServicesList().size());
     }
 
     @Test
     @Order(2)
     void isConfirmExpertByAdmin() {
-        Expert expert = expertService.findById(1L);
+        Expert expert = expertService.findById(101L);
         adminService.isConfirmExpertByAdmin(expert.getEmail());
-        Expert expertNew = expertService.findById(1L);
+        Expert expertNew = expertService.findById(101L);
         Assertions.assertTrue(expertNew.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed));
     }
 

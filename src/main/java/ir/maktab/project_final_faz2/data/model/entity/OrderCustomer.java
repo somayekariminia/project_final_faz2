@@ -43,4 +43,7 @@ public class OrderCustomer {
 
     @OneToOne
     Expert expert;
+
+    @ManyToOne
+    Customer customer;
 }

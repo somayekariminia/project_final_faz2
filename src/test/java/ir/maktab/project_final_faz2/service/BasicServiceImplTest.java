@@ -102,8 +102,8 @@ public class BasicServiceImplTest {
     @Test
     void findByNameSubJob() {
         Assertions.assertNotNull(subJobService.findSubJobByName("washing"));
-        Exception exception = Assertions.assertThrows(NotFoundException.class, () -> subJobService.findSubJobByName("windows"));
-        Assertions.assertEquals(String.format("Not Found %s !!!!!!!!", "windows"), exception.getMessage());
+        Exception exception = Assertions.assertThrows(NotFoundException.class, () -> subJobService.findSubJobByName("personGaz"));
+        Assertions.assertEquals(String.format("Not Found %s !!!!!!!!", "personGaz"), exception.getMessage());
     }
 
     @Test

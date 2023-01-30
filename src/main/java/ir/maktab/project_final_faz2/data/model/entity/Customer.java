@@ -13,6 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 public class Customer extends Person {
-    @OneToMany
-    List<OrderCustomer> orderCustomerList = new ArrayList<>();
+
 }

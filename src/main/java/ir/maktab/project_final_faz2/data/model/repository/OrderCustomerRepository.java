@@ -1,5 +1,6 @@
 package ir.maktab.project_final_faz2.data.model.repository;
 
+import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,6 @@ public interface OrderCustomerRepository extends JpaRepository<OrderCustomer, Lo
     List<OrderCustomer> findAllBySubJobForAExpert(@Param("subJob") SubJob subJob);
 
     Optional<OrderCustomer> findByCodeOrder(String codeOrder);
+    @Query("select o from OrderCustomer o where o.customer=:customer")
+    List<OrderCustomer> findAllByCustomer(@Param("customer")Customer customer);
 }

@@ -3,6 +3,7 @@ package ir.maktab.project_final_faz2.service;
 import ir.maktab.project_final_faz2.data.model.entity.Address;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.repository.OrderCustomerRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.RepeatException;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
@@ -20,6 +21,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -29,6 +31,10 @@ public class OrderServiceTest {
     private static OrderCustomer orderCustomer;
     @Autowired
     private SubJobServiceImpl subJobService;
+    @Autowired
+    private CustomerServiceImpl customerService;
+    @Autowired
+    private OrderCustomerRepository orderCustomerRepository;
 
     @BeforeAll
     static void setup(@Autowired DataSource dataSource) {
@@ -50,6 +56,7 @@ public class OrderServiceTest {
     @Test
     void saveOrderTest() {
         orderCustomer.setSubJob(subJobService.findSubJobByName("Washing"));
+        orderCustomer.setCustomer(customerService.findByUserName("tara@gmail.com"));
         orderCustomerService.saveOrder(orderCustomer);
         Assertions.assertNotNull(orderCustomer.getId());
     }
@@ -84,14 +91,14 @@ public class OrderServiceTest {
     @Order(5)
     @Test
     void findAllOrdersBySubJobTest() {
-        SubJob subJob = subJobService.findById(1L);
+        SubJob subJob = subJobService.findById(33333L);
         Assertions.assertTrue(orderCustomerService.findAllOrdersBySubJob(subJob).size() > 0);
         ;
     }
     @Order(5)
     @Test
     void notFindAllOrdersBySubJobTest() {
-        SubJob subJob=subJobService.findById(3L);
+        SubJob subJob=subJobService.findById(333333L);
         Exception exception = Assertions.assertThrows(NotFoundException.class, () -> orderCustomerService.findAllOrdersBySubJob(subJob));
         Assertions.assertEquals(String.format("!!!No Order for This SubJob %s",subJob.getSubJobName()),exception.getMessage());
     }
@@ -112,5 +119,11 @@ public class OrderServiceTest {
     void notFindOrderByOrderCode() {
         Exception exception = Assertions.assertThrows(NotFoundException.class, () -> orderCustomerService.findByCode("order6"));
         Assertions.assertEquals(String.format("there arent any orderCustomer to code %s ", "order6"),exception.getMessage());
+    }
+    @Order(10)
+    @Test
+    void findOrdersCustomer() {
+        List<OrderCustomer> listOrdersCustomer = orderCustomerService.findOrdersCustomer(customerService.findByUserName("tara@gmail.com"));
+        Assertions.assertTrue(listOrdersCustomer.size()>0);
     }
 }

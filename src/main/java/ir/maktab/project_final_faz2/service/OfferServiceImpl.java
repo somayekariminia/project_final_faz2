@@ -1,10 +1,7 @@
 package ir.maktab.project_final_faz2.service;
 
 import com.google.common.collect.Lists;
-import ir.maktab.project_final_faz2.data.model.entity.Expert;
-import ir.maktab.project_final_faz2.data.model.entity.Offers;
-import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
-import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
@@ -28,6 +25,7 @@ public class OfferServiceImpl implements OfferService {
     private final OfferRepository offerRepository;
     private final ExpertServiceImpl expertService;
     private final OrderCustomerServiceImpl orderCustomerService;
+    private final CustomerServiceImpl customerService;
 
     @Override
     public List<SubJob> findAllSubJubExpert(Expert expert) {
@@ -65,7 +63,7 @@ public class OfferServiceImpl implements OfferService {
     }
     @Override
     public List<Offers> viewAllOffersOrderByPriceAsc(String orderCode) {
-        OrderCustomer orderCustomer = orderCustomerService.findByCode(orderCode);
+        OrderCustomer orderCustomer=orderCustomerService.findByCode(orderCode);
         List<Offers> allOffersAOrder = offerRepository.findAllByOrderCustomerOrderByPriceOrder(orderCustomer);
         if (allOffersAOrder.isEmpty())
             throw new NotFoundException(String.format("Not Found offer for this order %s !!", orderCode));
@@ -98,7 +96,7 @@ public class OfferServiceImpl implements OfferService {
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
         Offers offersDb = findById(offers.getId());
         if (!Objects.equals(offersDb.getOrderCustomer().getId(), orderCustomerDb.getId()))
-            throw new NotAcceptedException("offers is not accept because the offer isn't its orderCustomer ");
+            throw new NotAcceptedException("offers is not accept because the offer isn't for this orderCustomer ");
         if (!(orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingForOfferTheExperts) || orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingSelectTheExpert)))
             throw new NotAcceptedException("Order an offer has already accepted ");
         orderCustomerDb.setOrderStatus(OrderStatus.WaitingForTheExpertToComeToYourLocation);
