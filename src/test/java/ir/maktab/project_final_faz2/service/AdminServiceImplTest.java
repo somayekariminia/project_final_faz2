@@ -3,7 +3,6 @@ package ir.maktab.project_final_faz2.service;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
-import org.junit.gen5.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -59,7 +58,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    @Order(1)
+    @Order(2)
     void isConfirmExpertByAdmin() {
         Expert expert = expertService.findById(1L);
         adminService.isConfirmExpertByAdmin(expert.getEmail());
@@ -67,7 +66,7 @@ class AdminServiceImplTest {
         Assertions.assertTrue(expertNew.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed));
     }
 
-    @Order(2)
+    @Order(1)
     @Test
     void findAllExpertIsNtConFirm() {
         List<Expert> allExpertsApproved = adminService.findAllExpertIsNtConFirm();

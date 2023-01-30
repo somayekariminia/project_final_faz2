@@ -37,7 +37,7 @@ class CustomerServiceImplTest {
     @Test
     void saveDuplicateCustomer() {
         Exception exception = Assertions.assertThrows(RepeatException.class, () -> customerService.save(customer));
-        Assertions.assertEquals("exist the user to the " + customer.getEmail(), exception.getMessage());
+        Assertions.assertEquals("exist the user " + customer.getEmail(), exception.getMessage());
     }
 
     public static List<Customer> data() {
@@ -66,7 +66,7 @@ class CustomerServiceImplTest {
     @Test
     void notLoginTest() {
         Exception exceptionUserName = Assertions.assertThrows(NotFoundException.class, () -> customerService.login("sok", "12345"));
-        assertEquals("customer not found with this userName", exceptionUserName.getMessage());
+        assertEquals(String.format("sok"+" Not Found !!!"), exceptionUserName.getMessage());
         Exception exceptionPassword = Assertions.assertThrows(ValidationException.class, () -> customerService.login("morteza@yahoo.com", "12345"));
         assertEquals("Your password is incorrect", exceptionPassword.getMessage());
     }
@@ -86,6 +86,6 @@ class CustomerServiceImplTest {
     @Test
     void notFindCustomerByUserName(){
         Exception exceptionPassword = Assertions.assertThrows(NotFoundException.class, () -> customerService.findByUserName("somaye@yahoo.com"));
-        assertEquals("customer not found with this userName "+"somaye@yahoo.com", exceptionPassword.getMessage());
+        assertEquals(String.format("somaye@yahoo.com"+" Not Found !!!"), exceptionPassword.getMessage());
     }
 }

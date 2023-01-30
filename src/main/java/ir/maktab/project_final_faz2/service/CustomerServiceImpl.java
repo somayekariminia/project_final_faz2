@@ -18,7 +18,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer save(Customer customer) {
         if (customerRepository.findByEmail(customer.getEmail()).isPresent())
-            throw new RepeatException(String.format("exist the user %s" + customer.getEmail()));
+            throw new RepeatException(String.format("exist the user " + customer.getEmail()));
         validateInfoPerson(customer);
         return customerRepository.save(customer);
     }
@@ -32,7 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer login(String userName, String password) {
-        Customer customer = customerRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format("%s Not Found !!!",userName)));
+        Customer customer = customerRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format(userName+" Not Found !!!")));
         if (customer.getPassword().equals(password))
             return customer;
         else
@@ -49,7 +49,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer findByUserName(String userName) {
-        return customerRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format("%s Not Found !!!",userName)));
+        return customerRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format(userName+" Not Found !!!")));
     }
 
 }

@@ -43,19 +43,12 @@ class OfferServiceImplTest {
         }
     }
 
-    @Order(2)
-    @Test
-    void findAllOrdersForAExpert() {
-        Expert expert = expertService.findById(1L);
-        List<OrderCustomer> allOrdersForAExpert = offerService.findAllOrdersForAExpert(expert);
-        Assertions.assertTrue(allOrdersForAExpert.size() > 0);
-    }
 
     @Order(1)
     @TestFactory
     Stream<DynamicTest> setOffer() {
-        LocalDate start = LocalDate.of(2023, 01, 29);
-        LocalDate start1 = LocalDate.of(2023, 01, 30);
+        LocalDate start = LocalDate.of(2023, 02, 1);
+        LocalDate start1 = LocalDate.of(2023, 02, 3);
         LocalDate start2 = LocalDate.of(2023, 02, 2);
         Offers[] arrayOffer = new Offers[3];
         arrayOffer[0] = Offers.builder().offerPriceByExpert(new BigDecimal(4000)).startTime(UtilDate.changeLocalDateToDate(start)).durationWork(Duration.ZERO.plusHours(2).plusMillis(30)).build();
@@ -114,7 +107,7 @@ class OfferServiceImplTest {
     @Order(3)
     @Test
     void viewAllOffersOrdersByCustomerOrderByPriceTest() {
-        List<Offers> offersForOrder = offerService.viewAllOffersOrdersByCustomerOrderByPrice("order1");
+        List<Offers> offersForOrder = offerService.viewAllOffersOrderByPriceAsc("order1");
         Assertions.assertTrue(offersForOrder.size() > 0);
         Comparator<Offers> comparator = Comparator.comparing(Offers::getOfferPriceByExpert);
         Assertions.assertTrue(comparator.compare(offersForOrder.get(0), offersForOrder.get(1)) <= 0);
@@ -122,19 +115,41 @@ class OfferServiceImplTest {
 
     @Order(3)
     @Test
+    void viewAllOffersOrderByPriceDesc() {
+        List<Offers> offers = offerService.viewAllOffersOrderByPriceDesc("order1");
+        Comparator<Offers> comparator = Comparator.comparing(Offers::getOfferPriceByExpert);
+        Assertions.assertTrue(comparator.compare(offers.get(0), offers.get(1)) >= 0);
+    }
+
+    @Order(3)
+    @Test
     void viewAllOffersOrdersByCustomerOrderByPerformanceExpertTest() {
-        List<Offers> offersForOrder = offerService.viewAllOffersOrdersByCustomerOrderByPerformanceExpert("order1");
+        List<Offers> offersForOrder = offerService.viewAllOrdersOrderByScoreExpertAsc("order1");
         Assertions.assertTrue(offersForOrder.size() > 0);
         Comparator<Offers> comparator = Comparator.comparing(offers -> offers.getExpert().getPerformance());
         Assertions.assertTrue(comparator.compare(offersForOrder.get(0), offersForOrder.get(1)) <= 0);
+    }
+
+    @Order(3)
+    @Test
+    void viewAllOrdersOrderByScoreExpertDesc() {
+        List<Offers> offersOrderDesc = offerService.viewAllOrdersOrderByScoreExpertDesc("order1");
+        Comparator<Offers> comparator = Comparator.comparing(offers -> offers.getExpert().getPerformance());
+        Assertions.assertTrue(comparator.compare(offersOrderDesc.get(0), offersOrderDesc.get(1)) >= 0);
     }
 
     @Order(9)
     @Test
     void findAllOrdersForAnSubJobOfExpert() {
         Expert expert = expertService.findById(1L);
-        List<OrderCustomer> allOrdersForAExpert = offerService.findAllOrdersForAnSubJobOfExpert(expert, expert.getServicesList().get(0));
+        List<OrderCustomer> allOrdersForAExpert = offerService.findAllOrdersForAnSubJobOfExpert(expert, expert.getServicesList().get(1));
         Assertions.assertTrue(allOrdersForAExpert.size() > 0);
     }
 
+
+    @Test
+    void findAllSubJubExpert() {
+        Expert expert = expertService.findById(1L);
+       Assertions.assertTrue(offerService.findAllSubJubExpert(expert).size()>0);
+    }
 }

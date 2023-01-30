@@ -28,9 +28,9 @@ insert into expert_services_list (expert_id, services_list_id)
 values (3,1);
 insert into address (id, city, pelak, street)
 values (1,'kerman','512','bahonar');
-insert into order_customer (id, about_work, code_order, end_date, offer_price, offer_start_date_customer, order_status,
+insert into order_customer (id, start_date_do_work, about_work, code_order, end_date_do_work, offer_price, order_status,
                             address_id, expert_id, sub_job_id)
-values (1,'homeclean','order1',null,3000.00,'2023-01-26','WaitingSelectTheExpert',1,null,1);
-insert into order_customer (id, about_work, code_order, end_date, offer_price, offer_start_date_customer, order_status,
+values (1,'2023-01-26','homeClean','order1',null,3000.00,'WaitingSelectTheExpert',1,null,1);
+insert into order_customer (id, start_date_do_work, about_work, code_order, end_date_do_work, offer_price, order_status,
                             address_id, expert_id, sub_job_id)
-values (2,'drivers','order2',null,3500.00,'2023-01-26','WaitingForOfferTheExperts',1,null,2);
+values (2,'2023-01-26','driversWithCar','order2',null,3500.00,'WaitingForOfferTheExperts',1,null,2);

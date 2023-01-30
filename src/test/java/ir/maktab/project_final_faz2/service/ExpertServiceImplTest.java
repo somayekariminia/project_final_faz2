@@ -62,7 +62,7 @@ class ExpertServiceImplTest {
     @Test
     void saveDuplicateExpert() {
         Exception exception = Assertions.assertThrows(RepeatException.class, () -> expertService.save(expert, file));
-        Assertions.assertEquals("exist is expert to userName "+expert.getEmail(), exception.getMessage());
+        Assertions.assertEquals(String.format("already Exist is Expert %s ", expert.getEmail()), exception.getMessage());
     }
 
     public static List<Expert> data() {
@@ -91,7 +91,7 @@ class ExpertServiceImplTest {
     @Test
     void notLoginTest() {
         Exception exceptionUserName = Assertions.assertThrows(NotFoundException.class, () -> expertService.login("sok", "12345"));
-        assertEquals("Expert not found with this userName " +"sok" , exceptionUserName.getMessage());
+        assertEquals(String.format("Not Fount Expert %s", "sok"), exceptionUserName.getMessage());
         Exception exceptionPassword = Assertions.assertThrows(ValidationException.class, () -> expertService.login("morteza@yahoo.com", "12345"));
         assertEquals("Your password is incorrect", exceptionPassword.getMessage());
     }
@@ -114,33 +114,50 @@ class ExpertServiceImplTest {
     @Test
     void notFindCustomerByUserName() {
         Exception exceptionPassword = Assertions.assertThrows(NotFoundException.class, () -> expertService.findByUserName("salman@yahoo.com"));
-        assertEquals("Person not found with this userName " + "salman@yahoo.com", exceptionPassword.getMessage());
+        assertEquals(String.format("Not Fount Expert %s", "salman@yahoo.com"), exceptionPassword.getMessage());
     }
+
     @Order(8)
     @Test
     void findAllExpertTest() {
         List<Expert> allExpert = expertService.findAllPerson();
-        assertTrue(allExpert.size()>0);
+        assertTrue(allExpert.size() > 0);
     }
 
     @Order(8)
     @Test
     void findAllExpertsConfirmTest() {
         List<Expert> allExpertIsConfirm = expertService.findAllExpertsApproved();
-        assertTrue(allExpertIsConfirm.size()>0);
+        assertTrue(allExpertIsConfirm.size() > 0);
     }
+
     @Order(8)
     @Test
     void findAllExpertsIsNotConfirmTest() {
         List<Expert> allExpertIsNotConfirm = expertService.findAllExpertsIsNotConfirm();
-        assertTrue(allExpertIsNotConfirm.size()>0);
+        assertTrue(allExpertIsNotConfirm.size() > 0);
     }
+
     @Order(9)
     @Test
-    void viewImageTest(){
-        File file=new File("C:\\Users\\Lenovo\\Desktop\\PIO.jpg");
+    void viewImageTest() {
+        File file = new File("C:\\Users\\Lenovo\\Desktop\\PIO.jpg");
         File outPutFile = expertService.viewImage("morteza@yahoo.com", file);
-        Expert expert=expertService.findByUserName("morteza@yahoo.com");
-        Assertions.assertEquals(outPutFile.length()/1024,expert.getExpertImage().length/1024);
+        Expert expert = expertService.findByUserName("morteza@yahoo.com");
+        Assertions.assertEquals(outPutFile.length() / 1024, expert.getExpertImage().length / 1024);
+    }
+
+    @Order(10)
+    @Test
+    void findById() {
+        Expert expert1 = expertService.findById(1L);
+        Assertions.assertNotNull(expert1);
+    }
+
+    @Order(11)
+    @Test
+    void notFindById() {
+        Exception exception = Assertions.assertThrows(NotFoundException.class, () -> expertService.findById(20L));
+        Assertions.assertEquals(String.format("Not Fount Expert %d", 20L), exception.getMessage());
     }
 }

@@ -1,5 +1,6 @@
 package ir.maktab.project_final_faz2.service;
 
+import com.google.common.collect.Lists;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.Offers;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
@@ -19,11 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,41 +30,31 @@ public class OfferServiceImpl implements OfferService {
     private final OrderCustomerServiceImpl orderCustomerService;
 
     @Override
-    public List<OrderCustomer> findAllOrdersForAExpert(Expert expert) {
-        Expert expertDb = expertService.findByUserName(expert.getEmail());
-        if (!expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
-            throw new ValidationException(String.format("Expert %s is not Confirm !!! ", expertDb.getEmail()));
-        List<OrderCustomer> list = new ArrayList<>();
-        for (SubJob subJob : expertDb.getServicesList()) {
-            List<OrderCustomer> listSub = orderCustomerService.findAllOrdersBySubJob(subJob);
-            listSub.parallelStream().collect(Collectors.toCollection(() -> list));
-        }
-        if (list.isEmpty())
-            throw new NotFoundException(String.format("No Order for this Expert %s", expertDb.getEmail()));
-        return list;
+    public List<SubJob> findAllSubJubExpert(Expert expert) {
+        Expert expertDb = expertService.findById(expert.getId());
+        if (expertDb.getServicesList().isEmpty())
+            throw new NotFoundException(String.format("No subJob for this Expert %s", expertDb.getEmail()));
+        return expertDb.getServicesList();
     }
-
     @Override
     public List<OrderCustomer> findAllOrdersForAnSubJobOfExpert(Expert expert, SubJob subJob) {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
         if (!expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
             throw new ValidationException(String.format("Expert %s is not Confirm !!! ", expertDb.getEmail()));
         if (expertDb.getServicesList().stream().noneMatch(subJob1 -> subJob1.getId().equals(subJob.getId())))
-            throw new NotFoundException(String.format("this %s is Not Exist", subJob.getSubJobName()));
+            throw new NotFoundException(String.format("this %s is Not Exist For this Expert", subJob.getSubJobName()));
         List<OrderCustomer> list = orderCustomerService.findAllOrdersBySubJob(subJob);
         if (list.isEmpty())
             throw new NotFoundException(String.format("No Order for this Expert %s", expertDb.getEmail()));
         return list;
-
     }
-
     @Override
     @Transactional
     public Offers save(Offers offers, String codeOrder) {
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         OrderCustomer orderCustomer = orderCustomerService.findByCode(codeOrder);
         if (offers.getOfferPriceByExpert().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
-            throw new ValidationException(String.format("The offer price for this sub-service %s is lower than the original price",orderCustomer.getSubJob().getSubJobName()));
+            throw new ValidationException(String.format("The offer price for this sub-service %s is lower than the original price", orderCustomer.getSubJob().getSubJobName()));
         if (UtilDate.compareTwoDate(offers.getStartTime(), today) < 0)
             throw new TimeOutException("The current date is less than the proposed date");
         orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
@@ -76,23 +63,29 @@ public class OfferServiceImpl implements OfferService {
         offers.setOrderCustomer(orderCustomer);
         return offerRepository.save(offers);
     }
-
     @Override
-    public List<Offers> viewAllOffersOrdersByCustomerOrderByPrice(String orderCode) {
+    public List<Offers> viewAllOffersOrderByPriceAsc(String orderCode) {
         OrderCustomer orderCustomer = orderCustomerService.findByCode(orderCode);
         List<Offers> allOffersAOrder = offerRepository.findAllByOrderCustomerOrderByPriceOrder(orderCustomer);
         if (allOffersAOrder.isEmpty())
-            throw new NotFoundException(String.format("Not Found offer for this order %s !!",orderCode));
+            throw new NotFoundException(String.format("Not Found offer for this order %s !!", orderCode));
         return allOffersAOrder;
     }
-
+    public List<Offers> viewAllOffersOrderByPriceDesc(String orderCode) {
+        List<Offers> offersAsc = viewAllOffersOrderByPriceAsc(orderCode);
+       return Lists.reverse(offersAsc);
+    }
     @Override
-    public List<Offers> viewAllOffersOrdersByCustomerOrderByPerformanceExpert(String orderCode) {
-        OrderCustomer orderCustomer = orderCustomerService.findByCode(orderCode);
-        List<Offers> allOffersAOrder = offerRepository.findAllOffersAnOrderOrderByScoreExpert(orderCustomer);
-        if (allOffersAOrder.isEmpty())
-            throw new NotFoundException(String.format("Not Found offer for this order %s !!",orderCode));
-        return allOffersAOrder;
+    public List<Offers> viewAllOrdersOrderByScoreExpertAsc(String orderCode) {
+        List<Offers> allOffersAOrder = viewAllOffersOrderByPriceAsc(orderCode);
+        List<Offers> orderByScore = allOffersAOrder.stream().sorted(Comparator.comparing(offers -> offers.getExpert().getPerformance())).toList();
+        if (orderByScore.isEmpty())
+            throw new NotFoundException(String.format("Not Found offer for this order %s !!", orderCode));
+        return orderByScore;
+    }
+    public List<Offers> viewAllOrdersOrderByScoreExpertDesc(String orderCode) {
+        List<Offers> offersAsc = viewAllOrdersOrderByScoreExpertAsc(orderCode);
+        return Lists.reverse(offersAsc);
     }
 
     private OrderCustomer getOrderCustomerById(Long id) {
@@ -137,12 +130,12 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public Offers findById(Long id) {
-        return offerRepository.findById(id).orElseThrow(() -> new NotFoundException((String.format("Not Fount Offer %d",id))));
+        return offerRepository.findById(id).orElseThrow(() -> new NotFoundException((String.format("Not Fount Offer %d", id))));
     }
 
     @Override
     public Offers findOffersIsAccept(OrderCustomer orderCustomer) {
-        return offerRepository.findOffersIsAccept(orderCustomer).orElseThrow(() -> new NotAcceptedException(String.format("No offers isAccept for OrderCustomer %s",orderCustomer.getCodeOrder())));
+        return offerRepository.findOffersIsAccept(orderCustomer).orElseThrow(() -> new NotAcceptedException(String.format("No offers isAccept for OrderCustomer %s", orderCustomer.getCodeOrder())));
     }
 
 }

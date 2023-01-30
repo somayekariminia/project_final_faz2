@@ -9,13 +9,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OfferService {
-    List<OrderCustomer> findAllOrdersForAExpert(Expert expert);
-
     List<OrderCustomer> findAllOrdersForAnSubJobOfExpert(Expert expert, SubJob subJob);
 
     Offers save(Offers offers, String codeOrder);
 
-    List<Offers> viewAllOffersOrdersByCustomerOrderByPrice(String orderCode);
+    List<Offers> viewAllOffersOrderByPriceAsc(String orderCode);
 
     Offers selectAnOfferByCustomer(Offers offers, OrderCustomer orderCustomer);
 
@@ -27,5 +25,7 @@ public interface OfferService {
 
     Offers findOffersIsAccept(OrderCustomer orderCustomer);
 
-    List<Offers> viewAllOffersOrdersByCustomerOrderByPerformanceExpert(String orderCode);
+    List<Offers> viewAllOrdersOrderByScoreExpertAsc(String orderCode);
+
+    List<SubJob> findAllSubJubExpert(Expert expert);
 }

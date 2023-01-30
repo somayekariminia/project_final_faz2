@@ -23,7 +23,7 @@ public class BasicJubServiceImpl implements BasicService {
     @Override
     public BasicJob save(BasicJob basicJob) {
         if (basicJobRepository.findBasicJobByNameBase(basicJob.getNameBase()).isPresent())
-            throw new RepeatException(String.format("already basicJob %s to exist name: " + basicJob.getNameBase()));
+            throw new RepeatException("already basicJob "+basicJob.getNameBase() +" is Exist");
         return basicJobRepository.save(basicJob);
     }
 
@@ -31,7 +31,7 @@ public class BasicJubServiceImpl implements BasicService {
     public List<SubJob> findAllSubJobsABasicJob(String nameBasicJob) {
         List<SubJob> subJobList= subJobRepository.findAllByBasicJobNameBase(nameBasicJob);
         if(subJobList.isEmpty())
-            throw new NotFoundException(String.format("!!There arent subJobs for BasicJob %s ",nameBasicJob));
+            throw new NotFoundException(String.format("!!There arent subJobs for BasicJob "+ nameBasicJob));
         return subJobList;
     }
 

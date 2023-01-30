@@ -47,7 +47,7 @@ public class BasicServiceImplTest {
     void testNotSaveBasicObject() {
         BasicJob basicJob1 = basicJob;
         Exception exception = Assertions.assertThrows(RepeatException.class, () -> basicJubService.save(basicJob1));
-        Assertions.assertEquals("already basicJob to exist name: " + basicJob.getNameBase(), exception.getMessage());
+        Assertions.assertEquals("already basicJob "+basicJob1.getNameBase()+" is Exist"  , exception.getMessage());
     }
 
     @Order(4)
@@ -57,7 +57,7 @@ public class BasicServiceImplTest {
         BasicJob basicJob1 = BasicJob.builder().nameBase("homeWork").build();
         subJob1.setBasicJob(basicJob1);
         Exception exception = Assertions.assertThrows(NotFoundException.class, () -> subJobService.saveSubJob(subJob1));
-        Assertions.assertEquals("is not exist basicJob to name" + subJob.getBasicJob().getNameBase(), exception.getMessage());
+        Assertions.assertEquals("is not exist basicJob " + subJob.getBasicJob().getNameBase(), exception.getMessage());
     }
 
     @Order(5)
@@ -66,7 +66,7 @@ public class BasicServiceImplTest {
         BasicJob basicJobDb = basicJubService.findBasicJobByName("clean");
         subJob.setBasicJob(basicJobDb);
         Exception exception = Assertions.assertThrows(RepeatException.class, () -> subJobService.saveSubJob(subJob));
-        Assertions.assertEquals("this subService Already saved", exception.getMessage());
+        Assertions.assertEquals("this subService "+  subJob.getBasicJob().getNameBase() +" Already saved", exception.getMessage());
     }
 
     @Order(6)
@@ -103,6 +103,17 @@ public class BasicServiceImplTest {
     void findByNameSubJob() {
         Assertions.assertNotNull(subJobService.findSubJobByName("washing"));
         Exception exception = Assertions.assertThrows(NotFoundException.class, () -> subJobService.findSubJobByName("windows"));
-        Assertions.assertEquals("is not exist subJob to name" + "windows", exception.getMessage());
+        Assertions.assertEquals(String.format("Not Found %s !!!!!!!!", "windows"), exception.getMessage());
     }
+
+    @Test
+    void findByIdTest() {
+       Assertions.assertNotNull(subJobService.findById(1L));
+    }
+    @Test
+    void notFindByIdTest() {
+        Exception exception = Assertions.assertThrows(NotFoundException.class, () -> subJobService.findById(2L));
+        Assertions.assertEquals(String.format("Not Found %s !!!!!!!!", "2"), exception.getMessage());
+    }
+
 }
