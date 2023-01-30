@@ -41,9 +41,6 @@ public class OrderCustomer {
     @OneToOne
     private SubJob subJob;
 
-    @OneToOne
-    Expert expert;
-
     @ManyToOne
     Customer customer;
 }

@@ -70,7 +70,7 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     @Override
     public void updateOrder(OrderCustomer orderCustomer) {
         if (Objects.isNull(orderCustomer))
-            throw new NotFoundException(String.format("not Fount orderCustomer"));
+            throw new NotFoundException("not Fount orderCustomer");
         orderCustomerRepository.save(orderCustomer);
     }
 }

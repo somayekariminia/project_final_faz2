@@ -66,7 +66,7 @@ class CustomerServiceImplTest {
     @Test
     void notLoginTest() {
         Exception exceptionUserName = Assertions.assertThrows(NotFoundException.class, () -> customerService.login("sok", "12345"));
-        assertEquals(String.format("sok"+" Not Found !!!"), exceptionUserName.getMessage());
+        assertEquals("sok"+" Not Found !!!", exceptionUserName.getMessage());
         Exception exceptionPassword = Assertions.assertThrows(ValidationException.class, () -> customerService.login("morteza@yahoo.com", "12345"));
         assertEquals("Your password is incorrect", exceptionPassword.getMessage());
     }
@@ -86,6 +86,6 @@ class CustomerServiceImplTest {
     @Test
     void notFindCustomerByUserName(){
         Exception exceptionPassword = Assertions.assertThrows(NotFoundException.class, () -> customerService.findByUserName("somaye@yahoo.com"));
-        assertEquals(String.format("somaye@yahoo.com"+" Not Found !!!"), exceptionPassword.getMessage());
+        assertEquals("somaye@yahoo.com"+" Not Found !!!", exceptionPassword.getMessage());
     }
 }

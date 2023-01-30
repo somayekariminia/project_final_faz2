@@ -25,7 +25,6 @@ public class OfferServiceImpl implements OfferService {
     private final OfferRepository offerRepository;
     private final ExpertServiceImpl expertService;
     private final OrderCustomerServiceImpl orderCustomerService;
-    private final CustomerServiceImpl customerService;
 
     @Override
     public List<SubJob> findAllSubJubExpert(Expert expert) {

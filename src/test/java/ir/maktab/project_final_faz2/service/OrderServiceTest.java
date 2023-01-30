@@ -3,7 +3,6 @@ package ir.maktab.project_final_faz2.service;
 import ir.maktab.project_final_faz2.data.model.entity.Address;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
-import ir.maktab.project_final_faz2.data.model.repository.OrderCustomerRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.RepeatException;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
@@ -33,8 +32,6 @@ public class OrderServiceTest {
     private SubJobServiceImpl subJobService;
     @Autowired
     private CustomerServiceImpl customerService;
-    @Autowired
-    private OrderCustomerRepository orderCustomerRepository;
 
     @BeforeAll
     static void setup(@Autowired DataSource dataSource) {
@@ -43,7 +40,7 @@ public class OrderServiceTest {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            Date dateStartC = UtilDate.changeLocalDateToDate(LocalDate.of(2023, 02, 1));
+            Date dateStartC = UtilDate.changeLocalDateToDate(LocalDate.of(2023, 2, 1));
             orderCustomer = OrderCustomer.builder().
                     offerPrice(new BigDecimal(3000))
                     .codeOrder("order1").address(Address.builder()
@@ -73,7 +70,7 @@ public class OrderServiceTest {
     void testExceptionValidationsSaveOrder() {
         OrderCustomer orderCustomer1 = orderCustomer;
         orderCustomer1.setCodeOrder("order2");
-        orderCustomer1.setStartDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.of(2023, 01, 22)));
+        orderCustomer1.setStartDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.of(2023,1, 22)));
         Exception exceptionDate = Assertions.assertThrows(TimeOutException.class, () -> orderCustomerService.saveOrder(orderCustomer1));
         Assertions.assertEquals("The current date is less than the proposed date", exceptionDate.getMessage());
 
@@ -93,7 +90,6 @@ public class OrderServiceTest {
     void findAllOrdersBySubJobTest() {
         SubJob subJob = subJobService.findById(33333L);
         Assertions.assertTrue(orderCustomerService.findAllOrdersBySubJob(subJob).size() > 0);
-        ;
     }
     @Order(5)
     @Test
