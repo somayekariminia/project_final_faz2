@@ -2,7 +2,6 @@ package ir.maktab.project_final_faz2.data.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -20,17 +19,12 @@ public class Offers {
     Long Id;
 
     Duration durationWork;
-
-    private BigDecimal offerPriceByExpert;
-
-    @Temporal(value = TemporalType.TIMESTAMP)
-    private Date startTime;
-
-    @OneToOne
-    private Expert expert;
-
     boolean isAccept;
-
     @ManyToOne
     OrderCustomer orderCustomer;
+    private BigDecimal offerPriceByExpert;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date startTime;
+    @OneToOne
+    private Expert expert;
 }

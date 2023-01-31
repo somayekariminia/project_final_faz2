@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ExpertServiceImplTest {
-    @Autowired
-    private ExpertServiceImpl expertService;
     private static Expert expert;
     private static File file;
+    @Autowired
+    private ExpertServiceImpl expertService;
 
     @BeforeAll
     static void set(@Autowired DataSource dataSource) {
@@ -51,6 +51,14 @@ class ExpertServiceImplTest {
         return array;
     }
 
+    public static List<Expert> data() {
+        List<Expert> arrayOfExpert = List.of(
+                Expert.builder().firstName("morteza").lastName("karimi").email("morteza.gmail").password("Mok31200").build(),
+                Expert.builder().email("somaye123@yahoo.com").password("1234vc").firstName("neda").lastName("akbari").build(),
+                Expert.builder().email("neda@yahoo.com").password("1234vc").firstName("neda45").lastName("akbari123").build());
+        return arrayOfExpert;
+    }
+
     @ParameterizedTest
     @MethodSource(value = "dataExpert")
     void saveTest(Expert expert) {
@@ -63,14 +71,6 @@ class ExpertServiceImplTest {
     void saveDuplicateExpert() {
         Exception exception = Assertions.assertThrows(RepeatException.class, () -> expertService.save(expert, file));
         Assertions.assertEquals(String.format("already Exist is Expert %s ", expert.getEmail()), exception.getMessage());
-    }
-
-    public static List<Expert> data() {
-        List<Expert> arrayOfExpert = List.of(
-                Expert.builder().firstName("morteza").lastName("karimi").email("morteza.gmail").password("Mok31200").build(),
-                Expert.builder().email("somaye123@yahoo.com").password("1234vc").firstName("neda").lastName("akbari").build(),
-                Expert.builder().email("neda@yahoo.com").password("1234vc").firstName("neda45").lastName("akbari123").build());
-        return arrayOfExpert;
     }
 
     @ParameterizedTest

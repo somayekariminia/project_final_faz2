@@ -1,7 +1,6 @@
 package ir.maktab.project_final_faz2.util.util;
 
 
-
 import ir.maktab.project_final_faz2.exception.PhotoValidationException;
 
 import javax.imageio.ImageIO;
@@ -49,7 +48,8 @@ public class UtilImage {
             throw new PhotoValidationException(e.getMessage());
         }
     }
-    public static File getFileImage(byte[] imageData,File outPutFile){
+
+    public static File getFileImage(byte[] imageData, File outPutFile) {
         ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
         BufferedImage read;
         try {

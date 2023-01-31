@@ -14,6 +14,7 @@ import java.util.Optional;
 public interface OfferRepository extends JpaRepository<Offers, Long> {
     @Query("select  o from Offers  o where o.orderCustomer=:orderCustomer order by o.offerPriceByExpert asc")
     List<Offers> findAllByOrderCustomerOrderByPriceOrder(@Param("orderCustomer") OrderCustomer orderCustomer);
+
     @Query("select o from Offers o where o.orderCustomer=:orderCustomer and o.isAccept=true")
     Optional<Offers> findOffersIsAccept(OrderCustomer orderCustomer);
 }

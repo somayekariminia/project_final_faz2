@@ -11,8 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ExpertRepository extends JpaRepository<Expert,Long> {
+public interface ExpertRepository extends JpaRepository<Expert, Long> {
     Optional<Expert> findByEmail(String email);
+
     @Query("from Expert e where e.specialtyStatus=:SpecialtyStatus")
     List<Expert> findAllExpertIsNtConfirm(@Param("SpecialtyStatus") SpecialtyStatus specialtyStatus);
 }

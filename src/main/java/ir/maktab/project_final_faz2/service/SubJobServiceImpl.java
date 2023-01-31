@@ -27,7 +27,7 @@ public class SubJobServiceImpl implements SubJobService {
         if (basicJobRepository.findBasicJobByNameBase(subJob.getBasicJob().getNameBase()).isEmpty())
             throw new NotFoundException(String.format("is not exist basicJob " + subJob.getBasicJob().getNameBase()));
         if (subJobRepository.findBySubJobName(subJob.getSubJobName()).isPresent())
-            throw new RepeatException(String.format("this subService "+  subJob.getBasicJob().getNameBase() +" Already saved"));
+            throw new RepeatException(String.format("this subService " + subJob.getBasicJob().getNameBase() + " Already saved"));
     }
 
     @Override
@@ -45,12 +45,12 @@ public class SubJobServiceImpl implements SubJobService {
 
     @Override
     public SubJob findSubJobByName(String name) {
-        return subJobRepository.findBySubJobName(name).orElseThrow(() -> new NotFoundException(String.format("Not Found "+ name +" !!!!!!!!")));
+        return subJobRepository.findBySubJobName(name).orElseThrow(() -> new NotFoundException(String.format("Not Found " + name + " !!!!!!!!")));
     }
 
     @Override
     public SubJob findById(Long id) {
-        return subJobRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Found "+id +" !!!!!!!!")));
+        return subJobRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Found " + id + " !!!!!!!!")));
     }
 }
 

@@ -17,6 +17,7 @@ public interface OrderCustomerRepository extends JpaRepository<OrderCustomer, Lo
     List<OrderCustomer> findAllBySubJobForAExpert(@Param("subJob") SubJob subJob);
 
     Optional<OrderCustomer> findByCodeOrder(String codeOrder);
+
     @Query("select o from OrderCustomer o where o.customer=:customer")
-    List<OrderCustomer> findAllByCustomer(@Param("customer")Customer customer);
+    List<OrderCustomer> findAllByCustomer(@Param("customer") Customer customer);
 }

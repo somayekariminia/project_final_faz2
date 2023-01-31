@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SubJobRepository extends JpaRepository<SubJob,Long> {
+public interface SubJobRepository extends JpaRepository<SubJob, Long> {
     Optional<SubJob> findBySubJobName(String name);
+
     List<SubJob> findAllByBasicJobNameBase(String name);
 }

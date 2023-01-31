@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
-
 @Entity
 @Data
 @AllArgsConstructor
@@ -22,6 +21,6 @@ public class Review {
     private Long id;
 
     private int rating;
-    
+
     private String comment;
 }

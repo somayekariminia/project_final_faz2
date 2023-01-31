@@ -1,7 +1,10 @@
 package ir.maktab.project_final_faz2.service;
 
 import com.google.common.collect.Lists;
-import ir.maktab.project_final_faz2.data.model.entity.*;
+import ir.maktab.project_final_faz2.data.model.entity.Expert;
+import ir.maktab.project_final_faz2.data.model.entity.Offers;
+import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
+import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
@@ -17,7 +20,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +39,7 @@ public class OfferServiceImpl implements OfferService {
             throw new NotFoundException(String.format("No subJob for this Expert %s", expertDb.getEmail()));
         return expertDb.getServicesList();
     }
+
     @Override
     public List<OrderCustomer> findAllOrdersForAnSubJobOfExpert(Expert expert, SubJob subJob) {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
@@ -45,6 +52,7 @@ public class OfferServiceImpl implements OfferService {
             throw new NotFoundException(String.format("No Order for this Expert %s", expertDb.getEmail()));
         return list;
     }
+
     @Override
     @Transactional
     public Offers save(Offers offers, String codeOrder) {
@@ -60,18 +68,21 @@ public class OfferServiceImpl implements OfferService {
         offers.setOrderCustomer(orderCustomer);
         return offerRepository.save(offers);
     }
+
     @Override
     public List<Offers> viewAllOffersOrderByPriceAsc(String orderCode) {
-        OrderCustomer orderCustomer=orderCustomerService.findByCode(orderCode);
+        OrderCustomer orderCustomer = orderCustomerService.findByCode(orderCode);
         List<Offers> allOffersAOrder = offerRepository.findAllByOrderCustomerOrderByPriceOrder(orderCustomer);
         if (allOffersAOrder.isEmpty())
             throw new NotFoundException(String.format("Not Found offer for this order %s !!", orderCode));
         return allOffersAOrder;
     }
+
     public List<Offers> viewAllOffersOrderByPriceDesc(String orderCode) {
         List<Offers> offersAsc = viewAllOffersOrderByPriceAsc(orderCode);
-       return Lists.reverse(offersAsc);
+        return Lists.reverse(offersAsc);
     }
+
     @Override
     public List<Offers> viewAllOrdersOrderByScoreExpertAsc(String orderCode) {
         List<Offers> allOffersAOrder = viewAllOffersOrderByPriceAsc(orderCode);
@@ -80,6 +91,7 @@ public class OfferServiceImpl implements OfferService {
             throw new NotFoundException(String.format("Not Found offer for this order %s !!", orderCode));
         return orderByScore;
     }
+
     public List<Offers> viewAllOrdersOrderByScoreExpertDesc(String orderCode) {
         List<Offers> offersAsc = viewAllOrdersOrderByScoreExpertAsc(orderCode);
         return Lists.reverse(offersAsc);

@@ -25,9 +25,9 @@ import java.util.List;
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OrderServiceTest {
+    private static OrderCustomer orderCustomer;
     @Autowired
     private OrderCustomerServiceImpl orderCustomerService;
-    private static OrderCustomer orderCustomer;
     @Autowired
     private SubJobServiceImpl subJobService;
     @Autowired
@@ -62,7 +62,7 @@ public class OrderServiceTest {
     @Test
     void testExceptionSaveDuplicateOrder() {
         Exception exception = Assertions.assertThrows(RepeatException.class, () -> orderCustomerService.saveOrder(orderCustomer));
-        Assertions.assertEquals(String.format("the order is exist already to code: %s" , orderCustomer.getCodeOrder()), exception.getMessage());
+        Assertions.assertEquals(String.format("the order is exist already to code: %s", orderCustomer.getCodeOrder()), exception.getMessage());
     }
 
     @Order(3)
@@ -70,7 +70,7 @@ public class OrderServiceTest {
     void testExceptionValidationsSaveOrder() {
         OrderCustomer orderCustomer1 = orderCustomer;
         orderCustomer1.setCodeOrder("order2");
-        orderCustomer1.setStartDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.of(2023,1, 22)));
+        orderCustomer1.setStartDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.of(2023, 1, 22)));
         Exception exceptionDate = Assertions.assertThrows(TimeOutException.class, () -> orderCustomerService.saveOrder(orderCustomer1));
         Assertions.assertEquals("The current date is less than the proposed date", exceptionDate.getMessage());
 
@@ -91,35 +91,40 @@ public class OrderServiceTest {
         SubJob subJob = subJobService.findById(33333L);
         Assertions.assertTrue(orderCustomerService.findAllOrdersBySubJob(subJob).size() > 0);
     }
+
     @Order(5)
     @Test
     void notFindAllOrdersBySubJobTest() {
-        SubJob subJob=subJobService.findById(333333L);
+        SubJob subJob = subJobService.findById(333333L);
         Exception exception = Assertions.assertThrows(NotFoundException.class, () -> orderCustomerService.findAllOrdersBySubJob(subJob));
-        Assertions.assertEquals(String.format("!!!No Order for This SubJob %s",subJob.getSubJobName()),exception.getMessage());
+        Assertions.assertEquals(String.format("!!!No Order for This SubJob %s", subJob.getSubJobName()), exception.getMessage());
     }
+
     @Order(6)
     @Test
     void findOrderById() {
         OrderCustomer orderCustomerDb = orderCustomerService.findById(1L);
         Assertions.assertNotNull(orderCustomerDb.getId());
     }
+
     @Order(6)
     @Test
     void findOrderByOrderCode() {
         OrderCustomer orderCustomerDb = orderCustomerService.findByCode("order1");
         Assertions.assertNotNull(orderCustomerDb.getId());
     }
+
     @Order(7)
     @Test
     void notFindOrderByOrderCode() {
         Exception exception = Assertions.assertThrows(NotFoundException.class, () -> orderCustomerService.findByCode("order6"));
-        Assertions.assertEquals(String.format("there arent any orderCustomer to code %s ", "order6"),exception.getMessage());
+        Assertions.assertEquals(String.format("there arent any orderCustomer to code %s ", "order6"), exception.getMessage());
     }
+
     @Order(10)
     @Test
     void findOrdersCustomer() {
         List<OrderCustomer> listOrdersCustomer = orderCustomerService.findOrdersCustomer(customerService.findByUserName("tara@gmail.com"));
-        Assertions.assertTrue(listOrdersCustomer.size()>0);
+        Assertions.assertTrue(listOrdersCustomer.size() > 0);
     }
 }

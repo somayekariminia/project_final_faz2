@@ -150,6 +150,6 @@ class OfferServiceImplTest {
     @Test
     void findAllSubJubExpert() {
         Expert expert = expertService.findById(1111L);
-       Assertions.assertTrue(offerService.findAllSubJubExpert(expert).size()>0);
+        Assertions.assertTrue(offerService.findAllSubJubExpert(expert).size() > 0);
     }
 }

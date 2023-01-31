@@ -13,12 +13,12 @@ import java.math.BigDecimal;
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BasicServiceImplTest {
+    private static BasicJob basicJob;
+    private static SubJob subJob;
     @Autowired
     private BasicJubServiceImpl basicJubService;
     @Autowired
     private SubJobServiceImpl subJobService;
-    private static BasicJob basicJob;
-    private static SubJob subJob;
 
     @BeforeAll
     static void set() {
@@ -47,7 +47,7 @@ public class BasicServiceImplTest {
     void testNotSaveBasicObject() {
         BasicJob basicJob1 = basicJob;
         Exception exception = Assertions.assertThrows(RepeatException.class, () -> basicJubService.save(basicJob1));
-        Assertions.assertEquals("already basicJob "+basicJob1.getNameBase()+" is Exist"  , exception.getMessage());
+        Assertions.assertEquals("already basicJob " + basicJob1.getNameBase() + " is Exist", exception.getMessage());
     }
 
     @Order(4)
@@ -66,7 +66,7 @@ public class BasicServiceImplTest {
         BasicJob basicJobDb = basicJubService.findBasicJobByName("clean");
         subJob.setBasicJob(basicJobDb);
         Exception exception = Assertions.assertThrows(RepeatException.class, () -> subJobService.saveSubJob(subJob));
-        Assertions.assertEquals("this subService "+  subJob.getBasicJob().getNameBase() +" Already saved", exception.getMessage());
+        Assertions.assertEquals("this subService " + subJob.getBasicJob().getNameBase() + " Already saved", exception.getMessage());
     }
 
     @Order(6)
@@ -108,8 +108,9 @@ public class BasicServiceImplTest {
 
     @Test
     void findByIdTest() {
-       Assertions.assertNotNull(subJobService.findById(1L));
+        Assertions.assertNotNull(subJobService.findById(1L));
     }
+
     @Test
     void notFindByIdTest() {
         Exception exception = Assertions.assertThrows(NotFoundException.class, () -> subJobService.findById(2L));

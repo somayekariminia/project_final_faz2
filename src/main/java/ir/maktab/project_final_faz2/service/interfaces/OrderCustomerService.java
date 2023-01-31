@@ -16,6 +16,7 @@ public interface OrderCustomerService {
     List<OrderCustomer> findAllOrdersBySubJob(SubJob subJob);
 
     void updateOrder(OrderCustomer orderCustomer);
+
     List<OrderCustomer> findOrdersCustomer(Customer customer);
 
 }
