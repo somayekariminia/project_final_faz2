@@ -1,5 +1,6 @@
 package ir.maktab.project_final_faz2.service.interfaces;
 
+import ir.maktab.project_final_faz2.data.model.entity.Admin;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 
@@ -15,4 +16,5 @@ public interface AdminService {
     List<Expert> findAllExpertIsNtConFirm();
 
     List<Expert> findAllIsConfirm();
+    Admin changePassword(String userName, String passwordOld, String newPassword);
 }

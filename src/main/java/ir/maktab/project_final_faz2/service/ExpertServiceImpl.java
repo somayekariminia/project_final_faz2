@@ -25,7 +25,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public Expert save(Expert expert, File file) {
         if (expertRepository.findByEmail(expert.getEmail()).isPresent())
-            throw new RepeatException(String.format("already Exist is Expert %s " , expert.getEmail()));
+            throw new RepeatException(String.format("already Exist is Expert %s ", expert.getEmail()));
         validateInfoPerson(expert);
         expert.setExpertImage(UtilImage.validateImage(file));
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);
@@ -44,7 +44,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
 
     public Expert login(String userName, String password) {
-        Expert expert = expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format("Not Fount Expert %s" , userName)));
+        Expert expert = expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format("Not Fount Expert %s", userName)));
         if (!expert.getPassword().equals(password))
             throw new ValidationException("Your password is incorrect");
         return expert;
@@ -56,18 +56,20 @@ public class ExpertServiceImpl implements ExpertService {
         Expert expert = login(userName, passwordOld);
         expert.setPassword(newPassword);
         expertRepository.save(expert);
-        return login(userName, newPassword);
-
+        Expert newExpert = findByUserName(userName);
+        if (newExpert.getPassword().equals(newPassword))
+            throw new NotFoundException("Password is invalid");
+        return newExpert;
     }
 
     @Override
     public Expert findById(Long id) {
-        return expertRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Fount Expert %d" , id)));
+        return expertRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Fount Expert %d", id)));
     }
 
     @Override
     public Expert findByUserName(String userName) {
-        return expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format("Not Fount Expert %s" ,userName)));
+        return expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format("Not Fount Expert %s", userName)));
     }
 
     @Override
