@@ -1,6 +1,7 @@
 package ir.maktab.project_final_faz2.service;
 
 import ir.maktab.project_final_faz2.data.model.entity.Address;
+import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
@@ -124,7 +125,16 @@ public class OrderServiceTest {
     @Order(10)
     @Test
     void findOrdersCustomer() {
-        List<OrderCustomer> listOrdersCustomer = orderCustomerService.findOrdersCustomer(customerService.findByUserName("tara@gmail.com"));
+        Customer customer = customerService.findByUserName("tara@gmail.com");
+        List<OrderCustomer> listOrdersCustomer = orderCustomerService.findOrdersCustomer(customer);
         Assertions.assertTrue(listOrdersCustomer.size() > 0);
+    }
+
+    @Order(11)
+    @Test
+    void notFoundOrdersCustomer() {
+        Customer customer = customerService.findByUserName("shams@gmail.com");
+        Exception exception = Assertions.assertThrows(NotFoundException.class, () -> orderCustomerService.findOrdersCustomer(customer));
+        Assertions.assertEquals(String.format("there aren't order for this Customer %s", customer.getEmail()), exception.getMessage());
     }
 }

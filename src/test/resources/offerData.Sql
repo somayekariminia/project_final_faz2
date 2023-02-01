@@ -31,8 +31,8 @@ values (111111, 33);
 insert into address (id, city, pelak, street)
 values (10, 'kerman', '512', 'bahonar');
 insert into order_customer (id, start_date_do_work, about_work, code_order, end_date_do_work, offer_price, order_status,
-                            address_id, expert_id, sub_job_id)
-values (7, '2023-01-26', 'homeClean', 'order16', null, 3000.00, 'WaitingSelectTheExpert', 10, null, 33);
+                            address_id, customer_id, sub_job_id)
+values (7, '2023-01-26', 'homeClean', 'order16', null, 3000.00, 'WaitingSelectTheExpert', 10, 5, 33);
 insert into order_customer (id, start_date_do_work, about_work, code_order, end_date_do_work, offer_price, order_status,
-                            address_id, expert_id, sub_job_id)
-values (77, '2023-01-26', 'driversWithCar', 'order27', null, 3500.00, 'WaitingForOfferTheExperts', 10, null, 333);
+                            address_id, customer_id, sub_job_id)
+values (77, '2023-01-26', 'driversWithCar', 'order27', null, 3500.00, 'WaitingForOfferTheExperts', 10, 5, 333);

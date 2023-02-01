@@ -17,6 +17,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class OrderCustomer {
+
     @OneToOne(cascade = CascadeType.PERSIST)
     Address address;
     @ManyToOne
@@ -25,15 +26,21 @@ public class OrderCustomer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private BigDecimal offerPrice;
+
     private String aboutWork;
+
     @Column(unique = true)
     private String codeOrder;
+
     @Temporal(value = TemporalType.DATE)
     private Date StartDateDoWork;
+
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
+
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date endDateDoWork;
+
     @OneToOne
     private SubJob subJob;
 }

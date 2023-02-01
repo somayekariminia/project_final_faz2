@@ -28,4 +28,8 @@ public interface OfferService {
     List<Offers> viewAllOrdersOrderByScoreExpertAsc(String orderCode);
 
     List<SubJob> findAllSubJubExpert(Expert expert);
+
+    public List<Offers> viewAllOrdersOrderByScoreExpertDesc(String orderCode);
+
+    public List<Offers> viewAllOffersOrderByPriceDesc(String orderCode);
 }

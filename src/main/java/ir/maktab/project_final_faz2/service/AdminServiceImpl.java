@@ -57,6 +57,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Admin changePassword(String userName, String passwordOld, String newPassword) {
+        if (passwordOld.equals(newPassword))
+            throw new ValidationException("passwordNew same is old password");
         Admin admin = adminRepository.findAdminByUserName(userName).orElseThrow(() -> new NotFoundException(String.format("Not fount username %s", userName)));
         admin.setPassword(newPassword);
         adminRepository.save(admin);
@@ -64,6 +66,10 @@ public class AdminServiceImpl implements AdminService {
         if (!newAdmin.getPassword().equals(newPassword))
             throw new NotFoundException("Password is invalid!!!");
         return newAdmin;
+    }
+
+    public Admin findByUserName(String userName) {
+        return adminRepository.findAdminByUserName(userName).orElseThrow(() -> new NotFoundException(String.format("Not fount username %s", userName)));
     }
 
     @Override

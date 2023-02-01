@@ -41,11 +41,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer changePassword(String userName, String passwordOld, String newPassword) {
+        if (passwordOld.equals(newPassword))
+            throw new ValidationException("passwordNew same is old password");
         Customer customer = login(userName, passwordOld);
         customer.setPassword(newPassword);
         customerRepository.save(customer);
         Customer newCustomer = findByUserName(userName);
-        if (newCustomer.getPassword().equals(newPassword))
+        if (!newCustomer.getPassword().equals(newPassword))
             throw new NotFoundException("Password is invalid");
         return newCustomer;
     }

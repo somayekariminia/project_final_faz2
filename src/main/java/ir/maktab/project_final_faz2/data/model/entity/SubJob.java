@@ -21,7 +21,7 @@ public class SubJob {
     @ManyToOne
     private BasicJob basicJob;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String subJobName;
 
     private BigDecimal price;

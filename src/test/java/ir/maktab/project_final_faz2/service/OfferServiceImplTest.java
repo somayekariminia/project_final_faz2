@@ -47,9 +47,9 @@ class OfferServiceImplTest {
     @Order(1)
     @TestFactory
     Stream<DynamicTest> setOffer() {
-        LocalDate start = LocalDate.of(2023, 02, 1);
-        LocalDate start1 = LocalDate.of(2023, 02, 3);
-        LocalDate start2 = LocalDate.of(2023, 02, 2);
+        LocalDate start = LocalDate.of(2023, 2, 1);
+        LocalDate start1 = LocalDate.of(2023, 2, 3);
+        LocalDate start2 = LocalDate.of(2023, 2, 2);
         Offers[] arrayOffer = new Offers[3];
         arrayOffer[0] = Offers.builder().offerPriceByExpert(new BigDecimal(4000)).startTime(UtilDate.changeLocalDateToDate(start)).durationWork(Duration.ZERO.plusHours(2).plusMillis(30)).build();
         arrayOffer[1] = Offers.builder().offerPriceByExpert(new BigDecimal(4500)).startTime(UtilDate.changeLocalDateToDate(start1)).durationWork(Duration.ZERO.plusHours(2).plusMillis(30)).build();
@@ -59,12 +59,9 @@ class OfferServiceImplTest {
         for (int i = 0; i <= 2; i++) {
             arrayOffer[i].setExpert(listExpert.get(i));
         }
-
-        return Arrays.stream(arrayOffer).map(offers -> {
-            return DynamicTest.dynamicTest("save Offer", () -> {
-                Assertions.assertNotNull(offerService.save(offers, "order16").getId());
-            });
-        });
+        return Arrays.stream(arrayOffer).map(offers -> DynamicTest.dynamicTest("save Offer", () -> {
+            Assertions.assertNotNull(offerService.save(offers, "order16").getId());
+        }));
     }
 
     @Order(4)

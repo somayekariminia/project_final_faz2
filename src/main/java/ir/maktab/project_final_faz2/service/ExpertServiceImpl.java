@@ -53,11 +53,13 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public Expert changePassword(String userName, String passwordOld, String newPassword) {
+        if (passwordOld.equals(newPassword))
+            throw new ValidationException("passwordNew same is old password");
         Expert expert = login(userName, passwordOld);
         expert.setPassword(newPassword);
         expertRepository.save(expert);
         Expert newExpert = findByUserName(userName);
-        if (newExpert.getPassword().equals(newPassword))
+        if (!newExpert.getPassword().equals(newPassword))
             throw new NotFoundException("Password is invalid");
         return newExpert;
     }
@@ -83,7 +85,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
 
     public List<Expert> findAllExpertsApproved() {
-        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsNtConfirm(SpecialtyStatus.Confirmed);
+        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsConfirm(SpecialtyStatus.Confirmed);
         if (allExpertIsNtConfirm.isEmpty())
             throw new NotFoundException("There arent Expert Confirmed !!!!!!");
         return allExpertIsNtConfirm;
@@ -91,7 +93,7 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public List<Expert> findAllExpertsIsNotConfirm() {
-        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsNtConfirm(SpecialtyStatus.NewState);
+        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsConfirm(SpecialtyStatus.NewState);
         if (allExpertIsNtConfirm.isEmpty())
             throw new NotFoundException("There arent Experts Is Not Confirm!!!!!!!");
         return allExpertIsNtConfirm;

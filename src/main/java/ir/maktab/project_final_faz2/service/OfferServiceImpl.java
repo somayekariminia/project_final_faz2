@@ -45,7 +45,7 @@ public class OfferServiceImpl implements OfferService {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
         if (!expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
             throw new ValidationException(String.format("Expert %s is not Confirm !!! ", expertDb.getEmail()));
-        if (expertDb.getServicesList().stream().noneMatch(subJob1 -> subJob1.getId().equals(subJob.getId())))
+        if (expertDb.getServicesList().stream().noneMatch(subJob1 -> subJob1.getSubJobName().equals(subJob.getSubJobName())))
             throw new NotFoundException(String.format("this %s is Not Exist For this Expert", subJob.getSubJobName()));
         List<OrderCustomer> list = orderCustomerService.findAllOrdersBySubJob(subJob);
         if (list.isEmpty())
@@ -78,6 +78,7 @@ public class OfferServiceImpl implements OfferService {
         return allOffersAOrder;
     }
 
+    @Override
     public List<Offers> viewAllOffersOrderByPriceDesc(String orderCode) {
         List<Offers> offersAsc = viewAllOffersOrderByPriceAsc(orderCode);
         return Lists.reverse(offersAsc);
@@ -92,6 +93,7 @@ public class OfferServiceImpl implements OfferService {
         return orderByScore;
     }
 
+    @Override
     public List<Offers> viewAllOrdersOrderByScoreExpertDesc(String orderCode) {
         List<Offers> offersAsc = viewAllOrdersOrderByScoreExpertAsc(orderCode);
         return Lists.reverse(offersAsc);
