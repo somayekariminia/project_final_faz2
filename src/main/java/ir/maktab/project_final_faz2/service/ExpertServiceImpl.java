@@ -4,7 +4,7 @@ import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.RepeatException;
+import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.interfaces.ExpertService;
 import ir.maktab.project_final_faz2.util.util.UtilImage;
@@ -25,7 +25,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public Expert save(Expert expert, File file) {
         if (expertRepository.findByEmail(expert.getEmail()).isPresent())
-            throw new RepeatException(String.format("already Exist is Expert %s ", expert.getEmail()));
+            throw new DuplicateException(String.format("already Exist is Expert %s ", expert.getEmail()));
         validateInfoPerson(expert);
         expert.setExpertImage(UtilImage.validateImage(file));
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);

@@ -2,13 +2,17 @@ package ir.maktab.project_final_faz2.mapper;
 
 import ir.maktab.project_final_faz2.data.model.dto.*;
 import ir.maktab.project_final_faz2.data.model.entity.*;
+
+
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 @Mapper
 public interface MapStructMapper {
     MapStructMapper INSTANCE = Mappers.getMapper(MapStructMapper.class);
-
+    List<SubJobDto> subJobListToSubJobDto(List<SubJob> subJobList);
     BasicJobDto basicJobToBasicJobDto(BasicJob basicJob);
 
     BasicJob basicJobDtoToBasicJob(BasicJobDto basicJobDto);
@@ -24,7 +28,6 @@ public interface MapStructMapper {
     ExpertDto expertToExpertDto(Expert expert);
 
     Expert expertDtoToExpert(ExpertDto expertDto);
-
     CustomerDto customerToCustomerDto(Customer customer);
 
     Customer customerDtoToCustomer(CustomerDto customerDto);

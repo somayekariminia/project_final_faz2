@@ -7,7 +7,7 @@ import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.AdminRepository;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.RepeatException;
+import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.interfaces.AdminService;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class AdminServiceImpl implements AdminService {
         if (expertDb.getSpecialtyStatus().equals(SpecialtyStatus.NewState))
             throw new ValidationException(String.format("the Expert %s isNot confirm " + expertDb.getEmail()));
         if (expertDb.getServicesList().stream().anyMatch(subJob1 -> subJob1.getSubJobName().equals(subJobDb.getSubJobName())))
-            throw new RepeatException(String.format("%s already exist ", subJob.getSubJobName()));
+            throw new DuplicateException(String.format("%s already exist ", subJob.getSubJobName()));
         expertDb.getServicesList().add(subJobDb);
         expertRepository.save(expertDb);
     }

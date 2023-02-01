@@ -5,7 +5,7 @@ import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.RepeatException;
+import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
@@ -62,7 +62,7 @@ public class OrderServiceTest {
     @Order(2)
     @Test
     void testExceptionSaveDuplicateOrder() {
-        Exception exception = Assertions.assertThrows(RepeatException.class, () -> orderCustomerService.saveOrder(orderCustomer));
+        Exception exception = Assertions.assertThrows(DuplicateException.class, () -> orderCustomerService.saveOrder(orderCustomer));
         Assertions.assertEquals(String.format("the order is exist already to code: %s", orderCustomer.getCodeOrder()), exception.getMessage());
     }
 

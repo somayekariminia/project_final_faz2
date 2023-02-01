@@ -6,7 +6,7 @@ import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OrderCustomerRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.RepeatException;
+import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.interfaces.OrderCustomerService;
@@ -30,7 +30,7 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     @Override
     public OrderCustomer saveOrder(OrderCustomer orderCustomer) {
         if (orderCustomerRepository.findByCodeOrder(orderCustomer.getCodeOrder()).isPresent())
-            throw new RepeatException(String.format("the order is exist already to code: %s", orderCustomer.getCodeOrder()));
+            throw new DuplicateException(String.format("the order is exist already to code: %s", orderCustomer.getCodeOrder()));
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         if (orderCustomer.getOfferPrice().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException(String.format("The offer price by Customer for this sub-service %s is lower than the original price", orderCustomer.getSubJob().getSubJobName()));

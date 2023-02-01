@@ -29,7 +29,7 @@ public class Person {
 
     private String password;
 
-    @Temporal(value = TemporalType.TIMESTAMP)
+    @Temporal(value = TemporalType.DATE)
     @CreationTimestamp
     private Date RegistrationDate;
 

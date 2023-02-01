@@ -3,7 +3,7 @@ package ir.maktab.project_final_faz2.service;
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.repository.CustomerRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.RepeatException;
+import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.interfaces.CustomerService;
 import ir.maktab.project_final_faz2.util.util.ValidationInput;
@@ -18,7 +18,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer save(Customer customer) {
         if (customerRepository.findByEmail(customer.getEmail()).isPresent())
-            throw new RepeatException(String.format("exist the user " + customer.getEmail()));
+            throw new DuplicateException(String.format("exist the user " + customer.getEmail()));
         validateInfoPerson(customer);
         return customerRepository.save(customer);
     }

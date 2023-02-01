@@ -2,7 +2,7 @@ package ir.maktab.project_final_faz2.service;
 
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.RepeatException;
+import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -47,7 +47,7 @@ class CustomerServiceImplTest {
     @Order(2)
     @Test
     void saveDuplicateCustomer() {
-        Exception exception = Assertions.assertThrows(RepeatException.class, () -> customerService.save(customer));
+        Exception exception = Assertions.assertThrows(DuplicateException.class, () -> customerService.save(customer));
         Assertions.assertEquals("exist the user " + customer.getEmail(), exception.getMessage());
     }
 

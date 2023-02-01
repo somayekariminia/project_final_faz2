@@ -3,7 +3,7 @@ package ir.maktab.project_final_faz2.service;
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.RepeatException;
+import ir.maktab.project_final_faz2.exception.DuplicateException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,7 +46,7 @@ public class BasicServiceImplTest {
     @Test
     void testNotSaveBasicObject() {
         BasicJob basicJob1 = basicJob;
-        Exception exception = Assertions.assertThrows(RepeatException.class, () -> basicJubService.save(basicJob1));
+        Exception exception = Assertions.assertThrows(DuplicateException.class, () -> basicJubService.save(basicJob1));
         Assertions.assertEquals("already basicJob " + basicJob1.getNameBase() + " is Exist", exception.getMessage());
     }
 
@@ -65,7 +65,7 @@ public class BasicServiceImplTest {
     void testNotSaveSubJobExist() {
         BasicJob basicJobDb = basicJubService.findBasicJobByName("clean");
         subJob.setBasicJob(basicJobDb);
-        Exception exception = Assertions.assertThrows(RepeatException.class, () -> subJobService.saveSubJob(subJob));
+        Exception exception = Assertions.assertThrows(DuplicateException.class, () -> subJobService.saveSubJob(subJob));
         Assertions.assertEquals("this subService " + subJob.getBasicJob().getNameBase() + " Already saved", exception.getMessage());
     }
 
