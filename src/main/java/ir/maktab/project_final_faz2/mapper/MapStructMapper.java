@@ -13,6 +13,7 @@ import java.util.List;
 public interface MapStructMapper {
     MapStructMapper INSTANCE = Mappers.getMapper(MapStructMapper.class);
     List<SubJobDto> subJobListToSubJobDto(List<SubJob> subJobList);
+    List<BasicJobDto> ListBasicJobToBasicJobDto(List<BasicJob> list);
     BasicJobDto basicJobToBasicJobDto(BasicJob basicJob);
 
     BasicJob basicJobDtoToBasicJob(BasicJobDto basicJobDto);
