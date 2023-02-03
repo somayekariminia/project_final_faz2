@@ -5,6 +5,7 @@ import ir.maktab.project_final_faz2.data.model.entity.*;
 
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -21,9 +22,9 @@ public interface MapStructMapper {
     SubJobDto subJubToSubJobDto(SubJob subJob);
 
     SubJob subJobDtoToSubJob(SubJobDto subJobDto);
-
+    @Mapping(source="startTime",target = "startTime",dateFormat = "yyyy-MM-dd HH:mm:ss")
     OffersDto offerToOfferDto(Offers offers);
-
+    @Mapping(source="startTime",target = "startTime",dateFormat = "yyyy-MM-dd HH:mm:ss")
     Offers offerDtoToOffer(OffersDto offersDto);
 
     ExpertDto expertToExpertDto(Expert expert);
@@ -32,17 +33,15 @@ public interface MapStructMapper {
     CustomerDto customerToCustomerDto(Customer customer);
 
     Customer customerDtoToCustomer(CustomerDto customerDto);
-
+    @Mapping(source = "startDateDoWork",target = "startDateDoWork",dateFormat = "yyyy.MM.dd HH:mm:ss")
     OrderCustomerDto orderCustomerToOrderCustomerDto(OrderCustomer orderCustomer);
-
+    @Mapping(source="startDateDoWork",target = "startDateDoWork",dateFormat = "yyyy-MM-dd HH:mm:ss")
     OrderCustomer orderCustomerDtoToOrderCustomer(OrderCustomerDto orderCustomerDto);
 
     ReviewDto reviewToReviewDto(Review review);
 
     Review reviewDtoToReview(ReviewDto reviewDto);
+    List<ExpertDto> listExpertToExpertDto(List<Expert> listExpert);
 
-    PersonDto personToPersonDto(Person person);
-
-    PersonDto personDtoToPerson(PersonDto personDto);
 
 }

@@ -10,9 +10,7 @@ import java.math.BigDecimal;
 @Setter
 @Getter
 public class SubJobDto {
-
     private Long id;
-
     private BasicJob basicJob;
 
     @NotNull

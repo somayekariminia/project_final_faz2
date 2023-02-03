@@ -8,10 +8,10 @@ import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
-import ir.maktab.project_final_faz2.exception.NotAcceptedException;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.TimeOutException;
-import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.NotAcceptedException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.TimeOutException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.interfaces.OfferService;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
@@ -55,9 +55,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     @Transactional
-    public Offers save(Offers offers, String codeOrder) {
+    public Offers save(Offers offers, Long id) {
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
-        OrderCustomer orderCustomer = orderCustomerService.findByCode(codeOrder);
+        OrderCustomer orderCustomer = orderCustomerService.findById(id);
         if (offers.getOfferPriceByExpert().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException(String.format("The offer price for this sub-service %s is lower than the original price", orderCustomer.getSubJob().getSubJobName()));
         if (UtilDate.compareTwoDate(offers.getStartTime(), today) < 0)

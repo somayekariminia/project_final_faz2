@@ -62,20 +62,20 @@ public class CustomerController {
         return ResponseEntity.ok().body(MapStructMapper.INSTANCE.subJobListToSubJobDto(listSubJob));
     }
     @GetMapping("/view_subServices_basic")
-    public ResponseEntity<List<SubJobDto>> findSubJobABasic(@Param("nameBasic") String nameBasic){
+    public ResponseEntity<List<SubJobDto>> findSubJobABasic(@Valid @Param("nameBasic") String nameBasic){
         List<SubJob> basicJobList=basicJubService.findAllSubJobsABasicJob(nameBasic);
         return ResponseEntity.ok().body(MapStructMapper.INSTANCE.subJobListToSubJobDto(basicJobList));
     }
 
     @PostMapping("/register_order")
-    public ResponseEntity<OrderCustomerDto> registerOrder(@RequestBody OrderRegistry orderRegistry) {
+    public ResponseEntity<String> saveOrder(@Valid @RequestBody OrderRegistry orderRegistry) {
         Customer customer = customerService.login(orderRegistry.getAccountDto().getUserName(), orderRegistry.getAccountDto().getPassword());
         SubJob subJob = subJobService.findSubJobByName(orderRegistry.getNameSubJob());
         OrderCustomer orderCustomer = MapStructMapper.INSTANCE.orderCustomerDtoToOrderCustomer(orderRegistry.getOrderCustomerDto());
         orderCustomer.setSubJob(subJob);
         orderCustomer.setCustomer(customer);
         OrderCustomer orderCustomer1 = orderCustomerService.saveOrder(orderCustomer);
-        return ResponseEntity.ok().body(MapStructMapper.INSTANCE.orderCustomerToOrderCustomerDto(orderCustomer1));
+        return ResponseEntity.ok().body("save order id : "+orderCustomer1.getId()+"ok");
     }
 
 }

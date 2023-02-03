@@ -21,7 +21,6 @@ public class OffersDto {
 
     private BigDecimal offerPriceByExpert;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date startTime;
+    private String startTime;
 
 }

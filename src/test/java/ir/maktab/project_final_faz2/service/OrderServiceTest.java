@@ -4,10 +4,10 @@ import ir.maktab.project_final_faz2.data.model.entity.Address;
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.DuplicateException;
-import ir.maktab.project_final_faz2.exception.TimeOutException;
-import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.DuplicateException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.TimeOutException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class OrderServiceTest {
                     offerPrice(new BigDecimal(3000))
                     .codeOrder("order1").address(Address.builder()
                             .city("kerman").street("hashtBehesht")
-                            .pelak("512").build()).aboutWork("cleanHomeAndCooking").StartDateDoWork(dateStartC).build();
+                            .pelak("512").build()).aboutWork("cleanHomeAndCooking").startDateDoWork(dateStartC).build();
         }
     }
 

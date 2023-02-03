@@ -9,10 +9,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 @Data
-public class ExpertDto extends PersonDto {
+public class ExpertDto{
     private String firstName;
 
     private String lastName;
@@ -26,9 +27,4 @@ public class ExpertDto extends PersonDto {
     private String password;
 
     private double performance;
-
-    private SpecialtyStatus specialtyStatus;
-
-    private byte[] expertImage;
-
 }

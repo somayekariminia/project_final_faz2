@@ -11,7 +11,7 @@ import java.util.List;
 public interface OfferService {
     List<OrderCustomer> findAllOrdersForAnSubJobOfExpert(Expert expert, SubJob subJob);
 
-    Offers save(Offers offers, String codeOrder);
+    Offers save(Offers offers, Long id);
 
     List<Offers> viewAllOffersOrderByPriceAsc(String codeOrder);
 

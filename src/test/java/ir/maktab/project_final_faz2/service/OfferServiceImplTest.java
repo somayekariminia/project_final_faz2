@@ -60,7 +60,7 @@ class OfferServiceImplTest {
             arrayOffer[i].setExpert(listExpert.get(i));
         }
         return Arrays.stream(arrayOffer).map(offers -> DynamicTest.dynamicTest("save Offer", () -> {
-            Assertions.assertNotNull(offerService.save(offers, "order16").getId());
+            Assertions.assertNotNull(offerService.save(offers, 1L).getId());
         }));
     }
 
