@@ -104,7 +104,7 @@ class OfferServiceImplTest {
     @Order(3)
     @Test
     void viewAllOffersOrdersByCustomerOrderByPriceTest() {
-        List<Offers> offersForOrder = offerService.viewAllOffersOrderByPriceAsc("order16");
+        List<Offers> offersForOrder = offerService.viewAllOffersOrderByPriceAsc(77L);
         Assertions.assertTrue(offersForOrder.size() > 0);
         Comparator<Offers> comparator = Comparator.comparing(Offers::getOfferPriceByExpert);
         Assertions.assertTrue(comparator.compare(offersForOrder.get(0), offersForOrder.get(1)) <= 0);
@@ -113,7 +113,7 @@ class OfferServiceImplTest {
     @Order(3)
     @Test
     void viewAllOffersOrderByPriceDesc() {
-        List<Offers> offers = offerService.viewAllOffersOrderByPriceDesc("order16");
+        List<Offers> offers = offerService.viewAllOffersOrderByPriceDesc(77L);
         Comparator<Offers> comparator = Comparator.comparing(Offers::getOfferPriceByExpert);
         Assertions.assertTrue(comparator.compare(offers.get(0), offers.get(1)) >= 0);
     }
@@ -121,7 +121,7 @@ class OfferServiceImplTest {
     @Order(3)
     @Test
     void viewAllOffersOrdersByCustomerOrderByPerformanceExpertTest() {
-        List<Offers> offersForOrder = offerService.viewAllOrdersOrderByScoreExpertAsc("order16");
+        List<Offers> offersForOrder = offerService.viewAllOrdersOrderByScoreExpertAsc(77L);
         Assertions.assertTrue(offersForOrder.size() > 0);
         Comparator<Offers> comparator = Comparator.comparing(offers -> offers.getExpert().getPerformance());
         Assertions.assertTrue(comparator.compare(offersForOrder.get(0), offersForOrder.get(1)) <= 0);
@@ -130,7 +130,7 @@ class OfferServiceImplTest {
     @Order(3)
     @Test
     void viewAllOrdersOrderByScoreExpertDesc() {
-        List<Offers> offersOrderDesc = offerService.viewAllOrdersOrderByScoreExpertDesc("order16");
+        List<Offers> offersOrderDesc = offerService.viewAllOrdersOrderByScoreExpertDesc(77L);
         Comparator<Offers> comparator = Comparator.comparing(offers -> offers.getExpert().getPerformance());
         Assertions.assertTrue(comparator.compare(offersOrderDesc.get(0), offersOrderDesc.get(1)) >= 0);
     }

@@ -4,6 +4,7 @@ import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class Expert extends Person {
 
     @Enumerated(value = EnumType.STRING)
     private SpecialtyStatus specialtyStatus;
+
 
     @Lob
     private byte[] expertImage;

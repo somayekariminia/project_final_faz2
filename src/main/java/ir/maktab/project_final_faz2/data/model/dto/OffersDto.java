@@ -15,7 +15,7 @@ import java.util.Date;
 public class OffersDto {
     Long Id;
 
-    Duration durationWork;
+   String durationWork;
 
     boolean isAccept;
 

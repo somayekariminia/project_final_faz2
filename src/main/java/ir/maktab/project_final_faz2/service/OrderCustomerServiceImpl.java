@@ -26,6 +26,7 @@ import java.util.Objects;
 public class OrderCustomerServiceImpl implements OrderCustomerService {
     private final OrderCustomerRepository orderCustomerRepository;
     private final CustomerServiceImpl customerService;
+    private final SubJobServiceImpl subJobService;
 
     @Override
     public OrderCustomer saveOrder(OrderCustomer orderCustomer) {
@@ -52,9 +53,10 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
 
     @Override
     public List<OrderCustomer> findAllOrdersBySubJob(SubJob subJob) {
-        List<OrderCustomer> allOrderBySubJobForAExpert = orderCustomerRepository.findAllBySubJobForAExpert(subJob);
+        SubJob subJobDb= subJobService.findSubJobByName(subJob.getSubJobName());
+        List<OrderCustomer> allOrderBySubJobForAExpert = orderCustomerRepository.findAllBySubJobForAExpert(subJobDb);
         if (allOrderBySubJobForAExpert.isEmpty())
-            throw new NotFoundException(String.format("!!!No Order for This SubJob %s", subJob.getSubJobName()));
+            throw new NotFoundException(String.format("!!!No Order for This SubJob %s", subJobDb.getSubJobName()));
         return allOrderBySubJobForAExpert;
     }
 

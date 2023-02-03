@@ -7,6 +7,8 @@ import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.mapper.MapStructMapper;
+import ir.maktab.project_final_faz2.mapper.MapperServices;
+import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.AdminServiceImpl;
 import ir.maktab.project_final_faz2.service.BasicJubServiceImpl;
 import ir.maktab.project_final_faz2.service.ExpertServiceImpl;
@@ -30,13 +32,13 @@ public class AdminController {
 
     @PostMapping("/save_subJobServices")
     public ResponseEntity<String> saveSubJobs(@RequestBody SubJobDto subJobDto) {
-        SubJob subJob = subJobService.saveSubJob(MapStructMapper.INSTANCE.subJobDtoToSubJob(subJobDto));
+        SubJob subJob = subJobService.saveSubJob(MapperServices.INSTANCE.subJobDtoToSubJob(subJobDto));
         return ResponseEntity.ok().body("save " + subJob.getSubJobName() + " ok");
     }
 
     @PostMapping("/save_basicJob")
     public ResponseEntity<String> saveBasicJob(@RequestBody BasicJobDto basicJobDto) {
-        BasicJob basicJob = basicJubService.save(MapStructMapper.INSTANCE.basicJobDtoToBasicJob(basicJobDto));
+        BasicJob basicJob = basicJubService.save(MapperServices.INSTANCE.basicJobDtoToBasicJob(basicJobDto));
         return ResponseEntity.ok().body("save " + basicJob.getNameBase() + " ok");
     }
     @PutMapping("/add_expert_to_subservice")
@@ -56,12 +58,12 @@ public class AdminController {
     @GetMapping("/view_all_unapproved_specialists")
     public ResponseEntity<List<ExpertDto>> findAllUnapprovedExpert(){
         List<Expert> expertUnapproved=expertService.findAllExpertsIsNotConfirm();
-        return ResponseEntity.ok().body(MapStructMapper.INSTANCE.listExpertToExpertDto(expertUnapproved));
+        return ResponseEntity.ok().body(MapperUsers.INSTANCE.listExpertToExpertDto(expertUnapproved));
     }
     @GetMapping("/view_all_approved_specialists")
     public ResponseEntity<List<ExpertDto>> findAllApprovedExpert(){
         List<Expert> expertList=expertService.findAllExpertsApproved();
-        List<ExpertDto> expertDto = MapStructMapper.INSTANCE.listExpertToExpertDto(expertList);
+        List<ExpertDto> expertDto = MapperUsers.INSTANCE.listExpertToExpertDto(expertList);
 
         return ResponseEntity.ok().body(expertDto);
     }

@@ -70,32 +70,32 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public List<Offers> viewAllOffersOrderByPriceAsc(String orderCode) {
-        OrderCustomer orderCustomer = orderCustomerService.findByCode(orderCode);
+    public List<Offers> viewAllOffersOrderByPriceAsc(Long id) {
+        OrderCustomer orderCustomer = orderCustomerService.findById(id);
         List<Offers> allOffersAOrder = offerRepository.findAllByOrderCustomerOrderByPriceOrder(orderCustomer);
         if (allOffersAOrder.isEmpty())
-            throw new NotFoundException(String.format("Not Found offer for this order %s !!", orderCode));
+            throw new NotFoundException(String.format("Not Found offer for this order %s !!", id));
         return allOffersAOrder;
     }
 
     @Override
-    public List<Offers> viewAllOffersOrderByPriceDesc(String orderCode) {
-        List<Offers> offersAsc = viewAllOffersOrderByPriceAsc(orderCode);
+    public List<Offers> viewAllOffersOrderByPriceDesc(Long id) {
+        List<Offers> offersAsc = viewAllOffersOrderByPriceAsc(id);
         return Lists.reverse(offersAsc);
     }
 
     @Override
-    public List<Offers> viewAllOrdersOrderByScoreExpertAsc(String orderCode) {
-        List<Offers> allOffersAOrder = viewAllOffersOrderByPriceAsc(orderCode);
+    public List<Offers> viewAllOrdersOrderByScoreExpertAsc(Long id) {
+        List<Offers> allOffersAOrder = viewAllOffersOrderByPriceAsc(id);
         List<Offers> orderByScore = allOffersAOrder.stream().sorted(Comparator.comparing(offers -> offers.getExpert().getPerformance())).toList();
         if (orderByScore.isEmpty())
-            throw new NotFoundException(String.format("Not Found offer for this order %s !!", orderCode));
+            throw new NotFoundException(String.format("Not Found offer for this order %s !!", id));
         return orderByScore;
     }
 
     @Override
-    public List<Offers> viewAllOrdersOrderByScoreExpertDesc(String orderCode) {
-        List<Offers> offersAsc = viewAllOrdersOrderByScoreExpertAsc(orderCode);
+    public List<Offers> viewAllOrdersOrderByScoreExpertDesc(Long id) {
+        List<Offers> offersAsc = viewAllOrdersOrderByScoreExpertAsc(id);
         return Lists.reverse(offersAsc);
     }
 
