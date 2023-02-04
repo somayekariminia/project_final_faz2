@@ -1,10 +1,10 @@
 package ir.maktab.project_final_faz2.data.model.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,14 +18,11 @@ public class CreditDto {
     private Long id;
 
     @NotNull
+    @Pattern(regexp = "^[0-9]{16}")
     String numberCard;
-    @Min(3)
-    @Max(4)
     @NotNull
+    @Pattern(regexp = "^[0-9]{3,4}")
     String cvv2;
-
-    @JsonFormat(pattern="yyyy-MM-dd")
     Date expiredDate;
-
     private BigDecimal balance;
 }

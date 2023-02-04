@@ -10,10 +10,10 @@ import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,10 +79,11 @@ public class CustomerController {
         OrderCustomer orderCustomer1 = orderCustomerService.saveOrder(orderCustomer);
         return ResponseEntity.ok().body("save order id : " + orderCustomer1.getId() + "ok");
     }
+
     @GetMapping("/view_Offers")
     public ResponseEntity<List<OffersDto>> findAllOffers(@RequestParam("orderId") Long id, @RequestParam("numberSelect") int numberSelect) {
         List<Offers> offers = new ArrayList<>();
-        StatusSort statusSort=StatusSort.values()[numberSelect];
+        StatusSort statusSort = StatusSort.values()[numberSelect];
         switch (statusSort) {
             case PRICE_ASC -> {
                 offers = offerService.viewAllOffersOrderByPriceAsc(id);
@@ -103,8 +104,29 @@ public class CustomerController {
         }
         return ResponseEntity.ok().body(MapperOffer.INSTANCE.listOfferToOfferDto(offers));
     }
-    public ResponseEntity<String>ChangeState(){
 
+    @GetMapping("/select_offer")
+    public ResponseEntity<String> SelectOffer(@RequestParam Long orderId, @RequestParam Long offerId) {
+        Offers offer = offerService.findById(offerId);
+        OrderCustomer order = orderCustomerService.findById(orderId);
+        Offers offers = offerService.selectAnOfferByCustomer(offer, order);
+        return ResponseEntity.ok().body("select "+ offers.getId());
+    }
+
+    @PutMapping("/change_state")
+    public ResponseEntity<String> ChangeState(@RequestParam("offerId") Long offerId, @RequestParam("orderId") Long orderId) {
+        Offers offer = offerService.findById(offerId);
+        OrderCustomer order = orderCustomerService.findById(orderId);
+        Offers offers = offerService.selectAnOfferByCustomer(offer, order);
+        return ResponseEntity.ok().body("order " + offers.getId() + " change state");
+    }
+
+    @PutMapping("/endWork")
+    public ResponseEntity<String> finalDoWork(@RequestParam("orderId") Long orderId, @RequestParam("dateDoWord") String dateDoWord) {
+        OrderCustomer order = orderCustomerService.findById(orderId);
+        LocalDateTime parse = LocalDateTime.parse(dateDoWord);
+        offerService.endDoWork(order, parse);
+        return ResponseEntity.ok().body("order in date  " + order.getEndDateDoWork() + "  end");
     }
 
 }

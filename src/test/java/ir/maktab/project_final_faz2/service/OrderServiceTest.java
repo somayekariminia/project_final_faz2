@@ -41,12 +41,12 @@ public class OrderServiceTest {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            Date dateStartC = UtilDate.changeLocalDateToDate(LocalDate.of(2023, 2, 1));
+            Date dateStartC = UtilDate.changeLocalDateToDate(LocalDate.of(2023, 2, 9));
             orderCustomer = OrderCustomer.builder().
                     offerPrice(new BigDecimal(3000))
                     .codeOrder("order1").address(Address.builder()
                             .city("kerman").street("hashtBehesht")
-                            .pelak("512").build()).aboutWork("cleanHomeAndCooking").startDateDoWork(dateStartC).build();
+                            .pelaq("512").build()).aboutWork("cleanHomeAndCooking").startDateDoWork(dateStartC).build();
         }
     }
 
