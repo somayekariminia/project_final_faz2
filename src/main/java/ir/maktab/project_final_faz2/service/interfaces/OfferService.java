@@ -11,9 +11,9 @@ import java.util.List;
 public interface OfferService {
     List<OrderCustomer> findAllOrdersForAnSubJobOfExpert(Expert expert, SubJob subJob);
 
-    Offers save(Offers offers, String codeOrder);
+    Offers save(Offers offers, Long id);
 
-    List<Offers> viewAllOffersOrderByPriceAsc(String codeOrder);
+    List<Offers> viewAllOffersOrderByPriceAsc(Long id);
 
     Offers selectAnOfferByCustomer(Offers offers, OrderCustomer orderCustomer);
 
@@ -25,7 +25,12 @@ public interface OfferService {
 
     Offers findOffersIsAccept(OrderCustomer orderCustomer);
 
-    List<Offers> viewAllOrdersOrderByScoreExpertAsc(String orderCode);
+    List<Offers> viewAllOrdersOrderByScoreExpertAsc(Long id );
 
     List<SubJob> findAllSubJubExpert(Expert expert);
+
+    public List<Offers> viewAllOrdersOrderByScoreExpertDesc(Long id);
+
+    public List<Offers> viewAllOffersOrderByPriceDesc(Long id);
+
 }

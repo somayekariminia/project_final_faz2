@@ -6,9 +6,9 @@ import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.AdminRepository;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.RepeatException;
-import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.DuplicateException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.interfaces.AdminService;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +39,7 @@ public class AdminServiceImpl implements AdminService {
         if (expertDb.getSpecialtyStatus().equals(SpecialtyStatus.NewState))
             throw new ValidationException(String.format("the Expert %s isNot confirm " + expertDb.getEmail()));
         if (expertDb.getServicesList().stream().anyMatch(subJob1 -> subJob1.getSubJobName().equals(subJobDb.getSubJobName())))
-            throw new RepeatException(String.format("%s already exist ", subJob.getSubJobName()));
+            throw new DuplicateException(String.format("%s already exist ", subJob.getSubJobName()));
         expertDb.getServicesList().add(subJobDb);
         expertRepository.save(expertDb);
     }
@@ -57,6 +57,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Admin changePassword(String userName, String passwordOld, String newPassword) {
+        if (passwordOld.equals(newPassword))
+            throw new ValidationException("passwordNew same is old password");
         Admin admin = adminRepository.findAdminByUserName(userName).orElseThrow(() -> new NotFoundException(String.format("Not fount username %s", userName)));
         admin.setPassword(newPassword);
         adminRepository.save(admin);
@@ -64,6 +66,10 @@ public class AdminServiceImpl implements AdminService {
         if (!newAdmin.getPassword().equals(newPassword))
             throw new NotFoundException("Password is invalid!!!");
         return newAdmin;
+    }
+
+    public Admin findByUserName(String userName) {
+        return adminRepository.findAdminByUserName(userName).orElseThrow(() -> new NotFoundException(String.format("Not fount username %s", userName)));
     }
 
     @Override

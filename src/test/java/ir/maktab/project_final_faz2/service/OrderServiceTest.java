@@ -1,12 +1,13 @@
 package ir.maktab.project_final_faz2.service;
 
 import ir.maktab.project_final_faz2.data.model.entity.Address;
+import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.RepeatException;
-import ir.maktab.project_final_faz2.exception.TimeOutException;
-import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.DuplicateException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.TimeOutException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +41,12 @@ public class OrderServiceTest {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            Date dateStartC = UtilDate.changeLocalDateToDate(LocalDate.of(2023, 2, 1));
+            Date dateStartC = UtilDate.changeLocalDateToDate(LocalDate.of(2023, 2, 9));
             orderCustomer = OrderCustomer.builder().
                     offerPrice(new BigDecimal(3000))
                     .codeOrder("order1").address(Address.builder()
                             .city("kerman").street("hashtBehesht")
-                            .pelak("512").build()).aboutWork("cleanHomeAndCooking").StartDateDoWork(dateStartC).build();
+                            .pelaq("512").build()).aboutWork("cleanHomeAndCooking").startDateDoWork(dateStartC).build();
         }
     }
 
@@ -61,7 +62,7 @@ public class OrderServiceTest {
     @Order(2)
     @Test
     void testExceptionSaveDuplicateOrder() {
-        Exception exception = Assertions.assertThrows(RepeatException.class, () -> orderCustomerService.saveOrder(orderCustomer));
+        Exception exception = Assertions.assertThrows(DuplicateException.class, () -> orderCustomerService.saveOrder(orderCustomer));
         Assertions.assertEquals(String.format("the order is exist already to code: %s", orderCustomer.getCodeOrder()), exception.getMessage());
     }
 
@@ -124,7 +125,16 @@ public class OrderServiceTest {
     @Order(10)
     @Test
     void findOrdersCustomer() {
-        List<OrderCustomer> listOrdersCustomer = orderCustomerService.findOrdersCustomer(customerService.findByUserName("tara@gmail.com"));
+        Customer customer = customerService.findByUserName("tara@gmail.com");
+        List<OrderCustomer> listOrdersCustomer = orderCustomerService.findOrdersCustomer(customer);
         Assertions.assertTrue(listOrdersCustomer.size() > 0);
+    }
+
+    @Order(11)
+    @Test
+    void notFoundOrdersCustomer() {
+        Customer customer = customerService.findByUserName("shams@gmail.com");
+        Exception exception = Assertions.assertThrows(NotFoundException.class, () -> orderCustomerService.findOrdersCustomer(customer));
+        Assertions.assertEquals(String.format("there aren't order for this Customer %s", customer.getEmail()), exception.getMessage());
     }
 }

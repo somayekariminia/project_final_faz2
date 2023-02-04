@@ -8,10 +8,10 @@ import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
-import ir.maktab.project_final_faz2.exception.NotAcceptedException;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.TimeOutException;
-import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.NotAcceptedException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.TimeOutException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.interfaces.OfferService;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
@@ -45,7 +45,7 @@ public class OfferServiceImpl implements OfferService {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
         if (!expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
             throw new ValidationException(String.format("Expert %s is not Confirm !!! ", expertDb.getEmail()));
-        if (expertDb.getServicesList().stream().noneMatch(subJob1 -> subJob1.getId().equals(subJob.getId())))
+        if (expertDb.getServicesList().stream().noneMatch(subJob1 -> subJob1.getSubJobName().equals(subJob.getSubJobName())))
             throw new NotFoundException(String.format("this %s is Not Exist For this Expert", subJob.getSubJobName()));
         List<OrderCustomer> list = orderCustomerService.findAllOrdersBySubJob(subJob);
         if (list.isEmpty())
@@ -55,9 +55,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     @Transactional
-    public Offers save(Offers offers, String codeOrder) {
+    public Offers save(Offers offers, Long id) {
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
-        OrderCustomer orderCustomer = orderCustomerService.findByCode(codeOrder);
+        OrderCustomer orderCustomer = orderCustomerService.findById(id);
         if (offers.getOfferPriceByExpert().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException(String.format("The offer price for this sub-service %s is lower than the original price", orderCustomer.getSubJob().getSubJobName()));
         if (UtilDate.compareTwoDate(offers.getStartTime(), today) < 0)
@@ -70,30 +70,32 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public List<Offers> viewAllOffersOrderByPriceAsc(String orderCode) {
-        OrderCustomer orderCustomer = orderCustomerService.findByCode(orderCode);
+    public List<Offers> viewAllOffersOrderByPriceAsc(Long id) {
+        OrderCustomer orderCustomer = orderCustomerService.findById(id);
         List<Offers> allOffersAOrder = offerRepository.findAllByOrderCustomerOrderByPriceOrder(orderCustomer);
         if (allOffersAOrder.isEmpty())
-            throw new NotFoundException(String.format("Not Found offer for this order %s !!", orderCode));
+            throw new NotFoundException(String.format("Not Found offer for this order %s !!", id));
         return allOffersAOrder;
     }
 
-    public List<Offers> viewAllOffersOrderByPriceDesc(String orderCode) {
-        List<Offers> offersAsc = viewAllOffersOrderByPriceAsc(orderCode);
+    @Override
+    public List<Offers> viewAllOffersOrderByPriceDesc(Long id) {
+        List<Offers> offersAsc = viewAllOffersOrderByPriceAsc(id);
         return Lists.reverse(offersAsc);
     }
 
     @Override
-    public List<Offers> viewAllOrdersOrderByScoreExpertAsc(String orderCode) {
-        List<Offers> allOffersAOrder = viewAllOffersOrderByPriceAsc(orderCode);
+    public List<Offers> viewAllOrdersOrderByScoreExpertAsc(Long id) {
+        List<Offers> allOffersAOrder = viewAllOffersOrderByPriceAsc(id);
         List<Offers> orderByScore = allOffersAOrder.stream().sorted(Comparator.comparing(offers -> offers.getExpert().getPerformance())).toList();
         if (orderByScore.isEmpty())
-            throw new NotFoundException(String.format("Not Found offer for this order %s !!", orderCode));
+            throw new NotFoundException(String.format("Not Found offer for this order %s !!", id));
         return orderByScore;
     }
 
-    public List<Offers> viewAllOrdersOrderByScoreExpertDesc(String orderCode) {
-        List<Offers> offersAsc = viewAllOrdersOrderByScoreExpertAsc(orderCode);
+    @Override
+    public List<Offers> viewAllOrdersOrderByScoreExpertDesc(Long id) {
+        List<Offers> offersAsc = viewAllOrdersOrderByScoreExpertAsc(id);
         return Lists.reverse(offersAsc);
     }
 

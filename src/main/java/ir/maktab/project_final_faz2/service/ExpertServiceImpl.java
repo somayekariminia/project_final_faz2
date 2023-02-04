@@ -3,9 +3,9 @@ package ir.maktab.project_final_faz2.service;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.RepeatException;
-import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.DuplicateException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.interfaces.ExpertService;
 import ir.maktab.project_final_faz2.util.util.UtilImage;
 import ir.maktab.project_final_faz2.util.util.ValidationInput;
@@ -25,7 +25,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public Expert save(Expert expert, File file) {
         if (expertRepository.findByEmail(expert.getEmail()).isPresent())
-            throw new RepeatException(String.format("already Exist is Expert %s ", expert.getEmail()));
+            throw new DuplicateException(String.format("already Exist is Expert %s ", expert.getEmail()));
         validateInfoPerson(expert);
         expert.setExpertImage(UtilImage.validateImage(file));
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);
@@ -53,11 +53,13 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public Expert changePassword(String userName, String passwordOld, String newPassword) {
+        if (passwordOld.equals(newPassword))
+            throw new ValidationException("passwordNew same is old password");
         Expert expert = login(userName, passwordOld);
         expert.setPassword(newPassword);
         expertRepository.save(expert);
         Expert newExpert = findByUserName(userName);
-        if (newExpert.getPassword().equals(newPassword))
+        if (!newExpert.getPassword().equals(newPassword))
             throw new NotFoundException("Password is invalid");
         return newExpert;
     }
@@ -83,7 +85,7 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
 
     public List<Expert> findAllExpertsApproved() {
-        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsNtConfirm(SpecialtyStatus.Confirmed);
+        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsConfirm(SpecialtyStatus.Confirmed);
         if (allExpertIsNtConfirm.isEmpty())
             throw new NotFoundException("There arent Expert Confirmed !!!!!!");
         return allExpertIsNtConfirm;
@@ -91,7 +93,7 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Override
     public List<Expert> findAllExpertsIsNotConfirm() {
-        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsNtConfirm(SpecialtyStatus.NewState);
+        List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsConfirm(SpecialtyStatus.NewState);
         if (allExpertIsNtConfirm.isEmpty())
             throw new NotFoundException("There arent Experts Is Not Confirm!!!!!!!");
         return allExpertIsNtConfirm;

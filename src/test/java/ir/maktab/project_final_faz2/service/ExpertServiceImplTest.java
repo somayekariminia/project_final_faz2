@@ -1,9 +1,9 @@
 package ir.maktab.project_final_faz2.service;
 
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.RepeatException;
-import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.DuplicateException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
@@ -69,7 +69,7 @@ class ExpertServiceImplTest {
     @Order(2)
     @Test
     void saveDuplicateExpert() {
-        Exception exception = Assertions.assertThrows(RepeatException.class, () -> expertService.save(expert, file));
+        Exception exception = Assertions.assertThrows(DuplicateException.class, () -> expertService.save(expert, file));
         Assertions.assertEquals(String.format("already Exist is Expert %s ", expert.getEmail()), exception.getMessage());
     }
 

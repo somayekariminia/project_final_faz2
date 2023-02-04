@@ -5,10 +5,10 @@ import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OrderCustomerRepository;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.RepeatException;
-import ir.maktab.project_final_faz2.exception.TimeOutException;
-import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.DuplicateException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.TimeOutException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.interfaces.OrderCustomerService;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
@@ -26,11 +26,12 @@ import java.util.Objects;
 public class OrderCustomerServiceImpl implements OrderCustomerService {
     private final OrderCustomerRepository orderCustomerRepository;
     private final CustomerServiceImpl customerService;
+    private final SubJobServiceImpl subJobService;
 
     @Override
     public OrderCustomer saveOrder(OrderCustomer orderCustomer) {
         if (orderCustomerRepository.findByCodeOrder(orderCustomer.getCodeOrder()).isPresent())
-            throw new RepeatException(String.format("the order is exist already to code: %s", orderCustomer.getCodeOrder()));
+            throw new DuplicateException(String.format("the order is exist already to code: %s", orderCustomer.getCodeOrder()));
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         if (orderCustomer.getOfferPrice().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException(String.format("The offer price by Customer for this sub-service %s is lower than the original price", orderCustomer.getSubJob().getSubJobName()));
@@ -52,9 +53,10 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
 
     @Override
     public List<OrderCustomer> findAllOrdersBySubJob(SubJob subJob) {
-        List<OrderCustomer> allOrderBySubJobForAExpert = orderCustomerRepository.findAllBySubJobForAExpert(subJob);
+        SubJob subJobDb= subJobService.findSubJobByName(subJob.getSubJobName());
+        List<OrderCustomer> allOrderBySubJobForAExpert = orderCustomerRepository.findAllBySubJobForAExpert(subJobDb);
         if (allOrderBySubJobForAExpert.isEmpty())
-            throw new NotFoundException(String.format("!!!No Order for This SubJob %s", subJob.getSubJobName()));
+            throw new NotFoundException(String.format("!!!No Order for This SubJob %s", subJobDb.getSubJobName()));
         return allOrderBySubJobForAExpert;
     }
 

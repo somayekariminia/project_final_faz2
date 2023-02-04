@@ -47,9 +47,9 @@ class OfferServiceImplTest {
     @Order(1)
     @TestFactory
     Stream<DynamicTest> setOffer() {
-        LocalDate start = LocalDate.of(2023, 02, 1);
-        LocalDate start1 = LocalDate.of(2023, 02, 3);
-        LocalDate start2 = LocalDate.of(2023, 02, 2);
+        LocalDate start = LocalDate.of(2023, 2, 8);
+        LocalDate start1 = LocalDate.of(2023, 2, 9);
+        LocalDate start2 = LocalDate.of(2023, 2, 11);
         Offers[] arrayOffer = new Offers[3];
         arrayOffer[0] = Offers.builder().offerPriceByExpert(new BigDecimal(4000)).startTime(UtilDate.changeLocalDateToDate(start)).durationWork(Duration.ZERO.plusHours(2).plusMillis(30)).build();
         arrayOffer[1] = Offers.builder().offerPriceByExpert(new BigDecimal(4500)).startTime(UtilDate.changeLocalDateToDate(start1)).durationWork(Duration.ZERO.plusHours(2).plusMillis(30)).build();
@@ -59,19 +59,16 @@ class OfferServiceImplTest {
         for (int i = 0; i <= 2; i++) {
             arrayOffer[i].setExpert(listExpert.get(i));
         }
-
-        return Arrays.stream(arrayOffer).map(offers -> {
-            return DynamicTest.dynamicTest("save Offer", () -> {
-                Assertions.assertNotNull(offerService.save(offers, "order16").getId());
-            });
-        });
+        return Arrays.stream(arrayOffer).map(offers -> DynamicTest.dynamicTest("save Offer", () -> {
+            Assertions.assertNotNull(offerService.save(offers, 77L).getId());
+        }));
     }
 
     @Order(4)
     @Test
     void selectAnOfferByCustomer() {
         Offers offerExist = offerService.findById(2L);
-        OrderCustomer orderCustomer = orderCustomerService.findByCode("order16");
+        OrderCustomer orderCustomer = orderCustomerService.findByCode("order27");
         Offers offers = offerService.selectAnOfferByCustomer(offerExist, orderCustomer);
         Assertions.assertTrue(offers.isAccept());
 
@@ -81,9 +78,9 @@ class OfferServiceImplTest {
     @Test
     void changeOrderToStartByCustomer() {
         Offers offerExist = offerService.findById(2L);
-        OrderCustomer orderCustomer = orderCustomerService.findByCode("order16");
+        OrderCustomer orderCustomer = orderCustomerService.findByCode("order27");
         offerService.changeOrderToStartByCustomer(offerExist, orderCustomer);
-        OrderCustomer orderCustomerNew = orderCustomerService.findByCode("order16");
+        OrderCustomer orderCustomerNew = orderCustomerService.findByCode("order27");
         Assertions.assertEquals(orderCustomerNew.getOrderStatus(), OrderStatus.Started);
     }
 
@@ -99,7 +96,7 @@ class OfferServiceImplTest {
     @Order(7)
     @Test
     void findOfferIsAccept() {
-        OrderCustomer orderCustomer = orderCustomerService.findByCode("order16");
+        OrderCustomer orderCustomer = orderCustomerService.findByCode("order27");
         Offers offersIsAccept = offerService.findOffersIsAccept(orderCustomer);
         Assertions.assertTrue(offersIsAccept.isAccept());
     }
@@ -107,7 +104,7 @@ class OfferServiceImplTest {
     @Order(3)
     @Test
     void viewAllOffersOrdersByCustomerOrderByPriceTest() {
-        List<Offers> offersForOrder = offerService.viewAllOffersOrderByPriceAsc("order16");
+        List<Offers> offersForOrder = offerService.viewAllOffersOrderByPriceAsc(77L);
         Assertions.assertTrue(offersForOrder.size() > 0);
         Comparator<Offers> comparator = Comparator.comparing(Offers::getOfferPriceByExpert);
         Assertions.assertTrue(comparator.compare(offersForOrder.get(0), offersForOrder.get(1)) <= 0);
@@ -116,7 +113,7 @@ class OfferServiceImplTest {
     @Order(3)
     @Test
     void viewAllOffersOrderByPriceDesc() {
-        List<Offers> offers = offerService.viewAllOffersOrderByPriceDesc("order16");
+        List<Offers> offers = offerService.viewAllOffersOrderByPriceDesc(77L);
         Comparator<Offers> comparator = Comparator.comparing(Offers::getOfferPriceByExpert);
         Assertions.assertTrue(comparator.compare(offers.get(0), offers.get(1)) >= 0);
     }
@@ -124,7 +121,7 @@ class OfferServiceImplTest {
     @Order(3)
     @Test
     void viewAllOffersOrdersByCustomerOrderByPerformanceExpertTest() {
-        List<Offers> offersForOrder = offerService.viewAllOrdersOrderByScoreExpertAsc("order16");
+        List<Offers> offersForOrder = offerService.viewAllOrdersOrderByScoreExpertAsc(77L);
         Assertions.assertTrue(offersForOrder.size() > 0);
         Comparator<Offers> comparator = Comparator.comparing(offers -> offers.getExpert().getPerformance());
         Assertions.assertTrue(comparator.compare(offersForOrder.get(0), offersForOrder.get(1)) <= 0);
@@ -133,12 +130,12 @@ class OfferServiceImplTest {
     @Order(3)
     @Test
     void viewAllOrdersOrderByScoreExpertDesc() {
-        List<Offers> offersOrderDesc = offerService.viewAllOrdersOrderByScoreExpertDesc("order16");
+        List<Offers> offersOrderDesc = offerService.viewAllOrdersOrderByScoreExpertDesc(77L);
         Comparator<Offers> comparator = Comparator.comparing(offers -> offers.getExpert().getPerformance());
         Assertions.assertTrue(comparator.compare(offersOrderDesc.get(0), offersOrderDesc.get(1)) >= 0);
     }
 
-    @Order(9)
+    @Order(4)
     @Test
     void findAllOrdersForAnSubJobOfExpert() {
         Expert expert = expertService.findById(1111L);

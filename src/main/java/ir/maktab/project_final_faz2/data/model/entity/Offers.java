@@ -19,12 +19,17 @@ public class Offers {
     Long Id;
 
     Duration durationWork;
+
     boolean isAccept;
+
     @ManyToOne
     OrderCustomer orderCustomer;
+
     private BigDecimal offerPriceByExpert;
+
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date startTime;
+
     @OneToOne
     private Expert expert;
 }
