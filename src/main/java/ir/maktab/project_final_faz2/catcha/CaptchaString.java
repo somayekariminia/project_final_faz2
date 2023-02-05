@@ -1,6 +1,6 @@
-package catcha;
+package ir.maktab.project_final_faz2.catcha;
 
-public class Captcha {
+public class CaptchaString {
             public static String Generate(int len){
                 String str = "abcdefghijklmnopqrstuvwxyzABCD"
                         +"EFGHIJKLMNOPQRSTUVWXYZ0123456789";

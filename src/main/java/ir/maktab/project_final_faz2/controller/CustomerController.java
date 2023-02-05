@@ -3,22 +3,23 @@ package ir.maktab.project_final_faz2.controller;
 import ir.maktab.project_final_faz2.data.model.dto.*;
 import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.StatusSort;
-import ir.maktab.project_final_faz2.mapper.MapperOffer;
-import ir.maktab.project_final_faz2.mapper.MapperOrder;
-import ir.maktab.project_final_faz2.mapper.MapperServices;
-import ir.maktab.project_final_faz2.mapper.MapperUsers;
+import ir.maktab.project_final_faz2.mapper.*;
 import ir.maktab.project_final_faz2.service.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-public class CustomerController {
+public class
+CustomerController {
     @Autowired
     private CustomerServiceImpl customerService;
     @Autowired
@@ -29,6 +30,9 @@ public class CustomerController {
     private OrderCustomerServiceImpl orderCustomerService;
     @Autowired
     private OfferServiceImpl offerService;
+    @Autowired
+    CreditServiceImpl creditService;
+    private String message;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@Valid @RequestBody CustomerDto customerDto) {
@@ -101,6 +105,7 @@ public class CustomerController {
                 offers = offerService.viewAllOrdersOrderByScoreExpertDesc(id);
             }
 
+
         }
         return ResponseEntity.ok().body(MapperOffer.INSTANCE.listOfferToOfferDto(offers));
     }
@@ -110,7 +115,7 @@ public class CustomerController {
         Offers offer = offerService.findById(offerId);
         OrderCustomer order = orderCustomerService.findById(orderId);
         Offers offers = offerService.selectAnOfferByCustomer(offer, order);
-        return ResponseEntity.ok().body("select "+ offers.getId());
+        return ResponseEntity.ok().body("select " + offers.getId());
     }
 
     @PutMapping("/change_state")
@@ -128,5 +133,14 @@ public class CustomerController {
         offerService.endDoWork(order, parse);
         return ResponseEntity.ok().body("order in date  " + order.getEndDateDoWork() + "  end");
     }
+
+
+    @GetMapping("/paymentOfCredit")
+    public ResponseEntity<String> paymentOfCredit(@RequestParam("amount") BigDecimal bigDecimal, @RequestParam("userName") String userName) {
+        Customer customer = customerService.findByUserName(userName);
+        Credit credit = creditService.payOfCredit(bigDecimal, customer);
+        return ResponseEntity.ok().body("your balance is" + credit.getBalance());
+    }
+
 
 }

@@ -29,4 +29,5 @@ public class Credit {
     Date expiredDate;
 
     private BigDecimal balance;
+    private String captcha;
 }

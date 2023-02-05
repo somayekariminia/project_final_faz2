@@ -19,6 +19,7 @@ public interface MapStructMapper {
     ReviewDto reviewToReviewDto(Review review);
 
     Review reviewDtoToReview(ReviewDto reviewDto);
+    Credit creditDtoToCredit(CreditDto creditDto);
 
 
 
