@@ -2,32 +2,38 @@ package ir.maktab.project_final_faz2.service;
 
 import ir.maktab.project_final_faz2.data.model.entity.Credit;
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
+import ir.maktab.project_final_faz2.data.model.entity.Expert;
+import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.enums.exception.Insufficient;
 import ir.maktab.project_final_faz2.data.model.enums.exception.TimeOutException;
-import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
 import ir.maktab.project_final_faz2.data.model.repository.CreditRepository;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Service
+
 public class CreditServiceImpl {
 
     private final CreditRepository creditRepository;
+    private final ExpertServiceImpl expertService;
+    private final OfferServiceImpl offerService;
 
-    public CreditServiceImpl(CreditRepository creditRepository) {
+    public CreditServiceImpl(CreditRepository creditRepository, ExpertServiceImpl expertService, OfferServiceImpl offerService) {
         this.creditRepository = creditRepository;
+        this.expertService = expertService;
+        this.offerService = offerService;
     }
 
-    public boolean checkCredit(Credit credit, Customer customer) {
-        if (credit.getNumberCard().equals(customer.getCredit().getNumberCard()))
-            throw new ValidationException("number Card is error");
-        if (credit.getCvv2().equals(customer.getCredit().getCvv2()))
-            throw new ValidationException("cvv2 is error");
-        if (credit.getExpiredDate().after(UtilDate.changeLocalDateToDate(LocalDate.now())))
+    @Transactional
+    public boolean checkCredit(LocalDate expiredDate, OrderCustomer orderCustomer) {
+        if (expiredDate.isBefore((LocalDate.now())))
             throw new TimeOutException("expiredDate is Expired");
+        Expert expert = offerService.findOffersIsAccept(orderCustomer).getExpert();
+        expertService.withdrawToCreditExpert(orderCustomer.getOfferPrice(), expert);
         return true;
     }
 
@@ -39,4 +45,6 @@ public class CreditServiceImpl {
         customer.getCredit().setBalance(balance);
         return creditRepository.save(customer.getCredit());
     }
+
+
 }

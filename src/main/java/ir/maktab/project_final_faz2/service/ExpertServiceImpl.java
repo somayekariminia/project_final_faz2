@@ -1,12 +1,17 @@
 package ir.maktab.project_final_faz2.service;
 
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
+import ir.maktab.project_final_faz2.data.model.entity.Offers;
+import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
+import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
-import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
-import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
 import ir.maktab.project_final_faz2.data.model.enums.exception.DuplicateException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.TimeOutException;
 import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
+import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
 import ir.maktab.project_final_faz2.service.interfaces.ExpertService;
+import ir.maktab.project_final_faz2.util.util.UtilDate;
 import ir.maktab.project_final_faz2.util.util.UtilImage;
 import ir.maktab.project_final_faz2.util.util.ValidationInput;
 import jakarta.transaction.Transactional;
@@ -14,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -21,6 +28,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExpertServiceImpl implements ExpertService {
     private final ExpertRepository expertRepository;
+    private OrderCustomerServiceImpl orderCustomerService;
+
 
     @Override
     public Expert save(Expert expert, File file) {
@@ -104,5 +113,26 @@ public class ExpertServiceImpl implements ExpertService {
         Expert expert = findByUserName(userName);
         return UtilImage.getFileImage(expert.getExpertImage(), file);
     }
+
+
+
+    public Expert disableExpert(Expert expert) {
+        Expert expertDb = findByUserName(expert.getEmail());
+        if (expertDb.getPerformance() > 0)
+            throw new ValidationException("your account is Active");
+        expertDb.setActive(false);
+        return expertRepository.save(expertDb);
+    }
+    public void withdrawToCreditExpert(BigDecimal amount,Expert expert){
+        Expert expertDb=findByUserName(expert.getEmail());
+        if(!expertDb.isActive())
+            throw new ValidationException("Account expert is isNotActive");
+        expertDb.getCredit().setBalance(BigDecimal.valueOf(0.7 * amount.doubleValue()));
+        expertRepository.save(expertDb);
+    }
+    public void updateExpert(Expert expert){
+        expertRepository.save(expert);
+    }
+
 
 }

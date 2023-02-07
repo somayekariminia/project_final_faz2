@@ -46,7 +46,7 @@ public class OrderServiceTest {
                     offerPrice(new BigDecimal(3000))
                     .codeOrder("order1").address(Address.builder()
                             .city("kerman").street("hashtBehesht")
-                            .pelaq("512").build()).aboutWork("cleanHomeAndCooking").startDateDoWork(dateStartC).build();
+                            .pelak("512").build()).aboutWork("cleanHomeAndCooking").startDateDoWork(dateStartC).build();
         }
     }
 

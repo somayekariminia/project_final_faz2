@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Employee</title>
+    <<meta charset="UTF-8" >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="${path}/webjars/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script>
+        function autoRefresh() {
+            window.location = window.location.href;
+        }
+        setInterval('autoRefresh()', 600);
+    </script>
+
+    <style>
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: gray;
+        }
+
+        .container {
+            width-max: 250px;
+            height: 700px;
+            background-color: powderblue;
+            top: 50%;
+            left: 50%;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row-reverse;
+            gap: 80px;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .main-container * {
+            margin-top: 10px;
+        }
+
+        input {
+            border-radius: 10px;
+            border: none;
+        }
+
+
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="${path}/webjars/bootstrap/3.3.5/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong><span class="glyphicon glyphicon-picture"></span> creditCard</strong>
+                </div>
+                <div class="panel-body">
+                    <form method="" action="" class="form-signin form-horizontal"
+                          commandName="creditCardDto">
+                        <if test="${message ne null}">
+                            <div class="alert alert-danger">
+                                <h5>payment</h5>
+                            </div>
+                        </if>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <label for="orderId">id_order: </label>
+                                <div class="input-group input-group-md">
+										<span class="input-group-addon">
+											<span class="glyphicon glyphicon-user"></span>
+										</span>
+                                    <input class="form-control" id="orderId" placeholder="Enter order" type="text"
+                                           />
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <label for="numberCard">numberCard: </label>
+                                <div class="input-group input-group-md">
+
+										<span class="input-group-addon">
+											<span class="glyphicon glyphicon-info-sign"></span>
+										</span>
+                                    <input class="form-control" type="text" id="numberCard"
+                                           placeholder="Enter numberCard"
+                                           required="true"/>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <label for="cvv2">cvv2</label>
+                                <div class="input-group input-group-md">
+										<span class="input-group-addon">
+											<span class="glyphicon glyphicon-info-sign"></span>
+										</span>
+                                    <input class="form-control" type="text" id="cvv2" placeholder="Enter cvv2"
+                                           required="true"/>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="dateExpired">dateExpired </label>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-md">
+
+										<span class="input-group-addon">
+											<span class="glyphicon glyphicon-calendar"></span>
+										</span>
+                                        <input type="text" placeholder="yyyy-mm-dd" class="form-control" id="dateExpired"
+                                               required="true"/>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        <br>
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <img alt="captcha" src="/captcha-servlet">
+                            </div>
+                            <label for="captcha"> enter code </label>
+                            <div class="col-md-6">
+
+                                <input class="form-control" type="text" id="captcha" placeholder="Enter Captcha"
+                                       required="true"/>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <input type="submit" id="submit" class="btn btn-default btn-primary">
+                            <span class="glyphicon glyphicon-ok-sign"></span>
+                            </input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+        integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"
+        integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+<script>
+    $("#submit").on('click', function (e) {
+        e.preventDefault();
+        const orderId = document.getElementById("orderId");
+        const numberCard = document.getElementById("numberCard");
+        const cvv2 = document.getElementById("cvv2");
+        const dateExpired = document.getElementById("dateExpired");
+        const captcha = document.getElementById("captcha");
+
+        const form = new FormData();
+        form.append("numberCard", numberCard.value);
+        form.append("cvv2", cvv2.value);
+        form.append("orderId", orderId.value);
+        form.append("dateExpired", dateExpired.value);
+        form.append("captcha", captcha.value);
+
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:7070/paymentOfCard",
+            data: form,
+            processData: false,
+            contentType: false,
+            dataType: "text",
+            success: function (response) {
+                e.preventDefault();
+                alert("success")
+            }, error: function (jqXHR, textStatus, errorThrown) {
+                e.preventDefault();
+                alert("error")
+            }
+        });
+    })
+
+</script>
+</body>
+</html>

@@ -18,16 +18,5 @@ public class Credit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true,nullable = false)
-    String numberCard;
-
-    @Column(unique = true,nullable = false)
-    String cvv2;
-
-    @Temporal(value = TemporalType.DATE)
-    Date expiredDate;
-
     private BigDecimal balance;
-    private String captcha;
 }

@@ -1,40 +1,38 @@
 package ir.maktab.project_final_faz2.controller;
 
-import ir.maktab.project_final_faz2.data.model.dto.CreditDto;
+import ir.maktab.project_final_faz2.data.model.dto.InfoCard;
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
+import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.mapper.MapStructMapper;
 import ir.maktab.project_final_faz2.service.CreditServiceImpl;
 import ir.maktab.project_final_faz2.service.CustomerServiceImpl;
+import ir.maktab.project_final_faz2.service.OrderCustomerServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
+@CrossOrigin
 public class CreditCardController {
     @Autowired
    private CreditServiceImpl creditService;
     @Autowired
-    private CustomerServiceImpl customerService;
-    private String message;
-    @GetMapping("/")
-    public String add(Model model) {
-        model.addAttribute("message", message);
-        model.addAttribute("CreditDto", new CreditDto());
-        return "payment";
-    }
+    private OrderCustomerServiceImpl orderCustomerService;
 
-    @GetMapping("/paymentOfCard")
-    public String paymentOfCard(@ModelAttribute("creditDto") CreditDto creditDto, HttpServletRequest request) {
-        if (creditDto.getCaptcha().equals(request.getSession().getAttribute("captcha"))) {
-            Customer customer = customerService.findByUserName(creditDto.getUserName());
-            creditService.checkCredit(MapStructMapper.INSTANCE.creditDtoToCredit(creditDto), customer);
-            return "ok";
-        } else {
-            String message = "Please verify captcha";
+
+    @PostMapping("/paymentOfCard")
+    public String paymentOfCard(@Valid @ModelAttribute("infoCard") InfoCard infoCard, HttpServletRequest request) {
+        System.out.println(request.getSession().getAttribute("captcha"));
+        if (!infoCard.getCaptcha().equalsIgnoreCase((String) request.getSession().getAttribute("captcha")))
             return "redirect:/";
-        }
+        Long id=Long.parseUnsignedLong(infoCard.getOrderId());
+        OrderCustomer orderCustomer = orderCustomerService.findById(id);
+        LocalDate localDate=LocalDate.parse(infoCard.getDateExpired());
+        creditService.checkCredit( localDate,orderCustomer);
+        return "ok";
     }
 }

@@ -1,10 +1,15 @@
 package ir.maktab.project_final_faz2.service;
 
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
-import ir.maktab.project_final_faz2.data.model.repository.CustomerRepository;
-import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
+import ir.maktab.project_final_faz2.data.model.entity.Offers;
+import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
+import ir.maktab.project_final_faz2.data.model.entity.Review;
+import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.exception.DuplicateException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
+import ir.maktab.project_final_faz2.data.model.enums.exception.TimeOutException;
 import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
+import ir.maktab.project_final_faz2.data.model.repository.CustomerRepository;
 import ir.maktab.project_final_faz2.service.interfaces.CustomerService;
 import ir.maktab.project_final_faz2.util.util.ValidationInput;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +19,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
+    private final OrderCustomerServiceImpl orderCustomerService;
+    private final OfferServiceImpl offerService;
+    private final ExpertServiceImpl expertService;
 
     @Override
     public Customer save(Customer customer) {
@@ -55,6 +63,17 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer findByUserName(String userName) {
         return customerRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format(userName + " Not Found !!!")));
+    }
+
+    public void giveScoreToExpert(OrderCustomer orderCustomer, Review review) {
+        OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomer.getId());
+        if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
+            throw new TimeOutException("It's not finished yet.");
+        Offers offers = offerService.findOffersIsAccept(orderCustomerDb);
+        offers.getExpert().getListComment().add(review);
+        Double performance = review.getRating() + offers.getExpert().getPerformance() / 2;
+        offers.getExpert().setPerformance(performance);
+        expertService.updateExpert(offers.getExpert());
     }
 
 }

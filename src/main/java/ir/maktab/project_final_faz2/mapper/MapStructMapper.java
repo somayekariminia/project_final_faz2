@@ -14,13 +14,7 @@ import java.util.List;
 @Mapper
 public interface MapStructMapper {
     MapStructMapper INSTANCE = Mappers.getMapper(MapStructMapper.class);
-
-
     ReviewDto reviewToReviewDto(Review review);
-
     Review reviewDtoToReview(ReviewDto reviewDto);
-    Credit creditDtoToCredit(CreditDto creditDto);
-
-
 
 }

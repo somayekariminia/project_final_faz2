@@ -1,23 +1,21 @@
 package ir.maktab.project_final_faz2.service;
 
 import com.google.common.collect.Lists;
-import ir.maktab.project_final_faz2.data.model.entity.Expert;
-import ir.maktab.project_final_faz2.data.model.entity.Offers;
-import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
-import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
-import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
 import ir.maktab.project_final_faz2.data.model.enums.exception.NotAcceptedException;
 import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
 import ir.maktab.project_final_faz2.data.model.enums.exception.TimeOutException;
 import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
+import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
 import ir.maktab.project_final_faz2.service.interfaces.OfferService;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -147,6 +145,20 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public Offers findOffersIsAccept(OrderCustomer orderCustomer) {
         return offerRepository.findOffersIsAccept(orderCustomer).orElseThrow(() -> new NotAcceptedException(String.format("No offers isAccept for OrderCustomer %s", orderCustomer.getCodeOrder())));
+    }
+
+    public Offers updateOffer(Offers offers) {
+       return offerRepository.save(offers);
+    }
+    public Offers subtractOfScore(OrderCustomer orderCustomer) {
+        OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomer.getId());
+        if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
+            throw new TimeOutException("It's not finished yet.");
+        Offers offers = findOffersIsAccept(orderCustomerDb);
+        int diffHours = (int) Duration.between(UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()), UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork())).toHours();
+        if (diffHours < 0)
+            offers.getExpert().setPerformance((offers.getExpert().getPerformance() - diffHours));
+        return updateOffer(offers);
     }
 
 }

@@ -33,6 +33,6 @@ public class Person {
     @CreationTimestamp
     private Date RegistrationDate;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Credit credit;
 }
