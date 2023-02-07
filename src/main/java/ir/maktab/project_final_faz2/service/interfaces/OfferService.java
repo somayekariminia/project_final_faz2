@@ -17,7 +17,7 @@ public interface OfferService {
 
     Offers selectAnOfferByCustomer(Offers offers, OrderCustomer orderCustomer);
 
-    void changeOrderToStartByCustomer(Offers offers, OrderCustomer orderCustomer);
+    OrderCustomer changeOrderToStartByCustomer(Offers offers, OrderCustomer orderCustomer);
 
     void endDoWork(OrderCustomer orderCustomer, LocalDateTime endDoWork);
 

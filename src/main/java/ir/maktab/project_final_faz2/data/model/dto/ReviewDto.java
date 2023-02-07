@@ -1,8 +1,10 @@
 package ir.maktab.project_final_faz2.data.model.dto;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ReviewDto {
 
     private Long id;

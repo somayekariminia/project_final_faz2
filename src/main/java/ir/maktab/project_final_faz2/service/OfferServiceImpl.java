@@ -54,6 +54,8 @@ public class OfferServiceImpl implements OfferService {
     @Override
     @Transactional
     public Offers save(Offers offers, Long id) {
+        if (!offers.getExpert().getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
+            throw new NotAcceptedException("expert is not confirm");
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         OrderCustomer orderCustomer = orderCustomerService.findById(id);
         if (offers.getOfferPriceByExpert().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
@@ -117,7 +119,7 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public void changeOrderToStartByCustomer(Offers offers, OrderCustomer orderCustomer) {
+    public OrderCustomer changeOrderToStartByCustomer(Offers offers, OrderCustomer orderCustomer) {
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
         Offers offersDb = findById(offers.getId());
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
@@ -126,7 +128,7 @@ public class OfferServiceImpl implements OfferService {
         if (!offers.isAccept())
             throw new NotAcceptedException("The selected offer has not been accepted !!!!");
         orderCustomerDb.setOrderStatus(OrderStatus.Started);
-        orderCustomerService.updateOrder(orderCustomerDb);
+        return orderCustomerService.updateOrder(orderCustomerDb);
     }
 
     @Override

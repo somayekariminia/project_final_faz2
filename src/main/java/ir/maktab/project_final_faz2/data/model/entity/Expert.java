@@ -15,6 +15,11 @@ import java.util.List;
 @SuperBuilder
 @ToString(callSuper = true)
 public class Expert extends Person {
+    @OneToOne(cascade =
+            { CascadeType.ALL},
+            fetch = FetchType.EAGER)
+    private Credit credit;
+
     @ManyToMany(fetch = FetchType.EAGER)
     List<SubJob> servicesList = new ArrayList<>();
 
@@ -32,5 +37,7 @@ public class Expert extends Person {
     private byte[] expertImage;
 
     private boolean isActive;
+
+
 
 }

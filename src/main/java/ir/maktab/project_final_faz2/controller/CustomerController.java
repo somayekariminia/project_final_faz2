@@ -12,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,24 +124,25 @@ CustomerController {
     public ResponseEntity<String> ChangeState(@RequestParam("offerId") Long offerId, @RequestParam("orderId") Long orderId) {
         Offers offer = offerService.findById(offerId);
         OrderCustomer order = orderCustomerService.findById(orderId);
-        Offers offers = offerService.selectAnOfferByCustomer(offer, order);
-        return ResponseEntity.ok().body("order " + offers.getId() + " change state");
+        OrderCustomer orderCustomer=offerService.changeOrderToStartByCustomer(offer, order);
+        return ResponseEntity.ok().body("order " + orderCustomer.getId() + " change state");
     }
 
     @PutMapping("/endWork")
     public ResponseEntity<String> finalDoWork(@RequestParam("orderId") Long orderId, @RequestParam("dateDoWord") String dateDoWord) {
         OrderCustomer order = orderCustomerService.findById(orderId);
-        LocalDateTime parse = LocalDateTime.parse(dateDoWord);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime parse = LocalDateTime.parse(dateDoWord,formatter);
         offerService.endDoWork(order, parse);
         return ResponseEntity.ok().body("order in date  " + order.getEndDateDoWork() + "  end");
     }
 
 
     @GetMapping("/paymentOfCredit")
-    public ResponseEntity<String> paymentOfCredit(@RequestParam("amount") BigDecimal bigDecimal, @RequestParam("userName") String userName) {
-        Customer customer = customerService.findByUserName(userName);
-        Credit credit = creditService.payOfCredit(bigDecimal, customer);
-        return ResponseEntity.ok().body("your balance is" + credit.getBalance());
+    public ResponseEntity<String> paymentOfCredit(@RequestParam Long orderId ) {
+        OrderCustomer orderCustomer=orderCustomerService.findById(orderId);
+        creditService.payOfCredit(orderCustomer);
+        return ResponseEntity.ok().body("payment of your credit");
     }
 @GetMapping("/submit_comment")
     public ResponseEntity<String>giveScore(@RequestParam long orderId,@RequestBody ReviewDto reviewDto){

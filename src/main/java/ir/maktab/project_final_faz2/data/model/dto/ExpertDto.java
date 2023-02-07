@@ -1,6 +1,7 @@
 package ir.maktab.project_final_faz2.data.model.dto;
 
 
+import ir.maktab.project_final_faz2.data.model.entity.Credit;
 import ir.maktab.project_final_faz2.data.model.entity.Review;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
@@ -27,4 +28,6 @@ public class ExpertDto{
     private String password;
 
     private double performance;
+
+    private Credit credit;
 }

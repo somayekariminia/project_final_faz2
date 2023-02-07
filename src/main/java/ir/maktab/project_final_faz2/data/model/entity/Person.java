@@ -33,6 +33,4 @@ public class Person {
     @CreationTimestamp
     private Date RegistrationDate;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private Credit credit;
 }

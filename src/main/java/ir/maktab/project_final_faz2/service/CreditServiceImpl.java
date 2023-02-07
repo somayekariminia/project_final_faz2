@@ -1,13 +1,11 @@
 package ir.maktab.project_final_faz2.service;
 
-import ir.maktab.project_final_faz2.data.model.entity.Credit;
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.enums.exception.Insufficient;
 import ir.maktab.project_final_faz2.data.model.enums.exception.TimeOutException;
 import ir.maktab.project_final_faz2.data.model.repository.CreditRepository;
-import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +22,7 @@ public class CreditServiceImpl {
 
     public CreditServiceImpl(CreditRepository creditRepository, ExpertServiceImpl expertService, OfferServiceImpl offerService) {
         this.creditRepository = creditRepository;
+
         this.expertService = expertService;
         this.offerService = offerService;
     }
@@ -37,13 +36,17 @@ public class CreditServiceImpl {
         return true;
     }
 
-    public Credit payOfCredit(BigDecimal bigDecimal, Customer customer) {
-        if (bigDecimal.compareTo(customer.getCredit().getBalance()) < 0)
+    @Transactional
+    public void payOfCredit(OrderCustomer orderCustomer) {
+        Customer customer=orderCustomer.getCustomer();
+        if (orderCustomer.getOfferPrice().compareTo(customer.getCredit().getBalance()) < 0)
             throw new Insufficient("Your balance is insufficient");
         BigDecimal balance = customer.getCredit().getBalance();
-        balance = balance.subtract(bigDecimal);
+        balance = balance.subtract(orderCustomer.getOfferPrice());
         customer.getCredit().setBalance(balance);
-        return creditRepository.save(customer.getCredit());
+        creditRepository.save(customer.getCredit());
+        Expert expert = offerService.findOffersIsAccept(orderCustomer).getExpert();
+        expertService.withdrawToCreditExpert(orderCustomer.getOfferPrice(), expert);
     }
 
 
