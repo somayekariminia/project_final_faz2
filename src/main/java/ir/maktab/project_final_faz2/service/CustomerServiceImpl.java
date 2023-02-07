@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
 
+    @Transactional
     @Override
     public Customer save(Customer customer) {
         if (customerRepository.findByEmail(customer.getEmail()).isPresent())

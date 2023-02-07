@@ -18,11 +18,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-@Transactional
+
 @RequiredArgsConstructor
 public class ExpertServiceImpl implements ExpertService {
     private final ExpertRepository expertRepository;
 
+    @Transactional
     @Override
     public Expert save(Expert expert, File file) {
         if (expertRepository.findByEmail(expert.getEmail()).isPresent())
