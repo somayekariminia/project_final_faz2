@@ -148,8 +148,9 @@ public class OfferServiceImpl implements OfferService {
     }
 
     public Offers updateOffer(Offers offers) {
-       return offerRepository.save(offers);
+        return offerRepository.save(offers);
     }
+
     public Offers subtractOfScore(OrderCustomer orderCustomer) {
         OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomer.getId());
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
@@ -160,5 +161,17 @@ public class OfferServiceImpl implements OfferService {
             offers.getExpert().setPerformance((offers.getExpert().getPerformance() - diffHours));
         return updateOffer(offers);
     }
+
+    public void giveScoreToExpert(OrderCustomer orderCustomer, Review review) {
+        OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomer.getId());
+        if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
+            throw new TimeOutException("It's not finished yet.");
+        Offers offers = findOffersIsAccept(orderCustomerDb);
+        offers.getExpert().getListComment().add(review);
+        Double performance = review.getRating() + offers.getExpert().getPerformance() / 2;
+        offers.getExpert().setPerformance(performance);
+        expertService.updateExpert(offers.getExpert());
+    }
+
 
 }

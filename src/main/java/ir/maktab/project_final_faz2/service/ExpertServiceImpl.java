@@ -28,7 +28,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExpertServiceImpl implements ExpertService {
     private final ExpertRepository expertRepository;
-    private OrderCustomerServiceImpl orderCustomerService;
 
 
     @Override

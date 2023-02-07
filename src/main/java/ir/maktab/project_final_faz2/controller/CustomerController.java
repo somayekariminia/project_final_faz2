@@ -141,6 +141,12 @@ CustomerController {
         Credit credit = creditService.payOfCredit(bigDecimal, customer);
         return ResponseEntity.ok().body("your balance is" + credit.getBalance());
     }
+@GetMapping("/submit_comment")
+    public ResponseEntity<String>giveScore(@RequestParam long orderId,@RequestBody ReviewDto reviewDto){
+   OrderCustomer order = orderCustomerService.findById(orderId);
+   offerService.giveScoreToExpert(order,MapStructMapper.INSTANCE.reviewDtoToReview(reviewDto));
+   return ResponseEntity.ok().body("your comment submit for desired expert");
+}
 
 
 }

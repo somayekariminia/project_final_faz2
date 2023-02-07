@@ -1,12 +1,10 @@
 package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.ExpertAndFile;
+import ir.maktab.project_final_faz2.data.model.dto.ExpertDto;
 import ir.maktab.project_final_faz2.data.model.dto.OfferRegistry;
 import ir.maktab.project_final_faz2.data.model.dto.OrderCustomerDto;
-import ir.maktab.project_final_faz2.data.model.entity.Expert;
-import ir.maktab.project_final_faz2.data.model.entity.Offers;
-import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
-import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.mapper.MapStructMapper;
 import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;
@@ -18,14 +16,12 @@ import ir.maktab.project_final_faz2.service.SubJobServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ExpertController {
@@ -61,6 +57,23 @@ public class ExpertController {
         List<OrderCustomer>orderCustomers=orderCustomerService.findAllOrdersBySubJob(subJob);
         return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
     }
-
+    @GetMapping("/view_credit")
+    public ResponseEntity<String> viewCreditExpert(@RequestParam String userName)
+    {
+       Expert expert = expertService.findByUserName(userName);
+       return ResponseEntity.ok().body("your credit is "+expert.getCredit().getBalance());
+    }
+    @GetMapping("/view_comments")
+    public ResponseEntity<List<Integer>> viewRating(@RequestParam String userName)
+    {
+        Expert expert = expertService.findByUserName(userName);
+        return ResponseEntity.ok().body(expert.getListComment().stream().map(Review::getRating).collect(Collectors.toList()));
+    }
+    @GetMapping("/view_performance")
+    public ResponseEntity<String> viewPerformance(@RequestParam String userName)
+    {
+        Expert expert = expertService.findByUserName(userName);
+        return ResponseEntity.ok().body("performance " + expert.getPerformance());
+    }
 }
 
