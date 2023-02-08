@@ -7,10 +7,7 @@ import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
-import ir.maktab.project_final_faz2.service.ExpertServiceImpl;
-import ir.maktab.project_final_faz2.service.OfferServiceImpl;
-import ir.maktab.project_final_faz2.service.OrderCustomerServiceImpl;
-import ir.maktab.project_final_faz2.service.SubJobServiceImpl;
+import ir.maktab.project_final_faz2.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +27,8 @@ public class ExpertController {
     private OrderCustomerServiceImpl orderCustomerService;
     @Autowired
     private SubJobServiceImpl subJobService;
+    @Autowired
+    private ReviewServiceImpl reviewService;
 
 
     @PostMapping("/save_expert")
@@ -65,7 +64,7 @@ public class ExpertController {
     @GetMapping("/view_comments")
     public ResponseEntity<List<Integer>> viewRating(@RequestParam String userName) {
         Expert expert = expertService.findByUserName(userName);
-        return ResponseEntity.ok().body(expert.getListComment().stream().map(Review::getRating).collect(Collectors.toList()));
+        return ResponseEntity.ok().body(reviewService.findAllReviewForExpert(expert).stream().map(Review::getRating).collect(Collectors.toList()));
     }
 
     @GetMapping("/view_performance")

@@ -2,6 +2,7 @@ package ir.maktab.project_final_faz2.data.model.repository;
 
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Transactional
 public interface ExpertRepository extends JpaRepository<Expert, Long> {
     Optional<Expert> findByEmail(String email);
 

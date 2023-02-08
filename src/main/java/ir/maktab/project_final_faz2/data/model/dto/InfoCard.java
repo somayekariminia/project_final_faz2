@@ -1,12 +1,11 @@
 package ir.maktab.project_final_faz2.data.model.dto;
 
 
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -20,7 +19,7 @@ public class InfoCard {
 
     private String dateExpired;
 
-
+    @Transient
     private String captcha;
 
 

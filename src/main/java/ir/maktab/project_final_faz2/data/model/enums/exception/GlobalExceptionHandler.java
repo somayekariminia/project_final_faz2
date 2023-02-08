@@ -37,5 +37,15 @@ public class GlobalExceptionHandler {
         CustomException exception = new CustomException(HttpStatus.REQUEST_TIMEOUT, e.getLocalizedMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
+    @ExceptionHandler(Insufficient.class)
+    public ResponseEntity<?> insufficientExceptionHandler(Insufficient e) {
+        CustomException exception = new CustomException(HttpStatus.REQUEST_TIMEOUT, e.getLocalizedMessage());
+        return new ResponseEntity<>(exception, exception.httpStatus());
+    }
+    @ExceptionHandler(CaptchaException.class)
+    public ResponseEntity<?> captchaExceptionHandler(CaptchaException e) {
+        CustomException exception = new CustomException(HttpStatus.REQUEST_TIMEOUT, e.getLocalizedMessage());
+        return new ResponseEntity<>(exception, exception.httpStatus());
+    }
 }
 

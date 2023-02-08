@@ -1,7 +1,10 @@
 package ir.maktab.project_final_faz2.service;
 
 import com.google.common.collect.Lists;
-import ir.maktab.project_final_faz2.data.model.entity.*;
+import ir.maktab.project_final_faz2.data.model.entity.Expert;
+import ir.maktab.project_final_faz2.data.model.entity.Offers;
+import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
+import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.enums.exception.NotAcceptedException;
@@ -58,6 +61,8 @@ public class OfferServiceImpl implements OfferService {
             throw new NotAcceptedException("expert is not confirm");
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         OrderCustomer orderCustomer = orderCustomerService.findById(id);
+        if (offers.getExpert().getServicesList().stream().noneMatch(subJob -> subJob.getSubJobName().equals(orderCustomer.getSubJob().getSubJobName())))
+            throw new NotFoundException("desired expert doesnt have this subService");
         if (offers.getOfferPriceByExpert().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException(String.format("The offer price for this sub-service %s is lower than the original price", orderCustomer.getSubJob().getSubJobName()));
         if (UtilDate.compareTwoDate(offers.getStartTime(), today) < 0)
@@ -158,22 +163,12 @@ public class OfferServiceImpl implements OfferService {
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
             throw new TimeOutException("It's not finished yet.");
         Offers offers = findOffersIsAccept(orderCustomerDb);
+        final var plus = UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork());
+        System.out.println(plus);
         int diffHours = (int) Duration.between(UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()), UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork())).toHours();
         if (diffHours < 0)
-            offers.getExpert().setPerformance((offers.getExpert().getPerformance() - diffHours));
+            offers.getExpert().setPerformance((offers.getExpert().getPerformance() - Math.abs(diffHours)));
         return updateOffer(offers);
     }
-
-    public void giveScoreToExpert(OrderCustomer orderCustomer, Review review) {
-        OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomer.getId());
-        if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
-            throw new TimeOutException("It's not finished yet.");
-        Offers offers = findOffersIsAccept(orderCustomerDb);
-        offers.getExpert().getListComment().add(review);
-        Double performance = review.getRating() + offers.getExpert().getPerformance() / 2;
-        offers.getExpert().setPerformance(performance);
-        expertService.updateExpert(offers.getExpert());
-    }
-
 
 }

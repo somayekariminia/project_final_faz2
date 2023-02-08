@@ -23,11 +23,6 @@ public class Expert extends Person {
     @ManyToMany(fetch = FetchType.EAGER)
     List<SubJob> servicesList = new ArrayList<>();
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @OneToMany
-    List<Review> listComment = new ArrayList<>();
-
     private double performance;
 
     @Enumerated(value = EnumType.STRING)

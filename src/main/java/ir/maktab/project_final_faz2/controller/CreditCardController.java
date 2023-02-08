@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @CrossOrigin
@@ -31,7 +32,8 @@ public class CreditCardController {
             throw new CaptchaException("captcha is invalid please enter incorrect ");
         Long id = Long.parseUnsignedLong(infoCard.getOrderId());
         OrderCustomer orderCustomer = orderCustomerService.findById(id);
-        LocalDate localDate = LocalDate.parse(infoCard.getDateExpired());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(infoCard.getDateExpired(),formatter);
         creditService.checkCredit(localDate, orderCustomer);
         return "ok";
     }

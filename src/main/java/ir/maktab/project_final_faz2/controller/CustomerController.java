@@ -5,15 +5,11 @@ import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.StatusSort;
 import ir.maktab.project_final_faz2.mapper.*;
 import ir.maktab.project_final_faz2.service.*;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -33,8 +29,10 @@ CustomerController {
     @Autowired
     private OfferServiceImpl offerService;
     @Autowired
-    CreditServiceImpl creditService;
-    private String message;
+    private CreditServiceImpl creditService;
+    @Autowired
+    private ReviewServiceImpl reviewService;
+
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@Valid @RequestBody CustomerDto customerDto) {
@@ -124,32 +122,32 @@ CustomerController {
     public ResponseEntity<String> ChangeState(@RequestParam("offerId") Long offerId, @RequestParam("orderId") Long orderId) {
         Offers offer = offerService.findById(offerId);
         OrderCustomer order = orderCustomerService.findById(orderId);
-        OrderCustomer orderCustomer=offerService.changeOrderToStartByCustomer(offer, order);
+        OrderCustomer orderCustomer = offerService.changeOrderToStartByCustomer(offer, order);
         return ResponseEntity.ok().body("order " + orderCustomer.getId() + " change state");
     }
 
     @PutMapping("/endWork")
-    public ResponseEntity<String> finalDoWork(@RequestParam("orderId") Long orderId, @RequestParam("dateDoWord") String dateDoWord) {
+    public ResponseEntity<String> finalDoWork(@RequestParam("orderId") Long orderId) {
         OrderCustomer order = orderCustomerService.findById(orderId);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime parse = LocalDateTime.parse(dateDoWord,formatter);
-        offerService.endDoWork(order, parse);
+        /*   LocalDateTime parse = LocalDateTime.parse(dateDoWord, formatter);*/
+        LocalDateTime today = LocalDateTime.now();
+        offerService.endDoWork(order, today);
         return ResponseEntity.ok().body("order in date  " + order.getEndDateDoWork() + "  end");
     }
 
 
     @GetMapping("/paymentOfCredit")
-    public ResponseEntity<String> paymentOfCredit(@RequestParam Long orderId ) {
-        OrderCustomer orderCustomer=orderCustomerService.findById(orderId);
+    public ResponseEntity<String> paymentOfCredit(@RequestParam Long orderId) {
+        OrderCustomer orderCustomer = orderCustomerService.findById(orderId);
         creditService.payOfCredit(orderCustomer);
         return ResponseEntity.ok().body("payment of your credit");
     }
-@GetMapping("/submit_comment")
-    public ResponseEntity<String>giveScore(@RequestParam long orderId,@RequestBody ReviewDto reviewDto){
-   OrderCustomer order = orderCustomerService.findById(orderId);
-   offerService.giveScoreToExpert(order,MapStructMapper.INSTANCE.reviewDtoToReview(reviewDto));
-   return ResponseEntity.ok().body("your comment submit for desired expert");
-}
 
-
+    @GetMapping("/submit_comment")
+    public ResponseEntity<String> giveScore(@RequestParam long orderId, @RequestBody ReviewDto reviewDto) {
+        OrderCustomer order = orderCustomerService.findById(orderId);
+        reviewService.giveScoreToExpert(order, MapStructMapper.INSTANCE.reviewDtoToReview(reviewDto));
+        return ResponseEntity.ok().body("your comment submit for desired expert");
+    }
 }
