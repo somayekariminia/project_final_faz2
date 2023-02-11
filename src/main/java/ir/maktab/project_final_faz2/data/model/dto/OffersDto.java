@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class OffersDto {
+
     Long Id;
 
    String durationWork;

@@ -8,7 +8,6 @@ import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,16 +18,24 @@ import java.util.stream.Collectors;
 
 @RestController
 public class ExpertController {
-    @Autowired
-    private ExpertServiceImpl expertService;
-    @Autowired
-    private OfferServiceImpl offerService;
-    @Autowired
-    private OrderCustomerServiceImpl orderCustomerService;
-    @Autowired
-    private SubJobServiceImpl subJobService;
-    @Autowired
-    private ReviewServiceImpl reviewService;
+
+    private final ExpertServiceImpl expertService;
+
+    private final OfferServiceImpl offerService;
+
+    private final OrderCustomerServiceImpl orderCustomerService;
+
+    private final SubJobServiceImpl subJobService;
+
+    private final ReviewServiceImpl reviewService;
+
+    public ExpertController(ExpertServiceImpl expertService, OfferServiceImpl offerService, OrderCustomerServiceImpl orderCustomerService, SubJobServiceImpl subJobService, ReviewServiceImpl reviewService) {
+        this.expertService = expertService;
+        this.offerService = offerService;
+        this.orderCustomerService = orderCustomerService;
+        this.subJobService = subJobService;
+        this.reviewService = reviewService;
+    }
 
 
     @PostMapping("/save_expert")
@@ -79,11 +86,12 @@ public class ExpertController {
         Offers offer = offerService.findOffersIsAccept(order);
         expertService.withdrawToCreditExpert(order.getOfferPrice(), offer.getExpert());
     }
+
     @GetMapping("/score_subtract")
     public void subtractScore(@RequestParam Long orderId) {
         OrderCustomer order = orderCustomerService.findById(orderId);
-        Offers offers = offerService.subtractOfScore(order);
-        System.out.println(offers.getExpert().getPerformance());
+        offerService.subtractOfScore(order);
+        System.out.println("ok");
     }
 
 }

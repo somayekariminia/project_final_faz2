@@ -68,7 +68,7 @@ CustomerController {
     }
 
     @GetMapping("/view_subServices_basic")
-    public ResponseEntity<List<SubJobDto>> findSubJobABasic(@Valid @RequestParam("nameBasic") String nameBasic) {
+    public ResponseEntity<List<SubJobDto>> findSubJobABasic(@RequestParam("nameBasic") String nameBasic) {
         List<SubJob> basicJobList = basicJubService.findAllSubJobsABasicJob(nameBasic);
         return ResponseEntity.ok().body(MapperServices.INSTANCE.subJobListToSubJobDto(basicJobList));
     }

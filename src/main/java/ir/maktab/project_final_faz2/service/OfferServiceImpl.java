@@ -7,10 +7,10 @@ import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
-import ir.maktab.project_final_faz2.data.model.enums.exception.NotAcceptedException;
-import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
-import ir.maktab.project_final_faz2.data.model.enums.exception.TimeOutException;
-import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
+import ir.maktab.project_final_faz2.exception.NotAcceptedException;
+import ir.maktab.project_final_faz2.exception.NotFoundException;
+import ir.maktab.project_final_faz2.exception.TimeOutException;
+import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
 import ir.maktab.project_final_faz2.service.interfaces.OfferService;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
@@ -142,6 +142,8 @@ public class OfferServiceImpl implements OfferService {
         orderCustomerDb.setEndDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.from(endDoWork)));
         orderCustomerDb.setOrderStatus(OrderStatus.DoItsBeen);
         orderCustomerService.updateOrder(orderCustomerDb);
+        subtractOfScore(orderCustomer);
+        subtractOfScore(orderCustomer);
     }
 
     @Override
@@ -158,7 +160,7 @@ public class OfferServiceImpl implements OfferService {
         return offerRepository.save(offers);
     }
 
-    public Offers subtractOfScore(OrderCustomer orderCustomer) {
+    public void subtractOfScore(OrderCustomer orderCustomer) {
         OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomer.getId());
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
             throw new TimeOutException("It's not finished yet.");
@@ -168,7 +170,8 @@ public class OfferServiceImpl implements OfferService {
         int diffHours = (int) Duration.between(UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()), UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork())).toHours();
         if (diffHours < 0)
             offers.getExpert().setPerformance((offers.getExpert().getPerformance() - Math.abs(diffHours)));
-        return updateOffer(offers);
+        updateOffer(offers);
+        expertService.disableExpert(offers.getExpert());
     }
 
 }

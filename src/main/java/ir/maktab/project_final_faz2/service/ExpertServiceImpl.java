@@ -2,9 +2,9 @@ package ir.maktab.project_final_faz2.service;
 
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
-import ir.maktab.project_final_faz2.data.model.enums.exception.DuplicateException;
-import ir.maktab.project_final_faz2.data.model.enums.exception.NotFoundException;
-import ir.maktab.project_final_faz2.data.model.enums.exception.ValidationException;
+import ir.maktab.project_final_faz2.exception.DuplicateException;
+import ir.maktab.project_final_faz2.exception.NotFoundException;
+import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
 import ir.maktab.project_final_faz2.service.interfaces.ExpertService;
 import ir.maktab.project_final_faz2.util.util.UtilImage;
@@ -113,7 +113,7 @@ public class ExpertServiceImpl implements ExpertService {
         Expert expertDb = findByUserName(expert.getEmail());
         if (expertDb.getPerformance() > 0)
             throw new ValidationException("your account is Active");
-        expertDb.setActive(false);
+        expertDb.setSpecialtyStatus(SpecialtyStatus.NewState);
         return expertRepository.save(expertDb);
     }
 

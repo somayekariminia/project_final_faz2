@@ -1,11 +1,9 @@
 package ir.maktab.project_final_faz2.data.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import ir.maktab.project_final_faz2.data.model.entity.Address;
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
 
@@ -19,6 +17,7 @@ public class OrderCustomerDto {
     private BigDecimal offerPrice;
 
     private String aboutWork;
+    @NotNull
 
     private String startDateDoWork;
 

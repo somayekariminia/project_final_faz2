@@ -6,14 +6,13 @@ import ir.maktab.project_final_faz2.data.model.dto.SubJobDto;
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
-import ir.maktab.project_final_faz2.mapper.MapStructMapper;
 import ir.maktab.project_final_faz2.mapper.MapperServices;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.AdminServiceImpl;
 import ir.maktab.project_final_faz2.service.BasicJubServiceImpl;
 import ir.maktab.project_final_faz2.service.ExpertServiceImpl;
 import ir.maktab.project_final_faz2.service.SubJobServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,23 +20,30 @@ import java.util.List;
 
 @RestController
 public class AdminController {
-    @Autowired
-    private SubJobServiceImpl subJobService;
-    @Autowired
-    private BasicJubServiceImpl basicJubService;
-    @Autowired
-    private ExpertServiceImpl expertService;
-    @Autowired
-    private AdminServiceImpl adminService;
+
+    private final SubJobServiceImpl subJobService;
+
+    private final BasicJubServiceImpl basicJubService;
+
+    private final ExpertServiceImpl expertService;
+
+    private final AdminServiceImpl adminService;
+
+    public AdminController(SubJobServiceImpl subJobService, BasicJubServiceImpl basicJubService, ExpertServiceImpl expertService, AdminServiceImpl adminService) {
+        this.subJobService = subJobService;
+        this.basicJubService = basicJubService;
+        this.expertService = expertService;
+        this.adminService = adminService;
+    }
 
     @PostMapping("/save_subJobServices")
-    public ResponseEntity<String> saveSubJobs(@RequestBody SubJobDto subJobDto) {
+    public ResponseEntity<String> saveSubJobs(@Valid  @RequestBody SubJobDto subJobDto) {
         SubJob subJob = subJobService.saveSubJob(MapperServices.INSTANCE.subJobDtoToSubJob(subJobDto));
         return ResponseEntity.ok().body("save " + subJob.getSubJobName() + " ok");
     }
 
     @PostMapping("/save_basicJob")
-    public ResponseEntity<String> saveBasicJob(@RequestBody BasicJobDto basicJobDto) {
+    public ResponseEntity<String> saveBasicJob(@Valid @RequestBody BasicJobDto basicJobDto) {
         BasicJob basicJob = basicJubService.save(MapperServices.INSTANCE.basicJobDtoToBasicJob(basicJobDto));
         return ResponseEntity.ok().body("save " + basicJob.getNameBase() + " ok");
     }
