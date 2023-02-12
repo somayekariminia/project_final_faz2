@@ -1,10 +1,12 @@
 package ir.maktab.project_final_faz2.controller;
 
+import ir.maktab.project_final_faz2.data.model.dto.AdminRequestDto;
 import ir.maktab.project_final_faz2.data.model.dto.BasicJobDto;
 import ir.maktab.project_final_faz2.data.model.dto.ExpertDto;
 import ir.maktab.project_final_faz2.data.model.dto.SubJobDto;
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
+import ir.maktab.project_final_faz2.data.model.entity.Person;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.mapper.MapperServices;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
@@ -78,6 +80,12 @@ public class AdminController {
         adminService.isConfirmExpertByAdmin(userName);
         return ResponseEntity.ok().body("Successfully confirm expert "+userName+"!!!" );
     }
+    @GetMapping("/find-person")
+    public String findPerson(@RequestBody AdminRequestDto requestAdmin){
+         adminService.findAllPerson(requestAdmin);
+         return "ok";
+    }
+
 
 }
 

@@ -31,8 +31,4 @@ public class Expert extends Person {
     @Lob
     private byte[] expertImage;
 
-    private boolean isActive;
-
-
-
 }

@@ -31,7 +31,6 @@ public class ExpertServiceImpl implements ExpertService {
         validateInfoPerson(expert);
         expert.setExpertImage(UtilImage.validateImage(file));
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);
-        expert.setActive(true);
         expert.setPerformance(0);
         return expertRepository.save(expert);
 
@@ -119,8 +118,6 @@ public class ExpertServiceImpl implements ExpertService {
 
     public void withdrawToCreditExpert(BigDecimal amount, Expert expert) {
         Expert expertDb = findByUserName(expert.getEmail());
-        if (!expertDb.isActive())
-            throw new ValidationException("Account expert is isNotActive");
         expertDb.getCredit().setBalance(BigDecimal.valueOf(0.7 * amount.doubleValue()));
         expertRepository.save(expertDb);
     }

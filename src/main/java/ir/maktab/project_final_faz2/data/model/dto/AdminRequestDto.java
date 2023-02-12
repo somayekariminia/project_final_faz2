@@ -10,7 +10,6 @@ import lombok.Setter;
 public class AdminRequestDto {
    private  String name;
    private String lastName;
-   @Email
    private String email;
    private String role;
    double performanceExpert;

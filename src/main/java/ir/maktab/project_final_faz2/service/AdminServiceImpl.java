@@ -1,15 +1,17 @@
 package ir.maktab.project_final_faz2.service;
 
-import ir.maktab.project_final_faz2.data.model.entity.Admin;
-import ir.maktab.project_final_faz2.data.model.entity.Expert;
-import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.dto.AdminRequestDto;
+import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.AdminRepository;
+import ir.maktab.project_final_faz2.data.model.repository.CustomerRepository;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
+import ir.maktab.project_final_faz2.data.model.repository.PersonRepository;
 import ir.maktab.project_final_faz2.exception.DuplicateException;
+import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.interfaces.AdminService;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,13 +25,16 @@ public class AdminServiceImpl implements AdminService {
 
     private final ExpertRepository expertRepository;
     private final AdminRepository adminRepository;
+    private final PersonRepository personRepository;
+
 
     public AdminServiceImpl(ExpertServiceImpl expertService, SubJobServiceImpl subJobService, ExpertRepository expertRepository,
-                            AdminRepository adminRepository) {
+                            AdminRepository adminRepository, CustomerRepository customerRepository, PersonRepository personRepository) {
         this.expertService = expertService;
         this.subJobService = subJobService;
         this.expertRepository = expertRepository;
         this.adminRepository = adminRepository;
+        this.personRepository = personRepository;
     }
 
     @Override
@@ -89,6 +94,12 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<Expert> findAllIsConfirm() {
         return expertService.findAllExpertsApproved();
+    }
+
+    public List<Person> findAllPerson(AdminRequestDto adminRequestDto) {
+       Specification personSpecification =PersonRepository.withDynamicQuery(adminRequestDto);
+        List<Person> personList=personRepository.findAll(personSpecification);
+       return personList;
     }
 
 }

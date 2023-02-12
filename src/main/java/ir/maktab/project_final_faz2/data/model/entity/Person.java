@@ -9,12 +9,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
-
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@MappedSuperclass
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

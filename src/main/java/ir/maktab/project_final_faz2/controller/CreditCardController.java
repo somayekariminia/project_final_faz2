@@ -6,6 +6,7 @@ import ir.maktab.project_final_faz2.service.CreditServiceImpl;
 import ir.maktab.project_final_faz2.service.OrderCustomerServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,21 +27,15 @@ public class CreditCardController {
 
 
     @PostMapping("/paymentOfCard")
-    public ModelAndView paymentOfCard(@Valid @ModelAttribute("infoCard") InfoCard infoCard, HttpServletRequest request) {
+    public void paymentOfCard(@Valid @ModelAttribute("infoCard") InfoCard infoCard, HttpServletRequest request) {
         System.out.println(request.getSession().getAttribute("captcha"));
         ModelAndView modelAndView = new ModelAndView();
-        if (!infoCard.getCaptcha().equalsIgnoreCase((String) request.getSession().getAttribute("captcha"))) {
-            modelAndView.addObject("error_message ");
-            modelAndView.setViewName("errorPage");
-            return modelAndView;
-        }
+        if (!infoCard.getCaptcha().equalsIgnoreCase((String) request.getSession().getAttribute("captcha")))
+          throw new ValidationException("captcha not is  valid");
         Long id = Long.parseUnsignedLong(infoCard.getOrderId());
         OrderCustomer orderCustomer = orderCustomerService.findById(id);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(infoCard.getDateExpired(), formatter);
         creditService.checkCredit(localDate, orderCustomer);
-        modelAndView.addObject("ok_payment");
-        modelAndView.setViewName("okPage");
-        return modelAndView;
     }
 }
