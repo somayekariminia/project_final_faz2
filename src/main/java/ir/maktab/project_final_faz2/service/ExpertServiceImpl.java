@@ -6,6 +6,7 @@ import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
 import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
+import ir.maktab.project_final_faz2.exception.NullObjects;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.interfaces.ExpertService;
 import ir.maktab.project_final_faz2.util.util.UtilImage;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 
@@ -27,6 +29,8 @@ public class ExpertServiceImpl implements ExpertService {
     @Transactional
     @Override
     public Expert save(Expert expert, File file) {
+        if (Objects.isNull(expert))
+            throw new NullObjects("expert is null");
         if (expertRepository.findByEmail(expert.getEmail()).isPresent())
             throw new DuplicateException(String.format("already Exist is Expert %s ", expert.getEmail()));
         validateInfoPerson(expert);
@@ -110,14 +114,6 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
 
-    public Expert disableExpert(Expert expert) {
-        Expert expertDb = findByUserName(expert.getEmail());
-        if (expertDb.getPerformance() > 0)
-            throw new ValidationException("your account is Active");
-        expertDb.setSpecialtyStatus(SpecialtyStatus.NewState);
-        return expertRepository.save(expertDb);
-    }
-
     public void withdrawToCreditExpert(BigDecimal amount, Expert expert) {
         Expert expertDb = findByUserName(expert.getEmail());
         expertDb.getCredit().setBalance(BigDecimal.valueOf(0.7 * amount.doubleValue()));
@@ -127,6 +123,10 @@ public class ExpertServiceImpl implements ExpertService {
     public void updateExpert(Expert expert) {
         expertRepository.save(expert);
     }
-
-
+    public List<Expert> expertOrderByPerformance(){
+        List<Expert> experts = expertRepository.findExpertByPerformanceAsc();
+        if(experts.isEmpty())
+            throw new NotFoundException("list experts is empty");
+        return experts;
+    }
 }

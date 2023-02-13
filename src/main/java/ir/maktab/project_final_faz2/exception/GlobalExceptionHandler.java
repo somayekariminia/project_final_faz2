@@ -2,14 +2,10 @@ package ir.maktab.project_final_faz2.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -21,7 +17,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotAcceptedException.class)
     public ResponseEntity<?> notAcceptExceptionHandler(NotAcceptedException e) {
-        CustomException exception = new CustomException(HttpStatus.NOT_ACCEPTABLE, e.getLocalizedMessage());
+        CustomException exception = new CustomException(HttpStatus.FOUND, e.getLocalizedMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
@@ -69,7 +65,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<?> NullExceptionHandler(NullPointerException e) {
+    public ResponseEntity<?> NullExceptionHandler() {
         CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, "object is null");
         return new ResponseEntity<>(exception, exception.httpStatus());
     }

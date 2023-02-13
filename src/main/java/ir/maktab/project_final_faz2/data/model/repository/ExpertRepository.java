@@ -20,7 +20,6 @@ public interface ExpertRepository extends JpaRepository<Expert, Long> , JpaSpeci
 
     @Query("from Expert e where e.specialtyStatus=:SpecialtyStatus")
     List<Expert> findAllExpertIsConfirm(@Param("SpecialtyStatus") SpecialtyStatus specialtyStatus);
-    List<Expert> findAll(Specification<Expert> specification);
-
-
+    @Query("select e from Expert  e order by e.performance asc")
+    List<Expert> findExpertByPerformanceAsc();
 }

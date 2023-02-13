@@ -5,10 +5,7 @@ import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OrderCustomerRepository;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.DuplicateException;
-import ir.maktab.project_final_faz2.exception.TimeOutException;
-import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.exception.*;
 import ir.maktab.project_final_faz2.service.interfaces.OrderCustomerService;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
@@ -30,6 +27,8 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
 
     @Override
     public OrderCustomer saveOrder(OrderCustomer orderCustomer) {
+        if(Objects.isNull(orderCustomer))
+            throw new NullObjects("orderCustomer is null");
         if (orderCustomerRepository.findByCodeOrder(orderCustomer.getCodeOrder()).isPresent())
             throw new DuplicateException(String.format("the order is exist already to code: %s", orderCustomer.getCodeOrder()));
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());

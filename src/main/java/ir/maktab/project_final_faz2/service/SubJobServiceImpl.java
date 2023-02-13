@@ -3,15 +3,16 @@ package ir.maktab.project_final_faz2.service;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.repository.BasicJobRepository;
 import ir.maktab.project_final_faz2.data.model.repository.SubJobRepository;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.DuplicateException;
+import ir.maktab.project_final_faz2.exception.NotFoundException;
+import ir.maktab.project_final_faz2.exception.NullObjects;
 import ir.maktab.project_final_faz2.service.interfaces.SubJobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,8 @@ public class SubJobServiceImpl implements SubJobService {
     }
 
     private void checkSubJob(SubJob subJob) {
+        if (Objects.isNull(subJob))
+            throw new NullObjects("subJob is null");
         if (basicJobRepository.findBasicJobByNameBase(subJob.getBasicJob().getNameBase()).isEmpty())
             throw new NotFoundException(String.format("is not exist basicJob " + subJob.getBasicJob().getNameBase()));
         if (subJobRepository.findBySubJobName(subJob.getSubJobName()).isPresent())
@@ -54,9 +57,6 @@ public class SubJobServiceImpl implements SubJobService {
     public SubJob findById(Long id) {
         return subJobRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Found " + id + " !!!!!!!!")));
     }
-    public List<SubJob> findAllByName(List<String> stringList){
-        List<SubJob>list=new ArrayList<>();
-    return stringList.stream().map(this::findSubJobByName).collect(Collectors.toList());
-    }
+
 }
 

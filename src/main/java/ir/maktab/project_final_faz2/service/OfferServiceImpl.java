@@ -8,10 +8,7 @@ import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
-import ir.maktab.project_final_faz2.exception.NotAcceptedException;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.TimeOutException;
-import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.exception.*;
 import ir.maktab.project_final_faz2.service.interfaces.OfferService;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
@@ -57,6 +54,8 @@ public class OfferServiceImpl implements OfferService {
     @Override
     @Transactional
     public Offers save(Offers offers, Long id) {
+        if(Objects.isNull(offers))
+            throw new NullObjects("offers is null");
         if (!offers.getExpert().getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
             throw new NotAcceptedException("expert is not confirm");
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
@@ -142,8 +141,7 @@ public class OfferServiceImpl implements OfferService {
         orderCustomerDb.setEndDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.from(endDoWork)));
         orderCustomerDb.setOrderStatus(OrderStatus.DoItsBeen);
         orderCustomerService.updateOrder(orderCustomerDb);
-        subtractOfScore(orderCustomer);
-        subtractOfScore(orderCustomer);
+        subtractOfScore(orderCustomerDb);
     }
 
     @Override
@@ -156,8 +154,8 @@ public class OfferServiceImpl implements OfferService {
         return offerRepository.findOffersIsAccept(orderCustomer).orElseThrow(() -> new NotAcceptedException(String.format("No offers isAccept for OrderCustomer %s", orderCustomer.getCodeOrder())));
     }
 
-    public Offers updateOffer(Offers offers) {
-        return offerRepository.save(offers);
+    public void updateOffer(Offers offers) {
+       offerRepository.save(offers);
     }
 
     public void subtractOfScore(OrderCustomer orderCustomer) {
@@ -165,15 +163,22 @@ public class OfferServiceImpl implements OfferService {
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
             throw new TimeOutException("It's not finished yet.");
         Offers offers = findOffersIsAccept(orderCustomerDb);
-        final var plus = UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork());
-        System.out.println(plus);
-        int diffHours = (int) Duration.between(UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()), UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork())).toHours();
-        if (diffHours < 0) {
-            offers.getExpert().setPerformance((offers.getExpert().getPerformance() - Math.abs(diffHours)));
-            expertService.disableExpert(offers.getExpert());//bistar barresi
+        LocalDateTime plus = UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork());
+        if(UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()).compareTo(plus)>0) {
+            int diffHours = (int) Duration.between(UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()), UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork())).toHours();
+            if (diffHours < 0) {
+                offers.getExpert().setPerformance((offers.getExpert().getPerformance() - Math.abs(diffHours)));
+            }
+            disableExpert(offers.getExpert());
+            updateOffer(offers);
         }
-        updateOffer(offers);
 
+    }
+    public void disableExpert(Expert expert) {
+        if (expert.getPerformance() >= 0)
+            throw new ValidationException("your account is Active");
+        expert.setSpecialtyStatus(SpecialtyStatus.NewState);
+        expertService.updateExpert(expert);
     }
 
 }

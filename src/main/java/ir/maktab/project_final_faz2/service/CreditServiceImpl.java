@@ -32,16 +32,16 @@ public class CreditServiceImpl {
     }
 
     @Transactional
-    public boolean checkCredit(LocalDate expiredDate, OrderCustomer orderCustomer) {
+    public void checkCredit(LocalDate expiredDate, OrderCustomer orderCustomer) {
         if(!orderCustomer.getOrderStatus().equals(OrderStatus.DoItsBeen))
-            throw new ValidationException(String.format("this ordre  %s  already isnot end",orderCustomer.getSubJob()));
+            throw new ValidationException(String.format("this order  %s  already isNot end",orderCustomer.getSubJob()));
         if (expiredDate.isBefore((LocalDate.now())))
             throw new TimeOutException("expiredDate is Expired");
         orderCustomer.setOrderStatus(OrderStatus.Paid);
         orderCustomerService.updateOrder(orderCustomer);
         Expert expert = offerService.findOffersIsAccept(orderCustomer).getExpert();
         expertService.withdrawToCreditExpert(orderCustomer.getOfferPrice(), expert);
-        return true;
+
     }
 
     @Transactional

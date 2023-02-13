@@ -4,6 +4,7 @@ import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.enums.Role;
 import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
+import ir.maktab.project_final_faz2.exception.NullObjects;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.data.model.repository.CustomerRepository;
 import ir.maktab.project_final_faz2.service.interfaces.CustomerService;
@@ -11,6 +12,8 @@ import ir.maktab.project_final_faz2.util.util.ValidationInput;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +23,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     @Override
     public Customer save(Customer customer) {
+        if(Objects.isNull(customer))
+            throw new NullObjects("customer is null");
         if (customerRepository.findByEmail(customer.getEmail()).isPresent())
             throw new DuplicateException(String.format("exist the user " + customer.getEmail()));
         validateInfoPerson(customer);

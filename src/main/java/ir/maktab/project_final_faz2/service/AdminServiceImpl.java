@@ -1,10 +1,12 @@
 package ir.maktab.project_final_faz2.service;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
-import ir.maktab.project_final_faz2.data.model.entity.*;
+import ir.maktab.project_final_faz2.data.model.entity.Admin;
+import ir.maktab.project_final_faz2.data.model.entity.Expert;
+import ir.maktab.project_final_faz2.data.model.entity.Person;
+import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.AdminRepository;
-import ir.maktab.project_final_faz2.data.model.repository.CustomerRepository;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
 import ir.maktab.project_final_faz2.data.model.repository.PersonRepository;
 import ir.maktab.project_final_faz2.exception.DuplicateException;
@@ -29,7 +31,7 @@ public class AdminServiceImpl implements AdminService {
 
 
     public AdminServiceImpl(ExpertServiceImpl expertService, SubJobServiceImpl subJobService, ExpertRepository expertRepository,
-                            AdminRepository adminRepository, CustomerRepository customerRepository, PersonRepository personRepository) {
+                            AdminRepository adminRepository, PersonRepository personRepository) {
         this.expertService = expertService;
         this.subJobService = subJobService;
         this.expertRepository = expertRepository;
@@ -42,7 +44,7 @@ public class AdminServiceImpl implements AdminService {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
         SubJob subJobDb = subJobService.findSubJobByName(subJob.getSubJobName());
         if (expertDb.getSpecialtyStatus().equals(SpecialtyStatus.NewState))
-            throw new ValidationException(String.format("the Expert %s isNot confirm " , expertDb.getEmail()));
+            throw new ValidationException(String.format("the Expert %s isNot confirm ", expertDb.getEmail()));
         if (expertDb.getServicesList().stream().anyMatch(subJob1 -> subJob1.getSubJobName().equals(subJobDb.getSubJobName())))
             throw new DuplicateException(String.format("%s already exist ", subJob.getSubJobName()));
         expertDb.getServicesList().add(subJobDb);
@@ -97,11 +99,22 @@ public class AdminServiceImpl implements AdminService {
     }
 
     public List<Person> findAllPerson(AdminRequestDto adminRequestDto) {
-       Specification personSpecification =PersonRepository.withDynamicQuery(adminRequestDto);
-        List<Person> personList=personRepository.findAll(personSpecification);
-        if(personList.isEmpty())
+        if (adminRequestDto.getSubService() != null && !adminRequestDto.getSubService().isEmpty()) {
+            SubJob subJob = subJobService.findSubJobByName(adminRequestDto.getSubService());
+            adminRequestDto.setSubSubject(subJob);
+        }
+        if(adminRequestDto.getTypePerformance()!=null && !adminRequestDto.getTypePerformance().isEmpty()){
+           List<Expert> list = expertService.expertOrderByPerformance();
+            if(adminRequestDto.getTypePerformance().equals("maximum"))
+                adminRequestDto.setPerformance(list.get(list.size()-1).getPerformance());
+            else
+                adminRequestDto.setPerformance(list.get(0).getPerformance());
+        }
+        Specification<Person> personSpecification = PersonRepository.withDynamicQuery(adminRequestDto);
+        List<Person> personList = personRepository.findAll(personSpecification);
+        if (personList.isEmpty())
             throw new NotFoundException("there arent person");
-       return personList;
+        return personList;
     }
 
 }

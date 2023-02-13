@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/Admin")
 public class AdminController {
 
     private final SubJobServiceImpl subJobService;
@@ -51,20 +52,20 @@ public class AdminController {
         return ResponseEntity.ok().body("save " + basicJob.getNameBase() + " ok");
     }
 
-    @PutMapping("/add_expert_to_subservice")
+    @PutMapping("/add_expert_to_subService")
     public ResponseEntity<String> addExpertToSubService(@RequestParam String userName, @RequestParam String subJobName) {
         Expert expert = expertService.findByUserName(userName);
         SubJob subJob = subJobService.findSubJobByName(subJobName);
         adminService.addExpertToSubJob(expert, subJob);
-        return ResponseEntity.ok().body("Successfully added");
+        return ResponseEntity.ok().body(subJobName+" Successfully added" +" to " +userName);
     }
 
-    @PutMapping("/delete_expert_to_subservice")
+    @PutMapping("/delete_expert_Of_subService")
     public ResponseEntity<String> deleteExpertToSubService(@RequestParam String userName, @RequestParam String subJobName) {
         Expert expert = expertService.findByUserName(userName);
         SubJob subJob = subJobService.findSubJobByName(subJobName);
         adminService.deleteExpertOfSubJob(expert, subJob);
-        return ResponseEntity.ok().body("Successfully delete");
+        return ResponseEntity.ok().body(subJobName+" Successfully delete"+" of "+ userName);
     }
 
     @GetMapping("/view_all_unapproved_specialists")
@@ -77,7 +78,6 @@ public class AdminController {
     public ResponseEntity<List<ExpertDto>> findAllApprovedExpert() {
         List<Expert> expertList = expertService.findAllExpertsApproved();
         List<ExpertDto> expertDto = MapperUsers.INSTANCE.listExpertToExpertDto(expertList);
-
         return ResponseEntity.ok().body(expertDto);
     }
 
@@ -87,12 +87,8 @@ public class AdminController {
         return ResponseEntity.ok().body("Successfully confirm expert " + userName + "!!!");
     }
 
-    @GetMapping("/find-person")
+    @GetMapping("/find-persons")
     public ResponseEntity<List<PersonDto>> findPerson(@RequestBody AdminRequestDto requestAdmin) {
-        if (requestAdmin.getSubService()!=null && !requestAdmin.getSubService().isEmpty()) {
-            SubJob subJob= subJobService.findSubJobByName(requestAdmin.getSubService());
-            requestAdmin.setSubSubject(subJob);
-        }
         List<Person> allPerson = adminService.findAllPerson(requestAdmin);
         return ResponseEntity.ok().body(MapperUsers.INSTANCE.listPersonToPersonDto(allPerson));
     }

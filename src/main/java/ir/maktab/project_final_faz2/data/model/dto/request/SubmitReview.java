@@ -8,5 +8,6 @@ import lombok.Setter;
 @Getter
 public class SubmitReview {
     private Long orderId;
+
     private ReviewDto reviewDto;
 }

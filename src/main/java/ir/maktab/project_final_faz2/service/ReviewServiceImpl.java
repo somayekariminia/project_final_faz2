@@ -4,6 +4,7 @@ import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.Review;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
+import ir.maktab.project_final_faz2.exception.NullObjects;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.data.model.repository.ReviewRepository;
@@ -28,7 +29,7 @@ public class ReviewServiceImpl {
 
     public Review save(Review review) {
         if (Objects.isNull(review))
-            throw new ValidationException("review is null");
+            throw new NullObjects("review is null");
         return reviewRepository.save(review);
     }
 
@@ -37,7 +38,7 @@ public class ReviewServiceImpl {
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
             throw new TimeOutException("It's not finished yet.");
         Expert expert = offerService.findOffersIsAccept(orderCustomerDb).getExpert();
-        Double performance = review.getRating() + expert.getPerformance() / 2;
+        double performance = review.getRating() + expert.getPerformance() / 2;
         expert.setPerformance(performance);
         review.setExpert(expert);
         expertService.updateExpert(expert);
