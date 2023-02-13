@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 public class BasicJobDto {
     private Long id;
-    @NotNull
+
+    @NotNull(message = "must not null")
     private String nameBase;
 }

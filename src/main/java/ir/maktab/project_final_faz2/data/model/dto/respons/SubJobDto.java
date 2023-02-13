@@ -13,7 +13,7 @@ public class SubJobDto {
     private Long id;
     private BasicJob basicJob;
 
-    @NotNull
+    @NotNull(message = "must not null")
     private String subJobName;
 
     private BigDecimal price;

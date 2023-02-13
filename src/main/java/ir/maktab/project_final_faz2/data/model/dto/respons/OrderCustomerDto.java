@@ -1,7 +1,6 @@
 package ir.maktab.project_final_faz2.data.model.dto.respons;
 
 import ir.maktab.project_final_faz2.data.model.entity.Address;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +16,6 @@ public class OrderCustomerDto {
     private BigDecimal offerPrice;
 
     private String aboutWork;
-    @NotNull
 
     private String startDateDoWork;
 

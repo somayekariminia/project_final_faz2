@@ -51,7 +51,7 @@ CustomerController {
         return ResponseEntity.ok().body(MapperUsers.INSTANCE.customerToCustomerDto(customer));
     }
 
-    @GetMapping("/login_customer")
+    @PostMapping("/login_customer")
     public ResponseEntity<CustomerDto> findCustomerBy(@Valid @RequestBody AccountDto accountDto) {
         Customer customer = customerService.login(accountDto.getUserName(), accountDto.getPassword());
         return ResponseEntity.ok().body(MapperUsers.INSTANCE.customerToCustomerDto(customer));
