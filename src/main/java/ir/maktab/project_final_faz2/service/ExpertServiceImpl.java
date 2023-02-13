@@ -1,11 +1,12 @@
 package ir.maktab.project_final_faz2.service;
 
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
+import ir.maktab.project_final_faz2.data.model.enums.Role;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
+import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
 import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
-import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
 import ir.maktab.project_final_faz2.service.interfaces.ExpertService;
 import ir.maktab.project_final_faz2.util.util.UtilImage;
 import ir.maktab.project_final_faz2.util.util.ValidationInput;
@@ -32,6 +33,7 @@ public class ExpertServiceImpl implements ExpertService {
         expert.setExpertImage(UtilImage.validateImage(file));
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);
         expert.setPerformance(0);
+        expert.setRole(Role.EXPERT);
         return expertRepository.save(expert);
 
     }

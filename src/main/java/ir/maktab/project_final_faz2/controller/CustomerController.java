@@ -1,6 +1,8 @@
 package ir.maktab.project_final_faz2.controller;
 
-import ir.maktab.project_final_faz2.data.model.dto.*;
+import ir.maktab.project_final_faz2.data.model.dto.request.AccountDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.OrderRegistry;
+import ir.maktab.project_final_faz2.data.model.dto.respons.*;
 import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.StatusSort;
 import ir.maktab.project_final_faz2.mapper.*;
@@ -42,7 +44,7 @@ CustomerController {
     }
 
     @PutMapping("/changing_password")
-    public ResponseEntity<CustomerDto> changePassword(@RequestParam("userName") String userName,
+    public ResponseEntity<CustomerDto> changePassword( @Valid @RequestParam("userName") String userName,
                                                       @RequestParam("oldPassword") String oldPassword,
                                                       @RequestParam("newPassword") String newPassword) {
         Customer customer = customerService.changePassword(userName, oldPassword, newPassword);
@@ -50,7 +52,7 @@ CustomerController {
     }
 
     @GetMapping("/login_customer")
-    public ResponseEntity<CustomerDto> findCustomerBy(@RequestBody AccountDto accountDto) {
+    public ResponseEntity<CustomerDto> findCustomerBy(@Valid @RequestBody AccountDto accountDto) {
         Customer customer = customerService.login(accountDto.getUserName(), accountDto.getPassword());
         return ResponseEntity.ok().body(MapperUsers.INSTANCE.customerToCustomerDto(customer));
     }

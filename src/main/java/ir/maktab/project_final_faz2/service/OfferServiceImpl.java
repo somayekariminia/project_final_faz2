@@ -7,11 +7,11 @@ import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
+import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
 import ir.maktab.project_final_faz2.exception.NotAcceptedException;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
-import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
 import ir.maktab.project_final_faz2.service.interfaces.OfferService;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
@@ -168,10 +168,12 @@ public class OfferServiceImpl implements OfferService {
         final var plus = UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork());
         System.out.println(plus);
         int diffHours = (int) Duration.between(UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()), UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork())).toHours();
-        if (diffHours < 0)
+        if (diffHours < 0) {
             offers.getExpert().setPerformance((offers.getExpert().getPerformance() - Math.abs(diffHours)));
+            expertService.disableExpert(offers.getExpert());//bistar barresi
+        }
         updateOffer(offers);
-        expertService.disableExpert(offers.getExpert());
+
     }
 
 }

@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.net.BindException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
@@ -45,6 +47,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CaptchaException.class)
     public ResponseEntity<?> captchaExceptionHandler(CaptchaException e) {
         CustomException exception = new CustomException(HttpStatus.REQUEST_TIMEOUT, e.getLocalizedMessage());
+        return new ResponseEntity<>(exception, exception.httpStatus());
+    }
+    @ExceptionHandler()
+    public ResponseEntity<?>boundedExceptionHandler(BindException e){
+        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, e.getLocalizedMessage());
+        return new ResponseEntity<>(exception, exception.httpStatus());
+    }
+    @ExceptionHandler()
+    public ResponseEntity<?>NullExceptionHandler(NullPointerException e){
+        CustomException exception = new CustomException(HttpStatus.NOT_FOUND, e.getLocalizedMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 }

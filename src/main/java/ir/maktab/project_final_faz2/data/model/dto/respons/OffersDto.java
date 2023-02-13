@@ -1,4 +1,4 @@
-package ir.maktab.project_final_faz2.data.model.dto;
+package ir.maktab.project_final_faz2.data.model.dto.respons;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;

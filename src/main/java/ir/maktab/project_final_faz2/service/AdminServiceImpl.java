@@ -1,6 +1,6 @@
 package ir.maktab.project_final_faz2.service;
 
-import ir.maktab.project_final_faz2.data.model.dto.AdminRequestDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
 import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.AdminRepository;
@@ -42,7 +42,7 @@ public class AdminServiceImpl implements AdminService {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
         SubJob subJobDb = subJobService.findSubJobByName(subJob.getSubJobName());
         if (expertDb.getSpecialtyStatus().equals(SpecialtyStatus.NewState))
-            throw new ValidationException(String.format("the Expert %s isNot confirm " + expertDb.getEmail()));
+            throw new ValidationException(String.format("the Expert %s isNot confirm " , expertDb.getEmail()));
         if (expertDb.getServicesList().stream().anyMatch(subJob1 -> subJob1.getSubJobName().equals(subJobDb.getSubJobName())))
             throw new DuplicateException(String.format("%s already exist ", subJob.getSubJobName()));
         expertDb.getServicesList().add(subJobDb);
@@ -99,6 +99,8 @@ public class AdminServiceImpl implements AdminService {
     public List<Person> findAllPerson(AdminRequestDto adminRequestDto) {
        Specification personSpecification =PersonRepository.withDynamicQuery(adminRequestDto);
         List<Person> personList=personRepository.findAll(personSpecification);
+        if(personList.isEmpty())
+            throw new NotFoundException("there arent person");
        return personList;
     }
 

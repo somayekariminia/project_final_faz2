@@ -1,15 +1,11 @@
 package ir.maktab.project_final_faz2.mapper;
 
-import ir.maktab.project_final_faz2.data.model.dto.*;
+import ir.maktab.project_final_faz2.data.model.dto.respons.ReviewDto;
 import ir.maktab.project_final_faz2.data.model.entity.*;
 
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-
-import java.time.Duration;
-import java.util.List;
 
 @Mapper
 public interface MapStructMapper {

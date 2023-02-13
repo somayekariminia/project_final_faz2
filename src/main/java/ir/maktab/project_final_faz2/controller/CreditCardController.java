@@ -1,6 +1,6 @@
 package ir.maktab.project_final_faz2.controller;
 
-import ir.maktab.project_final_faz2.data.model.dto.InfoCard;
+import ir.maktab.project_final_faz2.data.model.dto.request.InfoCard;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.service.CreditServiceImpl;
 import ir.maktab.project_final_faz2.service.OrderCustomerServiceImpl;
@@ -29,7 +29,6 @@ public class CreditCardController {
     @PostMapping("/paymentOfCard")
     public void paymentOfCard(@Valid @ModelAttribute("infoCard") InfoCard infoCard, HttpServletRequest request) {
         System.out.println(request.getSession().getAttribute("captcha"));
-        ModelAndView modelAndView = new ModelAndView();
         if (!infoCard.getCaptcha().equalsIgnoreCase((String) request.getSession().getAttribute("captcha")))
           throw new ValidationException("captcha not is  valid");
         Long id = Long.parseUnsignedLong(infoCard.getOrderId());

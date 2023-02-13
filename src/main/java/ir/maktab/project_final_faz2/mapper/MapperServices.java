@@ -1,7 +1,7 @@
 package ir.maktab.project_final_faz2.mapper;
 
-import ir.maktab.project_final_faz2.data.model.dto.BasicJobDto;
-import ir.maktab.project_final_faz2.data.model.dto.SubJobDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.BasicJobDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.SubJobDto;
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import org.mapstruct.Mapper;

@@ -1,5 +1,6 @@
 package ir.maktab.project_final_faz2.data.model.entity;
 
+import ir.maktab.project_final_faz2.data.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,9 @@ public class Person {
     private String email;
 
     private String password;
+
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
 
     @Temporal(value = TemporalType.DATE)
     @CreationTimestamp

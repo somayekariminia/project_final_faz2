@@ -1,6 +1,6 @@
 package ir.maktab.project_final_faz2.mapper;
 
-import ir.maktab.project_final_faz2.data.model.dto.OffersDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.OffersDto;
 import ir.maktab.project_final_faz2.data.model.entity.Offers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

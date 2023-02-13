@@ -1,4 +1,4 @@
-package ir.maktab.project_final_faz2.data.model.dto;
+package ir.maktab.project_final_faz2.data.model.dto.respons;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

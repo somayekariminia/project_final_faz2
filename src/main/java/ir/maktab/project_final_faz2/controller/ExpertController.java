@@ -1,8 +1,8 @@
 package ir.maktab.project_final_faz2.controller;
 
-import ir.maktab.project_final_faz2.data.model.dto.ExpertAndFile;
-import ir.maktab.project_final_faz2.data.model.dto.OfferRegistry;
-import ir.maktab.project_final_faz2.data.model.dto.OrderCustomerDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.ExpertAndFile;
+import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistry;
+import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
 import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;

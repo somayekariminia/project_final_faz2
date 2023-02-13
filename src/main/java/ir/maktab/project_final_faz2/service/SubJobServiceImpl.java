@@ -9,7 +9,9 @@ import ir.maktab.project_final_faz2.service.interfaces.SubJobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +53,10 @@ public class SubJobServiceImpl implements SubJobService {
     @Override
     public SubJob findById(Long id) {
         return subJobRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Found " + id + " !!!!!!!!")));
+    }
+    public List<SubJob> findAllByName(List<String> stringList){
+        List<SubJob>list=new ArrayList<>();
+    return stringList.stream().map(this::findSubJobByName).collect(Collectors.toList());
     }
 }
 

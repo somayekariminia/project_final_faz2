@@ -1,9 +1,11 @@
 package ir.maktab.project_final_faz2.mapper;
 
-import ir.maktab.project_final_faz2.data.model.dto.CustomerDto;
-import ir.maktab.project_final_faz2.data.model.dto.ExpertDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.CustomerDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.PersonDto;
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
+import ir.maktab.project_final_faz2.data.model.entity.Person;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -18,4 +20,5 @@ public interface MapperUsers {
 
     Customer customerDtoToCustomer(CustomerDto customerDto);
     List<ExpertDto> listExpertToExpertDto(List<Expert> listExpert);
+    List<PersonDto> listPersonToPersonDto(List<Person> personList);
 }
