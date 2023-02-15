@@ -1,4 +1,4 @@
-package ir.maktab.project_final_faz2.data.model.dto.respons;
+package ir.maktab.project_final_faz2.data.model.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 public class BasicJobDto {
     private Long id;
-
     @NotNull(message = "must not null")
     @NotBlank(message = "must not blank")
     private String nameBase;

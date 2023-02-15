@@ -1,39 +1,41 @@
 package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AccountDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.BasicJobDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.OrderRegistry;
+import ir.maktab.project_final_faz2.data.model.dto.request.SubJobDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.*;
 import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.StatusSort;
 import ir.maktab.project_final_faz2.mapper.*;
-import ir.maktab.project_final_faz2.service.*;
+import ir.maktab.project_final_faz2.service.impl.*;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-public class
-CustomerController {
-    @Autowired
-    private CustomerServiceImpl customerService;
-    @Autowired
-    private SubJobServiceImpl subJobService;
-    @Autowired
-    private BasicJubServiceImpl basicJubService;
-    @Autowired
-    private OrderCustomerServiceImpl orderCustomerService;
-    @Autowired
-    private OfferServiceImpl offerService;
-    @Autowired
-    private CreditServiceImpl creditService;
-    @Autowired
-    private ReviewServiceImpl reviewService;
+@RequestMapping("/customer")
+@RequiredArgsConstructor
+public class CustomerController {
+
+    private final CustomerServiceImpl customerService;
+
+    private final SubJobServiceImpl subJobService;
+
+    private final BasicJubServiceImpl basicJubService;
+
+    private final OrderCustomerServiceImpl orderCustomerService;
+
+    private final OfferServiceImpl offerService;
+
+    private final CreditServiceImpl creditService;
+
+    private final ReviewServiceImpl reviewService;
 
 
     @PostMapping("/register")
@@ -77,7 +79,7 @@ CustomerController {
 
     @PostMapping("/register_order")
     public ResponseEntity<String> saveOrder(@Valid @RequestBody OrderRegistry orderRegistry) {
-        Customer customer = customerService.login(orderRegistry.getAccountDto().getUserName(), orderRegistry.getAccountDto().getPassword());
+        Customer customer = customerService.findByUserName(orderRegistry.getUserName());
         SubJob subJob = subJobService.findSubJobByName(orderRegistry.getNameSubJob());
         OrderCustomer orderCustomer = MapperOrder.INSTANCE.orderCustomerDtoToOrderCustomer(orderRegistry.getOrderCustomerDto());
         orderCustomer.setSubJob(subJob);
@@ -87,27 +89,17 @@ CustomerController {
     }
 
     @GetMapping("/view_Offers")
-    public ResponseEntity<List<OffersDto>> findAllOffers(@RequestParam("orderId") Long id, @RequestParam("numberSelect") int numberSelect) {
+    public ResponseEntity<List<OffersDto>> findAllOffers(@RequestParam("orderId") Long orderId, @RequestParam("numberSelect") int numberSelect) {
         List<Offers> offers = new ArrayList<>();
         StatusSort statusSort = StatusSort.values()[numberSelect];
         switch (statusSort) {
-            case PRICE_ASC -> {
-                offers = offerService.viewAllOffersOrderByPriceAsc(id);
-            }
+            case PRICE_ASC -> offers = offerService.viewAllOffersOrderByPriceAsc(orderId);
 
-            case PRICE_DESC -> {
-                offers = offerService.viewAllOffersOrderByPriceDesc(id);
-            }
+            case PRICE_DESC -> offers = offerService.viewAllOffersOrderByPriceDesc(orderId);
 
-            case SCORE_ASC -> {
-                offers = offerService.viewAllOrdersOrderByScoreExpertAsc(id);
-            }
+            case SCORE_ASC -> offers = offerService.viewAllOrdersOrderByScoreExpertAsc(orderId);
 
-            case SCORE_DESC -> {
-                offers = offerService.viewAllOrdersOrderByScoreExpertDesc(id);
-            }
-
-
+            case SCORE_DESC -> offers = offerService.viewAllOrdersOrderByScoreExpertDesc(orderId);
         }
         return ResponseEntity.ok().body(MapperOffer.INSTANCE.listOfferToOfferDto(offers));
     }
@@ -131,8 +123,6 @@ CustomerController {
     @PutMapping("/endWork")
     public ResponseEntity<String> finalDoWork(@RequestParam("orderId") Long orderId) {
         OrderCustomer order = orderCustomerService.findById(orderId);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        /*   LocalDateTime parse = LocalDateTime.parse(dateDoWord, formatter);*/
         LocalDateTime today = LocalDateTime.now();
         offerService.endDoWork(order, today);
         return ResponseEntity.ok().body("order in date  " + order.getEndDateDoWork() + "  end");
@@ -147,7 +137,7 @@ CustomerController {
     }
 
     @GetMapping("/submit_comment")
-    public ResponseEntity<String> giveScore(@RequestParam long orderId, @RequestBody ReviewDto reviewDto) {
+    public ResponseEntity<String> giveScore(@RequestParam Long orderId, @Valid @RequestBody ReviewDto reviewDto) {
         OrderCustomer order = orderCustomerService.findById(orderId);
         reviewService.giveScoreToExpert(order, MapStructMapper.INSTANCE.reviewDtoToReview(reviewDto));
         return ResponseEntity.ok().body("your comment submit for desired expert");

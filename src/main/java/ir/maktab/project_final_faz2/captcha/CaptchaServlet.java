@@ -1,18 +1,13 @@
-package ir.maktab.project_final_faz2.catcha;
+package ir.maktab.project_final_faz2.captcha;
 
 import com.github.cage.GCage;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 //@WebServlet("/captcha-servlet")
 public class CaptchaServlet extends HttpServlet {

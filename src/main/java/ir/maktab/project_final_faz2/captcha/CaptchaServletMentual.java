@@ -1,4 +1,4 @@
-package ir.maktab.project_final_faz2.catcha;
+package ir.maktab.project_final_faz2.captcha;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -33,7 +33,7 @@ public class CaptchaServletMentual extends HttpServlet {
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.OPAQUE);
         Graphics graphics = bufferedImage.createGraphics();
         graphics.setFont(new Font("Arial", Font.BOLD, 20));
-        graphics.setColor(new Color(169, 169, 169));
+        graphics.setColor(new Color(236, 169, 239, 226));
         graphics.fillRect(0, 0, width, height);
         graphics.setColor(new Color(255, 255, 255));
         graphics.drawString(captcha, 20, 25);

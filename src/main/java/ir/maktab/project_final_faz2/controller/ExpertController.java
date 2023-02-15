@@ -7,7 +7,7 @@ import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
-import ir.maktab.project_final_faz2.service.*;
+import ir.maktab.project_final_faz2.service.impl.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/expert")
 public class ExpertController {
 
     private final ExpertServiceImpl expertService;
@@ -44,7 +45,7 @@ public class ExpertController {
         return ResponseEntity.ok().body("save " + expert.getEmail() + " ok");
     }
 
-    @PostMapping("/regist_offer")
+    @PostMapping("/register_offer")
     public ResponseEntity<String> saveOffer(@RequestBody OfferRegistry offerRegistry) {
         Offers offers = MapperOffer.INSTANCE.offerDtoToOffer(offerRegistry.getOffersDto());
         Expert expert = expertService.findByUserName(offerRegistry.getUserName());
@@ -55,8 +56,8 @@ public class ExpertController {
         return ResponseEntity.ok().body("save " + offerSave.getId());
     }
 
-    @GetMapping("/view_orders ")
-    public ResponseEntity<List<OrderCustomerDto>> findAllOrder(@Param("nameSubService") String nameSubService) {
+    @GetMapping("/view_orders_subJob")
+    public ResponseEntity<List<OrderCustomerDto>> findAllOrder(@RequestParam("nameSubService") String nameSubService) {
         SubJob subJob = subJobService.findSubJobByName(nameSubService);
         List<OrderCustomer> orderCustomers = orderCustomerService.findAllOrdersBySubJob(subJob);
         return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
@@ -92,6 +93,13 @@ public class ExpertController {
         OrderCustomer order = orderCustomerService.findById(orderId);
         offerService.subtractOfScore(order);
         System.out.println("ok");
+    }
+
+    @GetMapping("/all-Orders-for-expert")
+    public ResponseEntity<List<OrderCustomerDto>> viewAllOrdersForAnExpert(@RequestParam String userName) {
+        Expert expert = expertService.findByUserName(userName);
+        List<OrderCustomer> orderCustomers = orderCustomerService.viewAllOrder(expert);
+        return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
     }
 
 }

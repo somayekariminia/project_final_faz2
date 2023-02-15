@@ -9,8 +9,6 @@ import java.util.List;
 public interface OrderCustomerService {
     OrderCustomer saveOrder(OrderCustomer orderCustomer);
 
-    OrderCustomer findByCode(String codeOrder);
-
     OrderCustomer findById(Long id);
 
     List<OrderCustomer> findAllOrdersBySubJob(SubJob subJob);

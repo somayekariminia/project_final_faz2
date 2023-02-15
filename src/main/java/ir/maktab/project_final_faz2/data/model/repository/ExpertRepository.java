@@ -22,4 +22,8 @@ public interface ExpertRepository extends JpaRepository<Expert, Long> , JpaSpeci
     List<Expert> findAllExpertIsConfirm(@Param("SpecialtyStatus") SpecialtyStatus specialtyStatus);
     @Query("select e from Expert  e order by e.performance asc")
     List<Expert> findExpertByPerformanceAsc();
+    @Query("select Max(e.performance) from Expert e")
+    double maxPerformance();
+    @Query("select Min(e.performance) from Expert e ")
+    double minPerformance();
 }

@@ -16,8 +16,5 @@ public interface OrderCustomerRepository extends JpaRepository<OrderCustomer, Lo
     @Query("select  o from OrderCustomer o where o.subJob=:subJob and (o.orderStatus='WaitingSelectTheExpert' or  o.orderStatus='WaitingForOfferTheExperts')")
     List<OrderCustomer> findAllBySubJobForAExpert(@Param("subJob") SubJob subJob);
 
-    Optional<OrderCustomer> findByCodeOrder(String codeOrder);
-
-
     List<OrderCustomer> findAllByCustomer(Customer customer);
 }

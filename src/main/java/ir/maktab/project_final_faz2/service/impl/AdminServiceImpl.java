@@ -1,6 +1,7 @@
-package ir.maktab.project_final_faz2.service;
+package ir.maktab.project_final_faz2.service.impl;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.PersonDto;
 import ir.maktab.project_final_faz2.data.model.entity.Admin;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.Person;
@@ -12,6 +13,8 @@ import ir.maktab.project_final_faz2.data.model.repository.PersonRepository;
 import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.mapper.MapperServices;
+import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.interfaces.AdminService;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -98,23 +101,35 @@ public class AdminServiceImpl implements AdminService {
         return expertService.findAllExpertsApproved();
     }
 
-    public List<Person> findAllPerson(AdminRequestDto adminRequestDto) {
-        if (adminRequestDto.getSubService() != null && !adminRequestDto.getSubService().isEmpty()) {
-            SubJob subJob = subJobService.findSubJobByName(adminRequestDto.getSubService());
-            adminRequestDto.setSubSubject(subJob);
-        }
-        if(adminRequestDto.getTypePerformance()!=null && !adminRequestDto.getTypePerformance().isEmpty()){
-           List<Expert> list = expertService.expertOrderByPerformance();
-            if(adminRequestDto.getTypePerformance().equals("maximum"))
-                adminRequestDto.setPerformance(list.get(list.size()-1).getPerformance());
-            else
-                adminRequestDto.setPerformance(list.get(0).getPerformance());
-        }
+    public List<PersonDto> findAllPerson(AdminRequestDto adminRequestDto) {
+        if (adminRequestDto.getSubService() != null && !adminRequestDto.getSubService().isEmpty())
+            subService(adminRequestDto);
+        if (adminRequestDto.getTypePerformance() != null && !adminRequestDto.getTypePerformance().isEmpty())
+            maxMin(adminRequestDto);
         Specification<Person> personSpecification = PersonRepository.withDynamicQuery(adminRequestDto);
         List<Person> personList = personRepository.findAll(personSpecification);
-        if (personList.isEmpty())
-            throw new NotFoundException("there arent person");
-        return personList;
+        List<PersonDto> personDtoS = MapperUsers.INSTANCE.listPersonToPersonDto(personList);
+        for (int i = 0; i < personList.size(); i++) {
+            if (personList.get(i) instanceof Expert) {
+                List<SubJob> servicesList = ((Expert) personList.get(i)).getServicesList();
+                personDtoS.get(i).getSubJob().addAll(MapperServices.INSTANCE.listSubJobToSubJobDtoRes(servicesList));
+                personDtoS.get(i).setPerformance(((Expert) personList.get(i)).getPerformance());
+            }
+        }
+        if (personDtoS.isEmpty())
+            throw new NotFoundException("not found any person in this search");
+        return personDtoS;
     }
 
+    private void subService(AdminRequestDto adminRequestDto) {
+        SubJob subJob = subJobService.findSubJobByName(adminRequestDto.getSubService());
+        adminRequestDto.setSubSubject(subJob);
+    }
+
+    private void maxMin(AdminRequestDto adminRequestDto) {
+        if (adminRequestDto.getTypePerformance().equals("max"))
+            adminRequestDto.setPerformance(expertService.findMax());
+        else
+            adminRequestDto.setPerformance(expertService.findMin());
+    }
 }

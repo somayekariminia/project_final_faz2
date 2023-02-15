@@ -1,13 +1,14 @@
-package ir.maktab.project_final_faz2.service;
+package ir.maktab.project_final_faz2.service.impl;
 
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.Review;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
+import ir.maktab.project_final_faz2.data.model.repository.ReviewRepository;
 import ir.maktab.project_final_faz2.exception.NullObjects;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
-import ir.maktab.project_final_faz2.data.model.repository.ReviewRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class ReviewServiceImpl {
         return reviewRepository.save(review);
     }
 
+    @Transactional
     public void giveScoreToExpert(OrderCustomer orderCustomer, Review review) {
         OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomer.getId());
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))

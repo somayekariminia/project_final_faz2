@@ -1,20 +1,18 @@
 package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.BasicJobDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.PersonDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.SubJobDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.BasicJobDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.SubJobDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.*;
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
-import ir.maktab.project_final_faz2.data.model.entity.Person;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.mapper.MapperServices;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
-import ir.maktab.project_final_faz2.service.AdminServiceImpl;
-import ir.maktab.project_final_faz2.service.BasicJubServiceImpl;
-import ir.maktab.project_final_faz2.service.ExpertServiceImpl;
-import ir.maktab.project_final_faz2.service.SubJobServiceImpl;
+import ir.maktab.project_final_faz2.service.impl.AdminServiceImpl;
+import ir.maktab.project_final_faz2.service.impl.BasicJubServiceImpl;
+import ir.maktab.project_final_faz2.service.impl.ExpertServiceImpl;
+import ir.maktab.project_final_faz2.service.impl.SubJobServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,9 +45,11 @@ public class AdminController {
     }
 
     @PostMapping("/save_basicJob")
-    public ResponseEntity<String> saveBasicJob(@Valid @RequestBody BasicJobDto basicJobDto) {
+    public ResponseEntity<ResponseDTO<BasicJobDto>> saveBasicJob(@Valid @RequestBody BasicJobDto basicJobDto) {
         BasicJob basicJob = basicJubService.save(MapperServices.INSTANCE.basicJobDtoToBasicJob(basicJobDto));
-        return ResponseEntity.ok().body("save " + basicJob.getNameBase() + " ok");
+        ResponseDTO<BasicJobDto> responseDto=new ResponseDTO<>();
+        responseDto.setInfo(MapperServices.INSTANCE.basicJobToBasicJobDto(basicJob));
+        return ResponseEntity.ok().body(responseDto);
     }
 
     @PutMapping("/add_expert_to_subService")
@@ -84,13 +84,14 @@ public class AdminController {
     @PutMapping("/confirm_Expert")
     public ResponseEntity<String> confirmExpert(@RequestParam String userName) {
         adminService.isConfirmExpertByAdmin(userName);
-        return ResponseEntity.ok().body("Successfully confirm expert " + userName + "!!!");
+
+        return ResponseEntity.ok().body("ok.Successfully confirm expert " + userName + "!!!");
     }
 
     @GetMapping("/find-persons")
     public ResponseEntity<List<PersonDto>> findPerson(@RequestBody AdminRequestDto requestAdmin) {
-        List<Person> allPerson = adminService.findAllPerson(requestAdmin);
-        return ResponseEntity.ok().body(MapperUsers.INSTANCE.listPersonToPersonDto(allPerson));
+        List<PersonDto> allPerson = adminService.findAllPerson(requestAdmin);
+        return ResponseEntity.ok().body(allPerson);
     }
 
 }

@@ -1,7 +1,8 @@
 package ir.maktab.project_final_faz2.mapper;
 
-import ir.maktab.project_final_faz2.data.model.dto.respons.BasicJobDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.SubJobDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.BasicJobDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.SubJobDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.SubJobDtoRes;
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import org.mapstruct.Mapper;
@@ -20,5 +21,7 @@ public interface MapperServices {
     SubJobDto subJubToSubJobDto(SubJob subJob);
 
     SubJob subJobDtoToSubJob(SubJobDto subJobDto);
+    SubJobDtoRes subJobToSubJobDtoRes(SubJob subJob);
+    List<SubJobDtoRes> listSubJobToSubJobDtoRes(List<SubJob> subJobList);
 
 }

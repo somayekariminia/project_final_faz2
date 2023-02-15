@@ -1,6 +1,7 @@
-package ir.maktab.project_final_faz2.service;
+package ir.maktab.project_final_faz2.service.impl;
 
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
+import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -29,8 +31,8 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     public OrderCustomer saveOrder(OrderCustomer orderCustomer) {
         if(Objects.isNull(orderCustomer))
             throw new NullObjects("orderCustomer is null");
-        if (orderCustomerRepository.findByCodeOrder(orderCustomer.getCodeOrder()).isPresent())
-            throw new DuplicateException(String.format("the order is exist already to code: %s", orderCustomer.getCodeOrder()));
+        if (orderCustomerRepository.findById(orderCustomer.getId()).isPresent())
+            throw new DuplicateException(String.format("the order is exist already to code: %s", orderCustomer.getId()));
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         if (orderCustomer.getOfferPrice().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException(String.format("The offer price by Customer for this sub-service %s is lower than the original price", orderCustomer.getSubJob().getSubJobName()));
@@ -39,12 +41,6 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
         orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
         return orderCustomerRepository.save(orderCustomer);
     }
-
-    @Override
-    public OrderCustomer findByCode(String codeOrder) {
-        return orderCustomerRepository.findByCodeOrder(codeOrder).orElseThrow(() -> new NotFoundException(String.format("there arent any orderCustomer to code %s ", codeOrder)));
-    }
-
     @Override
     public OrderCustomer findById(Long id) {
         return orderCustomerRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Found Order %d ", id)));
@@ -73,5 +69,13 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
         if (Objects.isNull(orderCustomer))
             throw new NotFoundException("not Fount orderCustomer");
         return orderCustomerRepository.save(orderCustomer);
+    }
+
+    public List<OrderCustomer> viewAllOrder(Expert expert){
+      List<OrderCustomer> customerList=new ArrayList<>();
+        for (SubJob subJob:expert.getServicesList()) {
+            customerList.addAll(findAllOrdersBySubJob(subJob));
+        }
+        return customerList;
     }
 }

@@ -2,6 +2,7 @@ package ir.maktab.project_final_faz2.data.model.dto.request;
 
 
 import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,9 +11,10 @@ import lombok.Setter;
 @Setter
 public class OrderRegistry {
 
-   private OrderCustomerDto orderCustomerDto;
+    private OrderCustomerDto orderCustomerDto;
 
-    private AccountDto accountDto;
+    @Email
+    private String userName;
 
     private String nameSubJob;
 }

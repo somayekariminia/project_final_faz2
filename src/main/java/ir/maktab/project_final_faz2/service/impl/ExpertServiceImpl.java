@@ -1,13 +1,10 @@
-package ir.maktab.project_final_faz2.service;
+package ir.maktab.project_final_faz2.service.impl;
 
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.enums.Role;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
-import ir.maktab.project_final_faz2.exception.DuplicateException;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
-import ir.maktab.project_final_faz2.exception.NullObjects;
-import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.exception.*;
 import ir.maktab.project_final_faz2.service.interfaces.ExpertService;
 import ir.maktab.project_final_faz2.util.util.UtilImage;
 import ir.maktab.project_final_faz2.util.util.ValidationInput;
@@ -116,6 +113,8 @@ public class ExpertServiceImpl implements ExpertService {
 
     public void withdrawToCreditExpert(BigDecimal amount, Expert expert) {
         Expert expertDb = findByUserName(expert.getEmail());
+        if(expertDb.getSpecialtyStatus().equals(SpecialtyStatus.NewState))
+            throw new NotAcceptedException(String.format("expert %s isNot confirm",expert.getEmail()));
         expertDb.getCredit().setBalance(BigDecimal.valueOf(0.7 * amount.doubleValue()));
         expertRepository.save(expertDb);
     }
@@ -123,10 +122,11 @@ public class ExpertServiceImpl implements ExpertService {
     public void updateExpert(Expert expert) {
         expertRepository.save(expert);
     }
-    public List<Expert> expertOrderByPerformance(){
-        List<Expert> experts = expertRepository.findExpertByPerformanceAsc();
-        if(experts.isEmpty())
-            throw new NotFoundException("list experts is empty");
-        return experts;
+
+    public double findMax() {
+        return expertRepository.maxPerformance();
+    }
+    public double findMin() {
+        return expertRepository.minPerformance();
     }
 }

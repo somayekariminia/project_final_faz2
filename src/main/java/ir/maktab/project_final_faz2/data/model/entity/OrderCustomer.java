@@ -29,9 +29,6 @@ public class OrderCustomer {
 
     private String aboutWork;
 
-    @Column(unique = true)
-    private String codeOrder;
-
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date startDateDoWork;
 

@@ -5,6 +5,7 @@ import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -21,5 +22,5 @@ public class PersonDto {
 
     private double performance;
 
-    private List<SubJob> subJob;
+    private List<SubJobDtoRes> subJob=new ArrayList<>();
 }

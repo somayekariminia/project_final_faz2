@@ -1,4 +1,4 @@
-package ir.maktab.project_final_faz2.service;
+package ir.maktab.project_final_faz2.service.impl;
 
 import com.google.common.collect.Lists;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
@@ -54,7 +54,7 @@ public class OfferServiceImpl implements OfferService {
     @Override
     @Transactional
     public Offers save(Offers offers, Long id) {
-        if(Objects.isNull(offers))
+        if (Objects.isNull(offers))
             throw new NullObjects("offers is null");
         if (!offers.getExpert().getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
             throw new NotAcceptedException("expert is not confirm");
@@ -76,7 +76,7 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public List<Offers> viewAllOffersOrderByPriceAsc(Long id) {
         OrderCustomer orderCustomer = orderCustomerService.findById(id);
-        List<Offers> allOffersAOrder = offerRepository.findAllByOrderCustomerOrderByPriceOrder(orderCustomer);
+        List<Offers> allOffersAOrder = offerRepository.findAllByOrderCustomerOrderByPriceOrder(orderCustomer.getId());
         if (allOffersAOrder.isEmpty())
             throw new NotFoundException(String.format("Not Found offer for this order %s !!", id));
         return allOffersAOrder;
@@ -125,6 +125,8 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public OrderCustomer changeOrderToStartByCustomer(Offers offers, OrderCustomer orderCustomer) {
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
+        if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingForTheExpertToComeToYourLocation))
+            throw new ValidationException("The order must be in the case of an expert coming to work");
         Offers offersDb = findById(offers.getId());
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         if (UtilDate.compareTwoDate(offersDb.getStartTime(), today) < 0)
@@ -137,6 +139,8 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public void endDoWork(OrderCustomer orderCustomer, LocalDateTime endDoWork) {
+        if (!orderCustomer.getOrderStatus().equals(OrderStatus.Started))
+            throw new ValidationException(String.format("Order %s must be in start mode to finish the job", orderCustomer.getId()));
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
         orderCustomerDb.setEndDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.from(endDoWork)));
         orderCustomerDb.setOrderStatus(OrderStatus.DoItsBeen);
@@ -151,11 +155,11 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public Offers findOffersIsAccept(OrderCustomer orderCustomer) {
-        return offerRepository.findOffersIsAccept(orderCustomer).orElseThrow(() -> new NotAcceptedException(String.format("No offers isAccept for OrderCustomer %s", orderCustomer.getCodeOrder())));
+        return offerRepository.findOffersIsAccept(orderCustomer.getId()).orElseThrow(() -> new NotAcceptedException(String.format("No offers isAccept for OrderCustomer %s", orderCustomer.getId())));
     }
 
     public void updateOffer(Offers offers) {
-       offerRepository.save(offers);
+        offerRepository.save(offers);
     }
 
     public void subtractOfScore(OrderCustomer orderCustomer) {
@@ -163,17 +167,16 @@ public class OfferServiceImpl implements OfferService {
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
             throw new TimeOutException("It's not finished yet.");
         Offers offers = findOffersIsAccept(orderCustomerDb);
-        LocalDateTime plus = UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork());
-        if(UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()).compareTo(plus)>0) {
+        LocalDateTime timeEndExpert = UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork());
+        if (UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()).compareTo(timeEndExpert) > 0) {
             int diffHours = (int) Duration.between(UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()), UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork())).toHours();
-            if (diffHours < 0) {
-                offers.getExpert().setPerformance((offers.getExpert().getPerformance() - Math.abs(diffHours)));
-            }
-            disableExpert(offers.getExpert());
-            updateOffer(offers);
+            offers.getExpert().setPerformance((offers.getExpert().getPerformance() - Math.abs(diffHours)));
         }
-
+        if(offers.getExpert().getPerformance()<0)
+             disableExpert(offers.getExpert());
+        updateOffer(offers);
     }
+
     public void disableExpert(Expert expert) {
         if (expert.getPerformance() >= 0)
             throw new ValidationException("your account is Active");

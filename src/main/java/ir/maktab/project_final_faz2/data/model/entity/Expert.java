@@ -15,9 +15,7 @@ import java.util.List;
 @SuperBuilder
 @ToString(callSuper = true)
 public class Expert extends Person {
-    @OneToOne(cascade =
-            { CascadeType.ALL},
-            fetch = FetchType.EAGER)
+    @OneToOne(cascade = { CascadeType.ALL}, fetch = FetchType.EAGER)
     private Credit credit;
 
     @ManyToMany(fetch = FetchType.EAGER)
