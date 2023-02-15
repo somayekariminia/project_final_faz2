@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @RequestMapping("/pay")
 @Slf4j
+@Validated
 public class CreditCardController {
 
     private final CreditServiceImpl creditService;

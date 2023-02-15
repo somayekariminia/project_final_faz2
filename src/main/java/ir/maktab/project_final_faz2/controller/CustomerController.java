@@ -14,8 +14,8 @@ import ir.maktab.project_final_faz2.mapper.*;
 import ir.maktab.project_final_faz2.service.serviceImpl.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.control.MappingControl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -25,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/customer")
 @RequiredArgsConstructor
+@Validated
 public class CustomerController {
 
     private final CustomerServiceImpl customerService;

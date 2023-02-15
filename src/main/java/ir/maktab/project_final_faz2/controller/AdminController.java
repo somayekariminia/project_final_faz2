@@ -17,12 +17,14 @@ import ir.maktab.project_final_faz2.service.serviceImpl.ExpertServiceImpl;
 import ir.maktab.project_final_faz2.service.serviceImpl.SubJobServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/Admin")
+@Validated
 public class AdminController {
 
     private final SubJobServiceImpl subJobService;
@@ -98,8 +100,8 @@ public class AdminController {
         return ResponseEntity.ok().body("ok.Successfully confirm expert " + userName + "!!!");
     }
 
-    @GetMapping("/find-persons")
-    public ResponseEntity<List<PersonDto>> findPerson(@RequestBody AdminRequestDto requestAdmin) {
+    @GetMapping("/search=filter")
+    public ResponseEntity<List<PersonDto>> findPerson(@Valid @RequestBody AdminRequestDto requestAdmin) {
         List<PersonDto> allPerson = adminService.search(requestAdmin);
         return ResponseEntity.ok().body(allPerson);
     }

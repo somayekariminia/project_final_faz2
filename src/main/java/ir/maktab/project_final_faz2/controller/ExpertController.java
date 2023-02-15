@@ -13,6 +13,7 @@ import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.serviceImpl.*;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/expert")
+@Validated
 public class ExpertController {
 
     private final ExpertServiceImpl expertService;
@@ -104,20 +106,6 @@ public class ExpertController {
     public ResponseEntity<String> viewPerformance(@RequestParam String userName) {
         Expert expert = expertService.findByUserName(userName);
         return ResponseEntity.ok().body("performance " + expert.getPerformance());
-    }
-
-    @GetMapping("/transfor")
-    public void WithDraw(@RequestParam Long orderId) {
-        OrderCustomer order = orderCustomerService.findById(orderId);
-        Offers offer = offerService.findOffersIsAccept(order);
-        expertService.withdrawToCreditExpert(order.getOfferPrice(), offer.getExpert());
-    }
-
-    @GetMapping("/score_subtract")
-    public void subtractScore(@RequestParam Long orderId) {
-        OrderCustomer order = orderCustomerService.findById(orderId);
-        offerService.subtractOfScore(order);
-        System.out.println("ok");
     }
 
     @GetMapping("/all-Orders-for-expert")
