@@ -6,15 +6,13 @@ import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Setter
 @Getter
 public class AdminRequestDto {
     private String firstName;
 
     private String lastName;
+
     @Email
     private String email;
 
@@ -24,8 +22,8 @@ public class AdminRequestDto {
 
     private SubJob subSubject;
 
-    private double performance;
+    private String minOrMax;
 
-    private String typePerformance;
+    private double performance;
 
 }

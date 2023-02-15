@@ -51,6 +51,13 @@ public class AdminController {
         responseDto.setInfo(MapperServices.INSTANCE.basicJobToBasicJobDto(basicJob));
         return ResponseEntity.ok().body(responseDto);
     }
+    @PutMapping("/update_subService")
+    public  ResponseEntity<ResponseDTO<SubJobDto>> updateSubJob(@RequestBody SubJobDto subJobDto){
+       SubJob subJob = subJobService.updateSubJob(MapperServices.INSTANCE.subJobDtoToSubJob(subJobDto));
+        ResponseDTO<SubJobDto> responseDto=new ResponseDTO<>();
+        responseDto.setInfo(MapperServices.INSTANCE.subJubToSubJobDto(subJob));
+        return ResponseEntity.ok().body(responseDto);
+    }
 
     @PutMapping("/add_expert_to_subService")
     public ResponseEntity<String> addExpertToSubService(@RequestParam String userName, @RequestParam String subJobName) {

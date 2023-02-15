@@ -5,17 +5,19 @@ import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.exception.Insufficient;
+import ir.maktab.project_final_faz2.exception.NotAcceptedException;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.data.model.repository.CreditRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Service
-
+@Slf4j
 public class CreditServiceImpl {
 
     private final CreditRepository creditRepository;
@@ -39,6 +41,7 @@ public class CreditServiceImpl {
             throw new TimeOutException("expiredDate is Expired");
         orderCustomer.setOrderStatus(OrderStatus.Paid);
         orderCustomerService.updateOrder(orderCustomer);
+        log.debug("continue method checkCredit");
         Expert expert = offerService.findOffersIsAccept(orderCustomer).getExpert();
         expertService.withdrawToCreditExpert(orderCustomer.getOfferPrice(), expert);
 
@@ -47,6 +50,8 @@ public class CreditServiceImpl {
     @Transactional
     public void payOfCredit(OrderCustomer orderCustomer) {
         Customer customer=orderCustomer.getCustomer();
+        if(!orderCustomer.getOrderStatus().equals(OrderStatus.DoItsBeen))
+            throw new NotAcceptedException("you cant payment because orderCustomer dont done");
         if (orderCustomer.getOfferPrice().compareTo(customer.getCredit().getBalance()) > 0)
             throw new Insufficient("Your balance is insufficient");
         orderCustomer.setOrderStatus(OrderStatus.Paid);

@@ -1,9 +1,9 @@
-package ir.maktab.project_final_faz2.exception;
+package ir.maktab.project_final_faz2.exception.global;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseDTO;
 
-import lombok.extern.slf4j.Slf4j;
+import ir.maktab.project_final_faz2.exception.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,6 @@ import static org.apache.catalina.manager.Constants.CHARSET;
 
 
 @ControllerAdvice
-@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
@@ -93,7 +92,6 @@ public class GlobalExceptionHandler {
         CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
-
 
     @ExceptionHandler(BindException.class)
     ResponseEntity<ResponseDTO<Object>> handleException(BindException exception) {

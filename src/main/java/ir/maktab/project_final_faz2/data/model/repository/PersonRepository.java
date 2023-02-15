@@ -31,7 +31,7 @@ public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecif
             if (request.getSubSubject() != null)
                 predicates.add(builder.isMember(request.getSubSubject(), root.get("servicesList")));
 
-            if (request.getPerformance() > 0 || request.getPerformance() <= 0)
+            if (request.getMinOrMax().equals("min") || request.getMinOrMax().equals("max"))
                 predicates.add(builder.equal(root.get("performance"),request.getPerformance()));
 
             return builder.and(predicates.toArray(new Predicate[0]));

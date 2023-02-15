@@ -104,7 +104,7 @@ public class AdminServiceImpl implements AdminService {
     public List<PersonDto> findAllPerson(AdminRequestDto adminRequestDto) {
         if (adminRequestDto.getSubService() != null && !adminRequestDto.getSubService().isEmpty())
             subService(adminRequestDto);
-        if (adminRequestDto.getTypePerformance() != null && !adminRequestDto.getTypePerformance().isEmpty())
+        if (adminRequestDto.getMinOrMax() != null && !adminRequestDto.getMinOrMax().isEmpty())
             maxMin(adminRequestDto);
         Specification<Person> personSpecification = PersonRepository.withDynamicQuery(adminRequestDto);
         List<Person> personList = personRepository.findAll(personSpecification);
@@ -127,7 +127,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     private void maxMin(AdminRequestDto adminRequestDto) {
-        if (adminRequestDto.getTypePerformance().equals("max"))
+        if (adminRequestDto.getMinOrMax().equals("max"))
             adminRequestDto.setPerformance(expertService.findMax());
         else
             adminRequestDto.setPerformance(expertService.findMin());

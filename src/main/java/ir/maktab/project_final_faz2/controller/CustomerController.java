@@ -85,7 +85,7 @@ public class CustomerController {
         orderCustomer.setSubJob(subJob);
         orderCustomer.setCustomer(customer);
         OrderCustomer orderCustomer1 = orderCustomerService.saveOrder(orderCustomer);
-        return ResponseEntity.ok().body("save order id : " + orderCustomer1.getId() + "ok");
+        return ResponseEntity.ok().body("save order id : " + orderCustomer1.getId() + " ok");
     }
 
     @GetMapping("/view_Offers")
@@ -112,12 +112,12 @@ public class CustomerController {
         return ResponseEntity.ok().body("select " + offers.getId());
     }
 
-    @PutMapping("/change_state")
+    @PutMapping("/change_state_start")
     public ResponseEntity<String> ChangeState(@RequestParam("offerId") Long offerId, @RequestParam("orderId") Long orderId) {
         Offers offer = offerService.findById(offerId);
         OrderCustomer order = orderCustomerService.findById(orderId);
         OrderCustomer orderCustomer = offerService.changeOrderToStartByCustomer(offer, order);
-        return ResponseEntity.ok().body("order " + orderCustomer.getId() + " change state");
+        return ResponseEntity.ok().body("order " + orderCustomer.getId() + " change state started");
     }
 
     @PutMapping("/endWork")

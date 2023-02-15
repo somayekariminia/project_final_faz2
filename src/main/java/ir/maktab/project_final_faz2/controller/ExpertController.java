@@ -1,14 +1,18 @@
 package ir.maktab.project_final_faz2.controller;
 
+import ir.maktab.project_final_faz2.data.model.dto.request.AccountDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.ExpertAndFile;
 import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistry;
+import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseDTO;
 import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.impl.*;
-import org.springframework.data.repository.query.Param;
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,10 +73,29 @@ public class ExpertController {
         return ResponseEntity.ok().body("your credit is " + expert.getCredit().getBalance());
     }
 
-    @GetMapping("/view_comments")
+    @GetMapping("/view_rating")
     public ResponseEntity<List<Integer>> viewRating(@RequestParam String userName) {
         Expert expert = expertService.findByUserName(userName);
         return ResponseEntity.ok().body(reviewService.findAllReviewForExpert(expert).stream().map(Review::getRating).collect(Collectors.toList()));
+    }
+    @GetMapping("/view_comments")
+    public ResponseEntity<List<String>> viewComments(@RequestParam String userName) {
+        Expert expert = expertService.findByUserName(userName);
+        return ResponseEntity.ok().body(reviewService.findAllReviewForExpert(expert).stream().map(Review::getComment).collect(Collectors.toList()));
+    }
+    @GetMapping("/login")
+    public ResponseEntity<ResponseDTO<ExpertDto>>login(@Valid @RequestBody AccountDto accountDto){
+        Expert expert=expertService.login(accountDto.getUserName(),accountDto.getPassword());
+        ResponseDTO<ExpertDto> responseDTO=new ResponseDTO<>();
+        responseDTO.setInfo(MapperUsers.INSTANCE.expertToExpertDto(expert));
+        return ResponseEntity.ok().body(responseDTO);
+    }
+    @PutMapping("/changing_password")
+    public ResponseEntity<ExpertDto> changePassword(@Valid @RequestParam("userName") String userName,
+                                                      @RequestParam("oldPassword") String oldPassword,
+                                                      @RequestParam("newPassword") String newPassword) {
+        Expert expert = expertService.changePassword(userName, oldPassword, newPassword);
+        return ResponseEntity.ok().body(MapperUsers.INSTANCE.expertToExpertDto(expert));
     }
 
     @GetMapping("/view_performance")
