@@ -1,4 +1,4 @@
-package ir.maktab.project_final_faz2.service.interfaces;
+package ir.maktab.project_final_faz2.service.serviceInterface;
 
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;

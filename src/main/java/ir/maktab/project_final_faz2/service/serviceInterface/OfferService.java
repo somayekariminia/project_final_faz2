@@ -1,4 +1,4 @@
-package ir.maktab.project_final_faz2.service.interfaces;
+package ir.maktab.project_final_faz2.service.serviceInterface;
 
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.Offers;
@@ -25,12 +25,14 @@ public interface OfferService {
 
     Offers findOffersIsAccept(OrderCustomer orderCustomer);
 
-    List<Offers> viewAllOrdersOrderByScoreExpertAsc(Long id );
+    List<Offers> viewAllOrdersOrderByScoreExpertAsc(Long id);
 
     List<SubJob> findAllSubJubExpert(Expert expert);
 
-    public List<Offers> viewAllOrdersOrderByScoreExpertDesc(Long id);
+    List<Offers> viewAllOrdersOrderByScoreExpertDesc(Long id);
 
-    public List<Offers> viewAllOffersOrderByPriceDesc(Long id);
+    List<Offers> viewAllOffersOrderByPriceDesc(Long id);
 
+    void subtractOfScore(OrderCustomer orderCustomer);
+     void updateOffer(Offers offers);
 }

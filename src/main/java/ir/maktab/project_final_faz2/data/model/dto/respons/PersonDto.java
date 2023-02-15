@@ -21,5 +21,5 @@ public class PersonDto {
 
     private double performance;
 
-    private List<SubJobDtoRes> subJob=new ArrayList<>();
+    private List<SubJobDtoRes> subJob = new ArrayList<>();
 }

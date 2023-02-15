@@ -16,9 +16,8 @@ import java.util.Random;
 
 @WebServlet("/captcha-servlet")
 public class CaptchaServletMentual extends HttpServlet {
-    private static final long serialVersionUID = -5840561187921381583L;
-
     public static final String FILE_TYPE = "jpeg";
+    private static final long serialVersionUID = -5840561187921381583L;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, IOException {

@@ -1,6 +1,7 @@
-package ir.maktab.project_final_faz2.service.interfaces;
+package ir.maktab.project_final_faz2.service.serviceInterface;
 
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
+import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 
@@ -16,5 +17,7 @@ public interface OrderCustomerService {
     OrderCustomer updateOrder(OrderCustomer orderCustomer);
 
     List<OrderCustomer> findOrdersCustomer(Customer customer);
+     List<OrderCustomer> viewAllOrder(Expert expert);
+
 
 }

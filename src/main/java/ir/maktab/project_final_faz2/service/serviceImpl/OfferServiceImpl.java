@@ -1,4 +1,4 @@
-package ir.maktab.project_final_faz2.service.impl;
+package ir.maktab.project_final_faz2.service.serviceImpl;
 
 import com.google.common.collect.Lists;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
@@ -9,7 +9,7 @@ import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
 import ir.maktab.project_final_faz2.exception.*;
-import ir.maktab.project_final_faz2.service.interfaces.OfferService;
+import ir.maktab.project_final_faz2.service.serviceInterface.OfferService;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -162,6 +162,7 @@ public class OfferServiceImpl implements OfferService {
         offerRepository.save(offers);
     }
 
+    @Override
     public void subtractOfScore(OrderCustomer orderCustomer) {
         OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomer.getId());
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
@@ -172,12 +173,12 @@ public class OfferServiceImpl implements OfferService {
             int diffHours = (int) Duration.between(UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()), UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork())).toHours();
             offers.getExpert().setPerformance((offers.getExpert().getPerformance() - Math.abs(diffHours)));
         }
-        if(offers.getExpert().getPerformance()<0)
-             disableExpert(offers.getExpert());
+        if (offers.getExpert().getPerformance() < 0)
+            disableExpert(offers.getExpert());
         updateOffer(offers);
     }
 
-    public void disableExpert(Expert expert) {
+    private void disableExpert(Expert expert) {
         if (expert.getPerformance() >= 0)
             throw new ValidationException("your account is Active");
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);

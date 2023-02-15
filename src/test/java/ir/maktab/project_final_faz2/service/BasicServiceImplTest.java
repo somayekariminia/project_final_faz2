@@ -2,10 +2,10 @@ package ir.maktab.project_final_faz2.service;
 
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
-import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.DuplicateException;
-import ir.maktab.project_final_faz2.service.impl.BasicJubServiceImpl;
-import ir.maktab.project_final_faz2.service.impl.SubJobServiceImpl;
+import ir.maktab.project_final_faz2.exception.NotFoundException;
+import ir.maktab.project_final_faz2.service.serviceImpl.BasicJubServiceImpl;
+import ir.maktab.project_final_faz2.service.serviceImpl.SubJobServiceImpl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

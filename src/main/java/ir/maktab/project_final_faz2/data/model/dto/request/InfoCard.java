@@ -1,7 +1,6 @@
 package ir.maktab.project_final_faz2.data.model.dto.request;
 
 
-import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;

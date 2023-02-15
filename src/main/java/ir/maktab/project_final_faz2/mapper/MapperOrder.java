@@ -11,9 +11,11 @@ import java.util.List;
 @Mapper
 public interface MapperOrder {
     MapperOrder INSTANCE = Mappers.getMapper(MapperOrder.class);
-    @Mapping(source = "startDateDoWork",target = "startDateDoWork",dateFormat = "yyyy-MM-dd HH:mm:ss")
+
+    @Mapping(source = "startDateDoWork", target = "startDateDoWork", dateFormat = "yyyy-MM-dd HH:mm:ss")
     OrderCustomerDto orderCustomerToOrderCustomerDto(OrderCustomer orderCustomer);
-    @Mapping(source="startDateDoWork",target = "startDateDoWork",dateFormat = "yyyy-MM-dd HH:mm:ss")
+
+    @Mapping(source = "startDateDoWork", target = "startDateDoWork", dateFormat = "yyyy-MM-dd HH:mm:ss")
     OrderCustomer orderCustomerDtoToOrderCustomer(OrderCustomerDto orderCustomerDto);
 
     List<OrderCustomerDto> listOrderCustomerTOrderCustomerDto(List<OrderCustomer> list);

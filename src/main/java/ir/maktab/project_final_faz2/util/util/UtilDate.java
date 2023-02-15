@@ -27,6 +27,7 @@ public class UtilDate {
         LocalDateTime localDateSecond = getLocalDateTime(dateTwo);
         return localDateFirst.compareTo(localDateSecond);
     }
+
     public static LocalDate getDate(String time) {
         DateTimeFormatter fmt = new DateTimeFormatterBuilder()
                 .appendPattern("yyyy-MM")

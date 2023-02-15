@@ -1,4 +1,4 @@
-package ir.maktab.project_final_faz2.service.impl;
+package ir.maktab.project_final_faz2.service.serviceImpl;
 
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.repository.BasicJobRepository;
@@ -6,7 +6,7 @@ import ir.maktab.project_final_faz2.data.model.repository.SubJobRepository;
 import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.NullObjects;
-import ir.maktab.project_final_faz2.service.interfaces.SubJobService;
+import ir.maktab.project_final_faz2.service.serviceInterface.SubJobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

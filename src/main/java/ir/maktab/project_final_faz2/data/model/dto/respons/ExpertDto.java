@@ -7,16 +7,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+
 @Data
-public class ExpertDto{
+public class ExpertDto {
     @NotNull
     @NotBlank(message = "must not blank")
-    @Pattern(regexp="[a-zA-Z]+", message = "Your name should be of letters and least Length 1")
+    @Pattern(regexp = "[a-zA-Z]+", message = "Your name should be of letters and least Length 1")
     private String firstName;
 
     @NotNull
     @NotBlank(message = "must not blank")
-    @Pattern(regexp="[a-zA-Z]+", message = "Your name should be of letters and least Length 1")
+    @Pattern(regexp = "[a-zA-Z]+", message = "Your name should be of letters and least Length 1")
     private String lastName;
 
     @NotNull

@@ -3,16 +3,18 @@ package ir.maktab.project_final_faz2.controller;
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.BasicJobDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.SubJobDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.*;
+import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.PersonDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseDTO;
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.mapper.MapperServices;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
-import ir.maktab.project_final_faz2.service.impl.AdminServiceImpl;
-import ir.maktab.project_final_faz2.service.impl.BasicJubServiceImpl;
-import ir.maktab.project_final_faz2.service.impl.ExpertServiceImpl;
-import ir.maktab.project_final_faz2.service.impl.SubJobServiceImpl;
+import ir.maktab.project_final_faz2.service.serviceImpl.AdminServiceImpl;
+import ir.maktab.project_final_faz2.service.serviceImpl.BasicJubServiceImpl;
+import ir.maktab.project_final_faz2.service.serviceImpl.ExpertServiceImpl;
+import ir.maktab.project_final_faz2.service.serviceImpl.SubJobServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,14 +49,15 @@ public class AdminController {
     @PostMapping("/save_basicJob")
     public ResponseEntity<ResponseDTO<BasicJobDto>> saveBasicJob(@Valid @RequestBody BasicJobDto basicJobDto) {
         BasicJob basicJob = basicJubService.save(MapperServices.INSTANCE.basicJobDtoToBasicJob(basicJobDto));
-        ResponseDTO<BasicJobDto> responseDto=new ResponseDTO<>();
+        ResponseDTO<BasicJobDto> responseDto = new ResponseDTO<>();
         responseDto.setInfo(MapperServices.INSTANCE.basicJobToBasicJobDto(basicJob));
         return ResponseEntity.ok().body(responseDto);
     }
+
     @PutMapping("/update_subService")
-    public  ResponseEntity<ResponseDTO<SubJobDto>> updateSubJob(@RequestBody SubJobDto subJobDto){
-       SubJob subJob = subJobService.updateSubJob(MapperServices.INSTANCE.subJobDtoToSubJob(subJobDto));
-        ResponseDTO<SubJobDto> responseDto=new ResponseDTO<>();
+    public ResponseEntity<ResponseDTO<SubJobDto>> updateSubJob(@RequestBody SubJobDto subJobDto) {
+        SubJob subJob = subJobService.updateSubJob(MapperServices.INSTANCE.subJobDtoToSubJob(subJobDto));
+        ResponseDTO<SubJobDto> responseDto = new ResponseDTO<>();
         responseDto.setInfo(MapperServices.INSTANCE.subJubToSubJobDto(subJob));
         return ResponseEntity.ok().body(responseDto);
     }
@@ -64,7 +67,7 @@ public class AdminController {
         Expert expert = expertService.findByUserName(userName);
         SubJob subJob = subJobService.findSubJobByName(subJobName);
         adminService.addExpertToSubJob(expert, subJob);
-        return ResponseEntity.ok().body(subJobName+" Successfully added" +" to " +userName);
+        return ResponseEntity.ok().body(subJobName + " Successfully added" + " to " + userName);
     }
 
     @PutMapping("/delete_expert_Of_subService")
@@ -72,7 +75,7 @@ public class AdminController {
         Expert expert = expertService.findByUserName(userName);
         SubJob subJob = subJobService.findSubJobByName(subJobName);
         adminService.deleteExpertOfSubJob(expert, subJob);
-        return ResponseEntity.ok().body(subJobName+" Successfully delete"+" of "+ userName);
+        return ResponseEntity.ok().body(subJobName + " Successfully delete" + " of " + userName);
     }
 
     @GetMapping("/view_all_unapproved_specialists")
@@ -97,7 +100,7 @@ public class AdminController {
 
     @GetMapping("/find-persons")
     public ResponseEntity<List<PersonDto>> findPerson(@RequestBody AdminRequestDto requestAdmin) {
-        List<PersonDto> allPerson = adminService.findAllPerson(requestAdmin);
+        List<PersonDto> allPerson = adminService.search(requestAdmin);
         return ResponseEntity.ok().body(allPerson);
     }
 

@@ -1,4 +1,4 @@
-package ir.maktab.project_final_faz2.service.impl;
+package ir.maktab.project_final_faz2.service.serviceImpl;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.PersonDto;
@@ -15,31 +15,32 @@ import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.mapper.MapperServices;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
-import ir.maktab.project_final_faz2.service.interfaces.AdminService;
+import ir.maktab.project_final_faz2.service.serviceInterface.AdminService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class AdminServiceImpl implements AdminService {
-
     private final ExpertServiceImpl expertService;
-
     private final SubJobServiceImpl subJobService;
-
     private final ExpertRepository expertRepository;
     private final AdminRepository adminRepository;
     private final PersonRepository personRepository;
 
-
-    public AdminServiceImpl(ExpertServiceImpl expertService, SubJobServiceImpl subJobService, ExpertRepository expertRepository,
-                            AdminRepository adminRepository, PersonRepository personRepository) {
-        this.expertService = expertService;
-        this.subJobService = subJobService;
-        this.expertRepository = expertRepository;
-        this.adminRepository = adminRepository;
-        this.personRepository = personRepository;
+    private static List<PersonDto> getPersonDtos(List<Person> personList) {
+        List<PersonDto> personDtoS = MapperUsers.INSTANCE.listPersonToPersonDto(personList);
+        for (int i = 0; i < personList.size(); i++) {
+            if (personList.get(i) instanceof Expert) {
+                List<SubJob> servicesList = ((Expert) personList.get(i)).getServicesList();
+                personDtoS.get(i).getSubJob().addAll(MapperServices.INSTANCE.listSubJobToSubJobDtoRes(servicesList));
+                personDtoS.get(i).setPerformance(((Expert) personList.get(i)).getPerformance());
+            }
+        }
+        return personDtoS;
     }
 
     @Override
@@ -101,21 +102,15 @@ public class AdminServiceImpl implements AdminService {
         return expertService.findAllExpertsApproved();
     }
 
-    public List<PersonDto> findAllPerson(AdminRequestDto adminRequestDto) {
+    @Override
+    public List<PersonDto> search(AdminRequestDto adminRequestDto) {
         if (adminRequestDto.getSubService() != null && !adminRequestDto.getSubService().isEmpty())
             subService(adminRequestDto);
         if (adminRequestDto.getMinOrMax() != null && !adminRequestDto.getMinOrMax().isEmpty())
             maxMin(adminRequestDto);
         Specification<Person> personSpecification = PersonRepository.withDynamicQuery(adminRequestDto);
         List<Person> personList = personRepository.findAll(personSpecification);
-        List<PersonDto> personDtoS = MapperUsers.INSTANCE.listPersonToPersonDto(personList);
-        for (int i = 0; i < personList.size(); i++) {
-            if (personList.get(i) instanceof Expert) {
-                List<SubJob> servicesList = ((Expert) personList.get(i)).getServicesList();
-                personDtoS.get(i).getSubJob().addAll(MapperServices.INSTANCE.listSubJobToSubJobDtoRes(servicesList));
-                personDtoS.get(i).setPerformance(((Expert) personList.get(i)).getPerformance());
-            }
-        }
+        List<PersonDto> personDtoS = getPersonDtos(personList);
         if (personDtoS.isEmpty())
             throw new NotFoundException("not found any person in this search");
         return personDtoS;

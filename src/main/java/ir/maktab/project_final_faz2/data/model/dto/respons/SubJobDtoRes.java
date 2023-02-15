@@ -6,5 +6,5 @@ import lombok.Setter;
 @Setter
 @Getter
 public class SubJobDtoRes {
-   private String subJobName;
+    private String subJobName;
 }

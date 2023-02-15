@@ -4,13 +4,17 @@ import ir.maktab.project_final_faz2.data.model.dto.request.AccountDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.BasicJobDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.OrderRegistry;
 import ir.maktab.project_final_faz2.data.model.dto.request.SubJobDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.*;
+import ir.maktab.project_final_faz2.data.model.dto.respons.CustomerDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.OffersDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.ReviewDto;
 import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.StatusSort;
 import ir.maktab.project_final_faz2.mapper.*;
-import ir.maktab.project_final_faz2.service.impl.*;
+import ir.maktab.project_final_faz2.service.serviceImpl.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.control.MappingControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +50,7 @@ public class CustomerController {
     }
 
     @PutMapping("/changing_password")
-    public ResponseEntity<CustomerDto> changePassword( @Valid @RequestParam("userName") String userName,
+    public ResponseEntity<CustomerDto> changePassword(@Valid @RequestParam("userName") String userName,
                                                       @RequestParam("oldPassword") String oldPassword,
                                                       @RequestParam("newPassword") String newPassword) {
         Customer customer = customerService.changePassword(userName, oldPassword, newPassword);
@@ -141,5 +145,11 @@ public class CustomerController {
         OrderCustomer order = orderCustomerService.findById(orderId);
         reviewService.giveScoreToExpert(order, MapStructMapper.INSTANCE.reviewDtoToReview(reviewDto));
         return ResponseEntity.ok().body("your comment submit for desired expert");
+    }
+    @GetMapping("/view-all-order-customer")
+    public ResponseEntity<List<OrderCustomerDto>> viewAllOrder(@RequestParam String userName){
+       Customer customer=customerService.findByUserName(userName);
+       List<OrderCustomer> orderCustomers=orderCustomerService.findOrdersCustomer(customer);
+       return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
     }
 }

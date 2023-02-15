@@ -13,15 +13,15 @@ import java.io.IOException;
 public class CaptchaServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        GCage gCage=new GCage();
-        response.setContentType("image/"+gCage.getFormat());
+        GCage gCage = new GCage();
+        response.setContentType("image/" + gCage.getFormat());
         response.setHeader("Cache-Control", "no-cache");
         response.setDateHeader("Expires", 0);
         response.setHeader("Progma", "no-cache");
         response.setDateHeader("Max-Age", 0);
-        String token=gCage.getTokenGenerator().toString();
-        HttpSession session=request.getSession();
-        session.setAttribute("captcha",token);
+        String token = gCage.getTokenGenerator().toString();
+        HttpSession session = request.getSession();
+        session.setAttribute("captcha", token);
         gCage.draw(token, response.getOutputStream());
     }
 }

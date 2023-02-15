@@ -4,9 +4,9 @@ import ir.maktab.project_final_faz2.data.model.entity.Admin;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
-import ir.maktab.project_final_faz2.service.impl.AdminServiceImpl;
-import ir.maktab.project_final_faz2.service.impl.ExpertServiceImpl;
-import ir.maktab.project_final_faz2.service.impl.SubJobServiceImpl;
+import ir.maktab.project_final_faz2.service.serviceImpl.AdminServiceImpl;
+import ir.maktab.project_final_faz2.service.serviceImpl.ExpertServiceImpl;
+import ir.maktab.project_final_faz2.service.serviceImpl.SubJobServiceImpl;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,12 +39,14 @@ class AdminServiceImplTest {
             e.printStackTrace();
         }
     }
+
     @Test
     void changePasswordTest() {
-        Admin admin=adminService.findByUserName("admin@gmail.com");
+        Admin admin = adminService.findByUserName("admin@gmail.com");
         Admin adminToNewPassword = adminService.changePassword(admin.getUserName(), admin.getPassword(), "Sok61058");
         assertEquals(adminToNewPassword.getPassword(), "Sok61058");
     }
+
     @Order(4)
     @Test
     void addExpertToSubJob() {

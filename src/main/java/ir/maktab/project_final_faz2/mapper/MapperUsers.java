@@ -10,15 +10,20 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
+
 @Mapper
 public interface MapperUsers {
     MapperUsers INSTANCE = Mappers.getMapper(MapperUsers.class);
+
     ExpertDto expertToExpertDto(Expert expert);
 
     Expert expertDtoToExpert(ExpertDto expertDto);
+
     CustomerDto customerToCustomerDto(Customer customer);
 
     Customer customerDtoToCustomer(CustomerDto customerDto);
+
     List<ExpertDto> listExpertToExpertDto(List<Expert> listExpert);
+
     List<PersonDto> listPersonToPersonDto(List<Person> personList);
 }

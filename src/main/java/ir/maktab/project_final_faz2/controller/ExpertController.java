@@ -10,9 +10,8 @@ import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
-import ir.maktab.project_final_faz2.service.impl.*;
+import ir.maktab.project_final_faz2.service.serviceImpl.*;
 import jakarta.validation.Valid;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,22 +77,25 @@ public class ExpertController {
         Expert expert = expertService.findByUserName(userName);
         return ResponseEntity.ok().body(reviewService.findAllReviewForExpert(expert).stream().map(Review::getRating).collect(Collectors.toList()));
     }
+
     @GetMapping("/view_comments")
     public ResponseEntity<List<String>> viewComments(@RequestParam String userName) {
         Expert expert = expertService.findByUserName(userName);
         return ResponseEntity.ok().body(reviewService.findAllReviewForExpert(expert).stream().map(Review::getComment).collect(Collectors.toList()));
     }
+
     @GetMapping("/login")
-    public ResponseEntity<ResponseDTO<ExpertDto>>login(@Valid @RequestBody AccountDto accountDto){
-        Expert expert=expertService.login(accountDto.getUserName(),accountDto.getPassword());
-        ResponseDTO<ExpertDto> responseDTO=new ResponseDTO<>();
+    public ResponseEntity<ResponseDTO<ExpertDto>> login(@Valid @RequestBody AccountDto accountDto) {
+        Expert expert = expertService.login(accountDto.getUserName(), accountDto.getPassword());
+        ResponseDTO<ExpertDto> responseDTO = new ResponseDTO<>();
         responseDTO.setInfo(MapperUsers.INSTANCE.expertToExpertDto(expert));
         return ResponseEntity.ok().body(responseDTO);
     }
+
     @PutMapping("/changing_password")
     public ResponseEntity<ExpertDto> changePassword(@Valid @RequestParam("userName") String userName,
-                                                      @RequestParam("oldPassword") String oldPassword,
-                                                      @RequestParam("newPassword") String newPassword) {
+                                                    @RequestParam("oldPassword") String oldPassword,
+                                                    @RequestParam("newPassword") String newPassword) {
         Expert expert = expertService.changePassword(userName, oldPassword, newPassword);
         return ResponseEntity.ok().body(MapperUsers.INSTANCE.expertToExpertDto(expert));
     }

@@ -10,4 +10,4 @@ values (2, 'home');
 insert into sub_job (id, description, price, sub_job_name, basic_job_id)
 values (3333, 'clean of windows', 2000, 'blender', 2);
 insert into public.admin (id, password, user_name)
-values (200,'Admin123','admin@gmail.com');
+values (200, 'Admin123', 'admin@gmail.com');

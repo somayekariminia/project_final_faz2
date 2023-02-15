@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecificationExecutor<Person> {
-    List<Person> findAll(Specification<Person> specification);
-
     static Specification<Person> withDynamicQuery(AdminRequestDto request) {
         return (root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -32,10 +30,12 @@ public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecif
                 predicates.add(builder.isMember(request.getSubSubject(), root.get("servicesList")));
 
             if (request.getMinOrMax().equals("min") || request.getMinOrMax().equals("max"))
-                predicates.add(builder.equal(root.get("performance"),request.getPerformance()));
+                predicates.add(builder.equal(root.get("performance"), request.getPerformance()));
 
             return builder.and(predicates.toArray(new Predicate[0]));
         };
     }
+
+    List<Person> findAll(Specification<Person> specification);
 }
 
