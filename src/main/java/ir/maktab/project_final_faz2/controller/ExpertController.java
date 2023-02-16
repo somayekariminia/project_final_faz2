@@ -7,6 +7,7 @@ import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseDTO;
 import ir.maktab.project_final_faz2.data.model.entity.*;
+import ir.maktab.project_final_faz2.data.model.repository.CustomerRepository;
 import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
@@ -34,13 +35,16 @@ public class ExpertController {
     private final SubJobServiceImpl subJobService;
 
     private final ReviewServiceImpl reviewService;
+    private final CustomerRepository customerRepository;
 
-    public ExpertController(ExpertServiceImpl expertService, OfferServiceImpl offerService, OrderCustomerServiceImpl orderCustomerService, SubJobServiceImpl subJobService, ReviewServiceImpl reviewService) {
+    public ExpertController(ExpertServiceImpl expertService, OfferServiceImpl offerService, OrderCustomerServiceImpl orderCustomerService, SubJobServiceImpl subJobService, ReviewServiceImpl reviewService,
+                            CustomerRepository customerRepository) {
         this.expertService = expertService;
         this.offerService = offerService;
         this.orderCustomerService = orderCustomerService;
         this.subJobService = subJobService;
         this.reviewService = reviewService;
+        this.customerRepository = customerRepository;
     }
 
 
@@ -113,6 +117,13 @@ public class ExpertController {
         Expert expert = expertService.findByUserName(userName);
         List<OrderCustomer> orderCustomers = orderCustomerService.viewAllOrder(expert);
         return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
+    }
+
+    @GetMapping("/view_image")
+    public ResponseEntity<File> viewImage(@RequestParam String userName) {
+        File file = new File("C:\\Users\\Lenovo\\Desktop\\OIF.jpg");
+        File file1 = expertService.viewImage(userName, file);
+        return ResponseEntity.ok().body(file1);
     }
 
 }
