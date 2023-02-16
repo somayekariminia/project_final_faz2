@@ -1,5 +1,6 @@
 package ir.maktab.project_final_faz2.service.serviceImpl;
 
+import ir.maktab.project_final_faz2.config.MessageSourceConfiguration;
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
@@ -26,30 +27,42 @@ public class CreditServiceImpl implements CreditService {
     private final ExpertServiceImpl expertService;
     private final OfferServiceImpl offerService;
     private final OrderCustomerServiceImpl orderCustomerService;
+    private final MessageSourceConfiguration messageSource;
+
 
     @Override
     @Transactional
     public void checkCredit(LocalDate expiredDate, OrderCustomer orderCustomer) {
-        if (!orderCustomer.getOrderStatus().equals(OrderStatus.DoItsBeen))
-            throw new ValidationException(String.format("this order  %s  already isNot end", orderCustomer.getSubJob()));
-        if (expiredDate.isBefore((LocalDate.now())))
-            throw new TimeOutException("expiredDate is Expired");
+        log.debug("start method CheckCredit");
+        if (!orderCustomer.getOrderStatus().equals(OrderStatus.DoItsBeen)) {
+            log.error("this order  %s  already isNot end");
+            throw new ValidationException(messageSource.getMessage("errors.message.order_isn't_done"));
+        }
+        if (expiredDate.isBefore((LocalDate.now()))) {
+            log.error("expiredDate is Expired");
+            throw new TimeOutException(messageSource.getMessage("errors.message.expired_date"));
+        }
         orderCustomer.setOrderStatus(OrderStatus.Paid);
         orderCustomerService.updateOrder(orderCustomer);
-        log.debug("continue method checkCredit");
         Expert expert = offerService.findOffersIsAccept(orderCustomer).getExpert();
         expertService.withdrawToCreditExpert(orderCustomer.getOfferPrice(), expert);
-
+        log.debug("end method");
     }
 
     @Override
     @Transactional
     public void payOfCredit(OrderCustomer orderCustomer) {
         Customer customer = orderCustomer.getCustomer();
-        if (!orderCustomer.getOrderStatus().equals(OrderStatus.DoItsBeen))
-            throw new NotAcceptedException("you cant payment because orderCustomer dont done");
+        if (!orderCustomer.getOrderStatus().equals(OrderStatus.DoItsBeen)) {
+            log.error("errors.message.done_work");
+            throw new NotAcceptedException(messageSource.getMessage("errors.message.done_work"));
+        }
+
         if (orderCustomer.getOfferPrice().compareTo(customer.getCredit().getBalance()) > 0)
-            throw new Insufficient("Your balance is insufficient");
+        {log.error("errors.message.dont_insufficient");
+            throw new Insufficient(messageSource.getMessage("errors.message.dont_insufficient"));
+        }
+
         orderCustomer.setOrderStatus(OrderStatus.Paid);
         orderCustomerService.updateOrder(orderCustomer);
         BigDecimal balance = customer.getCredit().getBalance();

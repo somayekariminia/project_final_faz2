@@ -1,6 +1,7 @@
 package ir.maktab.project_final_faz2.service.serviceImpl;
 
 import com.google.common.collect.Lists;
+import ir.maktab.project_final_faz2.config.MessageSourceConfiguration;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.Offers;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
@@ -13,6 +14,7 @@ import ir.maktab.project_final_faz2.service.serviceInterface.OfferService;
 import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -29,6 +31,8 @@ public class OfferServiceImpl implements OfferService {
     private final OfferRepository offerRepository;
     private final ExpertServiceImpl expertService;
     private final OrderCustomerServiceImpl orderCustomerService;
+    @Autowired
+    MessageSourceConfiguration messageSource;
 
     @Override
     public List<SubJob> findAllSubJubExpert(Expert expert) {
@@ -42,12 +46,12 @@ public class OfferServiceImpl implements OfferService {
     public List<OrderCustomer> findAllOrdersForAnSubJobOfExpert(Expert expert, SubJob subJob) {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
         if (!expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
-            throw new ValidationException(String.format("Expert %s is not Confirm !!! ", expertDb.getEmail()));
+            throw new ValidationException(messageSource.getMessage("the desired Expert isNot confirm "));
         if (expertDb.getServicesList().stream().noneMatch(subJob1 -> subJob1.getSubJobName().equals(subJob.getSubJobName())))
-            throw new NotFoundException(String.format("this %s is Not Exist For this Expert", subJob.getSubJobName()));
+            throw new NotFoundException(messageSource.getMessage("errors.message.notFound-subJob"));
         List<OrderCustomer> list = orderCustomerService.findAllOrdersBySubJob(subJob);
         if (list.isEmpty())
-            throw new NotFoundException(String.format("No Order for this Expert %s", expertDb.getEmail()));
+            throw new NotFoundException(messageSource.getMessage("errors.message.notFound_order"));
         return list;
     }
 
@@ -55,17 +59,17 @@ public class OfferServiceImpl implements OfferService {
     @Transactional
     public Offers save(Offers offers, Long id) {
         if (Objects.isNull(offers))
-            throw new NullObjects("offers is null");
+            throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         if (!offers.getExpert().getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
-            throw new NotAcceptedException("expert is not confirm");
+            throw new NotAcceptedException(messageSource.getMessage("errors.message.isn't_confirm"));
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         OrderCustomer orderCustomer = orderCustomerService.findById(id);
         if (offers.getExpert().getServicesList().stream().noneMatch(subJob -> subJob.getSubJobName().equals(orderCustomer.getSubJob().getSubJobName())))
-            throw new NotFoundException("desired expert doesnt have this subService");
+            throw new NotFoundException(messageSource.getMessage("errors.message.notFound-subJob"));
         if (offers.getOfferPriceByExpert().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
-            throw new ValidationException(String.format("The offer price for this sub-service %s is lower than the original price", orderCustomer.getSubJob().getSubJobName()));
+            throw new ValidationException(messageSource.getMessage("errors.message.low_price"));
         if (UtilDate.compareTwoDate(offers.getStartTime(), today) < 0)
-            throw new TimeOutException("The current date is less than the proposed date");
+            throw new TimeOutException(messageSource.getMessage("errors.message.isBefore_date_now"));
         orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
         orderCustomerService.updateOrder(orderCustomer);
         offers.setAccept(false);
@@ -78,7 +82,7 @@ public class OfferServiceImpl implements OfferService {
         OrderCustomer orderCustomer = orderCustomerService.findById(id);
         List<Offers> allOffersAOrder = offerRepository.findAllByOrderCustomerOrderByPriceOrder(orderCustomer.getId());
         if (allOffersAOrder.isEmpty())
-            throw new NotFoundException(String.format("Not Found offer for this order %s !!", id));
+            throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return allOffersAOrder;
     }
 
@@ -93,7 +97,7 @@ public class OfferServiceImpl implements OfferService {
         List<Offers> allOffersAOrder = viewAllOffersOrderByPriceAsc(id);
         List<Offers> orderByScore = allOffersAOrder.stream().sorted(Comparator.comparing(offers -> offers.getExpert().getPerformance())).toList();
         if (orderByScore.isEmpty())
-            throw new NotFoundException(String.format("Not Found offer for this order %s !!", id));
+            throw new NotFoundException(messageSource.getMessage("errors.message.notFound_offer_for_order"));
         return orderByScore;
     }
 
@@ -113,9 +117,9 @@ public class OfferServiceImpl implements OfferService {
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
         Offers offersDb = findById(offers.getId());
         if (!Objects.equals(offersDb.getOrderCustomer().getId(), orderCustomerDb.getId()))
-            throw new NotAcceptedException("offers is not accept because the offer isn't for this orderCustomer ");
+            throw new NotAcceptedException(messageSource.getMessage("errors.message.is_not_exist_offer_for_order"));
         if (!(orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingForOfferTheExperts) || orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingSelectTheExpert)))
-            throw new NotAcceptedException("Order an offer has already accepted ");
+            throw new NotAcceptedException(messageSource.getMessage("errors.message.exist_accept_offer_order"));
         orderCustomerDb.setOrderStatus(OrderStatus.WaitingForTheExpertToComeToYourLocation);
         orderCustomerService.updateOrder(orderCustomerDb);
         offers.setAccept(true);
@@ -126,13 +130,13 @@ public class OfferServiceImpl implements OfferService {
     public OrderCustomer changeOrderToStartByCustomer(Offers offers, OrderCustomer orderCustomer) {
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingForTheExpertToComeToYourLocation))
-            throw new ValidationException("The order must be in the case of an expert coming to work");
+            throw new ValidationException(messageSource.getMessage("errors.message.state_order_must_waiting_come_expert"));
         Offers offersDb = findById(offers.getId());
         Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         if (UtilDate.compareTwoDate(offersDb.getStartTime(), today) < 0)
-            throw new TimeOutException("The current date is less than the proposed date!!!");
+            throw new TimeOutException(messageSource.getMessage("errors.message.isBefore_date_now"));
         if (!offers.isAccept())
-            throw new NotAcceptedException("The selected offer has not been accepted !!!!");
+            throw new NotAcceptedException(messageSource.getMessage("errors.message.offer_isn't_accept"));
         orderCustomerDb.setOrderStatus(OrderStatus.Started);
         return orderCustomerService.updateOrder(orderCustomerDb);
     }
@@ -140,7 +144,7 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public void endDoWork(OrderCustomer orderCustomer, LocalDateTime endDoWork) {
         if (!orderCustomer.getOrderStatus().equals(OrderStatus.Started))
-            throw new ValidationException(String.format("Order %s must be in start mode to finish the job", orderCustomer.getId()));
+            throw new ValidationException(messageSource.getMessage("errors.message.order_state_start"));
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
         orderCustomerDb.setEndDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.from(endDoWork)));
         orderCustomerDb.setOrderStatus(OrderStatus.DoItsBeen);
@@ -166,7 +170,7 @@ public class OfferServiceImpl implements OfferService {
     public void subtractOfScore(OrderCustomer orderCustomer) {
         OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomer.getId());
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
-            throw new TimeOutException("It's not finished yet.");
+            throw new TimeOutException(messageSource.getMessage("errors.message.order_isn't_done"));
         Offers offers = findOffersIsAccept(orderCustomerDb);
         LocalDateTime timeEndExpert = UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork());
         if (UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()).compareTo(timeEndExpert) > 0) {
@@ -180,7 +184,7 @@ public class OfferServiceImpl implements OfferService {
 
     private void disableExpert(Expert expert) {
         if (expert.getPerformance() >= 0)
-            throw new ValidationException("your account is Active");
+            throw new ValidationException(messageSource.getMessage("error.message.active_expert"));
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);
         expertService.updateExpert(expert);
     }

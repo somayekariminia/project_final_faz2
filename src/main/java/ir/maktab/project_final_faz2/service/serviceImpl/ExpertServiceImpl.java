@@ -1,5 +1,6 @@
 package ir.maktab.project_final_faz2.service.serviceImpl;
 
+import ir.maktab.project_final_faz2.config.MessageSourceConfiguration;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.enums.Role;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
@@ -10,6 +11,7 @@ import ir.maktab.project_final_faz2.util.util.UtilImage;
 import ir.maktab.project_final_faz2.util.util.ValidationInput;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -22,14 +24,16 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ExpertServiceImpl implements ExpertService {
     private final ExpertRepository expertRepository;
+    @Autowired
+    MessageSourceConfiguration messageSource;
 
     @Transactional
     @Override
     public Expert save(Expert expert, File file) {
         if (Objects.isNull(expert))
-            throw new NullObjects("expert is null");
+            throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         if (expertRepository.findByEmail(expert.getEmail()).isPresent())
-            throw new DuplicateException(String.format("already Exist is Expert %s ", expert.getEmail()));
+            throw new DuplicateException(messageSource.getMessage("errors.message.duplicate-object"));
         validateInfoPerson(expert);
         expert.setExpertImage(UtilImage.validateImage(file));
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);
@@ -49,9 +53,9 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
 
     public Expert login(String userName, String password) {
-        Expert expert = expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format("Not Fount Expert %s", userName)));
+        Expert expert = expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-object")));
         if (!expert.getPassword().equals(password))
-            throw new ValidationException("Your password is incorrect");
+            throw new ValidationException(messageSource.getMessage("errors.message.invalid_password"));
         return expert;
 
     }
@@ -59,31 +63,31 @@ public class ExpertServiceImpl implements ExpertService {
     @Override
     public Expert changePassword(String userName, String passwordOld, String newPassword) {
         if (passwordOld.equals(newPassword))
-            throw new ValidationException("passwordNew same is old password");
+            throw new ValidationException(messageSource.getMessage("errors.message.duplicate_password"));
         Expert expert = login(userName, passwordOld);
         expert.setPassword(newPassword);
         expertRepository.save(expert);
         Expert newExpert = findByUserName(userName);
         if (!newExpert.getPassword().equals(newPassword))
-            throw new NotFoundException("Password is invalid");
+            throw new NotFoundException(messageSource.getMessage("errors.message.invalid_password"));
         return newExpert;
     }
 
     @Override
     public Expert findById(Long id) {
-        return expertRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Fount Expert %d", id)));
+        return expertRepository.findById(id).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-object")));
     }
 
     @Override
     public Expert findByUserName(String userName) {
-        return expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(String.format("Not Fount Expert %s", userName)));
+        return expertRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-object")));
     }
 
     @Override
     public List<Expert> findAllPerson() {
         List<Expert> listExpert = expertRepository.findAll();
         if (listExpert.isEmpty())
-            throw new NotFoundException("!!!!List Experts is Null!!!!");
+            throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return listExpert;
     }
 
@@ -92,7 +96,7 @@ public class ExpertServiceImpl implements ExpertService {
     public List<Expert> findAllExpertsApproved() {
         List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsConfirm(SpecialtyStatus.Confirmed);
         if (allExpertIsNtConfirm.isEmpty())
-            throw new NotFoundException("There arent Expert Confirmed !!!!!!");
+            throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return allExpertIsNtConfirm;
     }
 
@@ -100,7 +104,7 @@ public class ExpertServiceImpl implements ExpertService {
     public List<Expert> findAllExpertsIsNotConfirm() {
         List<Expert> allExpertIsNtConfirm = expertRepository.findAllExpertIsConfirm(SpecialtyStatus.NewState);
         if (allExpertIsNtConfirm.isEmpty())
-            throw new NotFoundException("There arent Experts Is Not Confirm!!!!!!!");
+            throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return allExpertIsNtConfirm;
     }
 
@@ -114,7 +118,7 @@ public class ExpertServiceImpl implements ExpertService {
     public void withdrawToCreditExpert(BigDecimal amount, Expert expert) {
         Expert expertDb = findByUserName(expert.getEmail());
         if (expertDb.getSpecialtyStatus().equals(SpecialtyStatus.NewState))
-            throw new NotAcceptedException(String.format("expert %s isNot confirm", expert.getEmail()));
+            throw new NotAcceptedException(messageSource.getMessage("errors.message.isn't_confirm"));
         expertDb.getCredit().setBalance(BigDecimal.valueOf(0.7 * amount.doubleValue()));
         expertRepository.save(expertDb);
     }

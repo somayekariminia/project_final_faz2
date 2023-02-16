@@ -1,5 +1,6 @@
 package ir.maktab.project_final_faz2.service.serviceImpl;
 
+import ir.maktab.project_final_faz2.config.MessageSourceConfiguration;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.repository.BasicJobRepository;
 import ir.maktab.project_final_faz2.data.model.repository.SubJobRepository;
@@ -19,6 +20,7 @@ import java.util.Objects;
 public class SubJobServiceImpl implements SubJobService {
     private final SubJobRepository subJobRepository;
     private final BasicJobRepository basicJobRepository;
+    private final MessageSourceConfiguration messageSource;
 
     @Override
     public SubJob saveSubJob(SubJob subJob) {
@@ -28,11 +30,11 @@ public class SubJobServiceImpl implements SubJobService {
 
     private void checkSubJob(SubJob subJob) {
         if (Objects.isNull(subJob))
-            throw new NullObjects("subJob is null");
+            throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         if (basicJobRepository.findBasicJobByNameBase(subJob.getBasicJob().getNameBase()).isEmpty())
-            throw new NotFoundException(String.format("is not exist basicJob " + subJob.getBasicJob().getNameBase()));
+            throw new NotFoundException(messageSource.getMessage("errors.message.notFound-object"));
         if (subJobRepository.findBySubJobName(subJob.getSubJobName()).isPresent())
-            throw new DuplicateException(String.format("this subService " + subJob.getBasicJob().getNameBase() + " Already saved"));
+            throw new DuplicateException(messageSource.getMessage("errors.message.duplicate-object"));
     }
 
     @Override
@@ -42,6 +44,8 @@ public class SubJobServiceImpl implements SubJobService {
 
     @Override
     public SubJob updateSubJob(SubJob subJob) {
+        if(Objects.isNull(subJob))
+            throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         SubJob subJobDb = findSubJobByName(subJob.getSubJobName());
         subJobDb.setDescription(subJob.getDescription());
         subJobDb.setPrice(subJob.getPrice());
@@ -50,12 +54,12 @@ public class SubJobServiceImpl implements SubJobService {
 
     @Override
     public SubJob findSubJobByName(String name) {
-        return subJobRepository.findBySubJobName(name).orElseThrow(() -> new NotFoundException(String.format("Not Found " + name + " !!!!!!!!")));
+        return subJobRepository.findBySubJobName(name).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-object")));
     }
 
     @Override
     public SubJob findById(Long id) {
-        return subJobRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Not Found " + id + " !!!!!!!!")));
+        return subJobRepository.findById(id).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-object")));
     }
 
 }

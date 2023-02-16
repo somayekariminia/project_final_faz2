@@ -1,5 +1,6 @@
 package ir.maktab.project_final_faz2.service.serviceImpl;
 
+import ir.maktab.project_final_faz2.config.MessageSourceConfiguration;
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.repository.BasicJobRepository;
@@ -21,13 +22,14 @@ import java.util.Objects;
 public class BasicJubServiceImpl implements BasicService {
     private final BasicJobRepository basicJobRepository;
     private final SubJobRepository subJobRepository;
+    private final MessageSourceConfiguration messageSource;
 
     @Override
     public BasicJob save(BasicJob basicJob) {
         if (Objects.isNull(basicJob))
-            throw new NullObjects("basicJob is null");
+            throw new NullObjects("errors.message.null-object");
         if (basicJobRepository.findBasicJobByNameBase(basicJob.getNameBase()).isPresent())
-            throw new DuplicateException("already basicJob " + basicJob.getNameBase() + " is Exist");
+            throw new DuplicateException("errors.message.duplicate-object");
         return basicJobRepository.save(basicJob);
     }
 
@@ -35,7 +37,7 @@ public class BasicJubServiceImpl implements BasicService {
     public List<SubJob> findAllSubJobsABasicJob(String nameBasicJob) {
         List<SubJob> subJobList = subJobRepository.findAllByBasicJobNameBase(nameBasicJob);
         if (subJobList.isEmpty())
-            throw new NotFoundException(String.format("!!There arent subJobs for BasicJob " + nameBasicJob));
+            throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return subJobList;
     }
 
@@ -46,6 +48,6 @@ public class BasicJubServiceImpl implements BasicService {
 
     @Override
     public BasicJob findBasicJobByName(String name) {
-        return basicJobRepository.findBasicJobByNameBase(name).orElseThrow(() -> new NotFoundException(String.format("is not exist BasicJob %s ", name)));
+        return basicJobRepository.findBasicJobByNameBase(name).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-object")));
     }
 }
