@@ -91,7 +91,7 @@ class OfferServiceImplTest {
     @Test
     void endDoWork() {
         OrderCustomer orderCustomer = orderCustomerService.findByCode("order16");
-        offerService.endDoWork(orderCustomer, LocalDateTime.now());
+        offerService.endDoWork(orderCustomer);
         OrderCustomer newOrderCustomer = orderCustomerService.findByCode("order16");
         Assertions.assertEquals(newOrderCustomer.getOrderStatus(), OrderStatus.DoItsBeen);
     }

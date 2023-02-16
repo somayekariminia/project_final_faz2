@@ -128,8 +128,7 @@ public class CustomerController {
     @PutMapping("/endWork")
     public ResponseEntity<String> finalDoWork(@RequestParam("orderId") Long orderId) {
         OrderCustomer order = orderCustomerService.findById(orderId);
-        LocalDateTime today = LocalDateTime.now();
-        offerService.endDoWork(order, today);
+        offerService.endDoWork(order);
         return ResponseEntity.ok().body("order in date  " + order.getEndDateDoWork() + "  end");
     }
 
@@ -147,7 +146,7 @@ public class CustomerController {
         reviewService.giveScoreToExpert(order, MapStructMapper.INSTANCE.reviewDtoToReview(reviewDto));
         return ResponseEntity.ok().body("your comment submit for desired expert");
     }
-    @GetMapping("/view-all-order-customer")
+    @GetMapping("/view_all_order_customer")
     public ResponseEntity<List<OrderCustomerDto>> viewAllOrder(@RequestParam String userName){
        Customer customer=customerService.findByUserName(userName);
        List<OrderCustomer> orderCustomers=orderCustomerService.findOrdersCustomer(customer);

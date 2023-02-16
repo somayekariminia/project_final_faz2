@@ -27,9 +27,9 @@ public class BasicJubServiceImpl implements BasicService {
     @Override
     public BasicJob save(BasicJob basicJob) {
         if (Objects.isNull(basicJob))
-            throw new NullObjects("errors.message.null-object");
+            throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         if (basicJobRepository.findBasicJobByNameBase(basicJob.getNameBase()).isPresent())
-            throw new DuplicateException("errors.message.duplicate-object");
+            throw new DuplicateException(messageSource.getMessage("errors.message.duplicate-object"));
         return basicJobRepository.save(basicJob);
     }
 

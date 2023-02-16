@@ -19,7 +19,7 @@ public interface OfferService {
 
     OrderCustomer changeOrderToStartByCustomer(Offers offers, OrderCustomer orderCustomer);
 
-    void endDoWork(OrderCustomer orderCustomer, LocalDateTime endDoWork);
+    void endDoWork(OrderCustomer orderCustomer);
 
     Offers findById(Long id);
 

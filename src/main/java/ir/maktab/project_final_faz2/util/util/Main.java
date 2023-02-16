@@ -1,7 +1,9 @@
 package ir.maktab.project_final_faz2.util.util;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,6 +15,7 @@ public class Main {
         Duration duration = Duration.ZERO.plusDays(1).plusHours(1);
         LocalDateTime plus = LocalDateTime.now().plus(duration);
         System.out.println(plus);
+        System.out.println(UtilDate.changeLocalDateToDate(LocalDateTime.now()));
 
 
     }

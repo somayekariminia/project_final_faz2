@@ -36,7 +36,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public void giveScoreToExpert(OrderCustomer orderCustomer, Review review) {
         OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomer.getId());
-        if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
+        if (!(orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen) || orderCustomerDb.getOrderStatus().equals(OrderStatus.Paid)) )
             throw new TimeOutException(messageSource.getMessage("errors.message.order_isn't_done"));
         Expert expert = offerService.findOffersIsAccept(orderCustomerDb).getExpert();
         double performance = review.getRating() + expert.getPerformance() / 2;

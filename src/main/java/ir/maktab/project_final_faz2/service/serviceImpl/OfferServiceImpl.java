@@ -21,7 +21,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,13 +61,13 @@ public class OfferServiceImpl implements OfferService {
             throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         if (!offers.getExpert().getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
             throw new NotAcceptedException(messageSource.getMessage("errors.message.isn't_confirm"));
-        Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
+
         OrderCustomer orderCustomer = orderCustomerService.findById(id);
         if (offers.getExpert().getServicesList().stream().noneMatch(subJob -> subJob.getSubJobName().equals(orderCustomer.getSubJob().getSubJobName())))
             throw new NotFoundException(messageSource.getMessage("errors.message.notFound-subJob"));
         if (offers.getOfferPriceByExpert().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException(messageSource.getMessage("errors.message.low_price"));
-        if (UtilDate.compareTwoDate(offers.getStartTime(), today) < 0)
+        if (offers.getStartTime().isBefore(LocalDateTime.now()))
             throw new TimeOutException(messageSource.getMessage("errors.message.isBefore_date_now"));
         orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
         orderCustomerService.updateOrder(orderCustomer);
@@ -132,8 +131,7 @@ public class OfferServiceImpl implements OfferService {
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingForTheExpertToComeToYourLocation))
             throw new ValidationException(messageSource.getMessage("errors.message.state_order_must_waiting_come_expert"));
         Offers offersDb = findById(offers.getId());
-        Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
-        if (UtilDate.compareTwoDate(offersDb.getStartTime(), today) < 0)
+        if (offersDb.getStartTime().isBefore(LocalDateTime.now()))
             throw new TimeOutException(messageSource.getMessage("errors.message.isBefore_date_now"));
         if (!offers.isAccept())
             throw new NotAcceptedException(messageSource.getMessage("errors.message.offer_isn't_accept"));
@@ -142,11 +140,11 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public void endDoWork(OrderCustomer orderCustomer, LocalDateTime endDoWork) {
+    public void endDoWork(OrderCustomer orderCustomer) {
         if (!orderCustomer.getOrderStatus().equals(OrderStatus.Started))
             throw new ValidationException(messageSource.getMessage("errors.message.order_state_start"));
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
-        orderCustomerDb.setEndDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.from(endDoWork)));
+        orderCustomerDb.setEndDateDoWork(LocalDateTime.now());
         orderCustomerDb.setOrderStatus(OrderStatus.DoItsBeen);
         orderCustomerService.updateOrder(orderCustomerDb);
         subtractOfScore(orderCustomerDb);
@@ -172,9 +170,9 @@ public class OfferServiceImpl implements OfferService {
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
             throw new TimeOutException(messageSource.getMessage("errors.message.order_isn't_done"));
         Offers offers = findOffersIsAccept(orderCustomerDb);
-        LocalDateTime timeEndExpert = UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork());
-        if (UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()).compareTo(timeEndExpert) > 0) {
-            int diffHours = (int) Duration.between(UtilDate.getLocalDateTime(orderCustomerDb.getEndDateDoWork()), UtilDate.getLocalDateTime(offers.getStartTime()).plus(offers.getDurationWork())).toHours();
+        LocalDateTime timeEndExpert = offers.getStartTime().plus(offers.getDurationWork());
+        if (orderCustomerDb.getEndDateDoWork().isAfter(timeEndExpert) ) {
+            int diffHours = (int) Duration.between(orderCustomerDb.getEndDateDoWork(), offers.getStartTime()).plus(offers.getDurationWork()).toHours();
             offers.getExpert().setPerformance((offers.getExpert().getPerformance() - Math.abs(diffHours)));
         }
         if (offers.getExpert().getPerformance() < 0)

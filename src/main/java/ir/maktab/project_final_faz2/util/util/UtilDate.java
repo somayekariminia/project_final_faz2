@@ -10,8 +10,8 @@ import java.time.temporal.ChronoField;
 import java.util.Date;
 
 public class UtilDate {
-    public static Date changeLocalDateToDate(LocalDate localDate) {
-        LocalDateTime localDateTime = localDate.atStartOfDay();
+    public static Date changeLocalDateToDate(LocalDateTime localDate) {
+        LocalDateTime localDateTime = localDate;
         ZonedDateTime zdt = localDateTime.atZone(ZoneId.systemDefault());
         return Date.from(zdt.toInstant());
 
@@ -20,12 +20,6 @@ public class UtilDate {
     public static LocalDateTime getLocalDateTime(Date date) {
         LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
         return ldt.toLocalDate().atStartOfDay();
-    }
-
-    public static int compareTwoDate(Date dateFirst, Date dateTwo) {
-        LocalDateTime localDateFirst = getLocalDateTime(dateFirst);
-        LocalDateTime localDateSecond = getLocalDateTime(dateTwo);
-        return localDateFirst.compareTo(localDateSecond);
     }
 
     public static LocalDate getDate(String time) {

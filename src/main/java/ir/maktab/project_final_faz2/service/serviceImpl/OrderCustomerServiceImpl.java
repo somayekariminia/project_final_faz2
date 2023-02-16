@@ -9,16 +9,13 @@ import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OrderCustomerRepository;
 import ir.maktab.project_final_faz2.exception.*;
 import ir.maktab.project_final_faz2.service.serviceInterface.OrderCustomerService;
-import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.bridge.IMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,10 +32,9 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     public OrderCustomer saveOrder(OrderCustomer orderCustomer) {
         if (Objects.isNull(orderCustomer))
             throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
-        Date today = UtilDate.changeLocalDateToDate(LocalDate.now());
         if (orderCustomer.getOfferPrice().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
             throw new ValidationException(messageSource.getMessage("errors.message.low_price"));
-        if (UtilDate.compareTwoDate(orderCustomer.getStartDateDoWork(), today) < 0)
+        if (orderCustomer.getStartDateDoWork().isBefore(LocalDateTime.now()))
             throw new TimeOutException(messageSource.getMessage("errors.message.isBefore_date_now"));
         orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
         return orderCustomerRepository.save(orderCustomer);
