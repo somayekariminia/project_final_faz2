@@ -1,6 +1,7 @@
 package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AccountDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.ChangePasswordDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.ExpertAndFileDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistryDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
@@ -86,7 +87,7 @@ public class ExpertController {
         return ResponseEntity.ok().body(reviewService.findAllReviewForExpert(expert).stream().map(Review::getComment).collect(Collectors.toList()));
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<ResponseDTO<ExpertDto>> login(@Valid @RequestBody AccountDto accountDto) {
         Expert expert = expertService.login(accountDto.getUserName(), accountDto.getPassword());
         ResponseDTO<ExpertDto> responseDTO = new ResponseDTO<>();
@@ -94,12 +95,10 @@ public class ExpertController {
         return ResponseEntity.ok().body(responseDTO);
     }
 
-    @PutMapping("/changing_password")
-    public ResponseEntity<ExpertDto> changePassword(@Valid @RequestParam("userName") String userName,
-                                                    @RequestParam("oldPassword") String oldPassword,
-                                                    @RequestParam("newPassword") String newPassword) {
-        Expert expert = expertService.changePassword(userName, oldPassword, newPassword);
-        return ResponseEntity.ok().body(MapperUsers.INSTANCE.expertToExpertDto(expert));
+    @PostMapping("/changing_password")
+    public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto) {
+        Expert expert = expertService.changePassword(changePasswordDto.getAccountDto().getUserName(), changePasswordDto.getAccountDto().getPassword(), changePasswordDto.getNewPassword());
+        return ResponseEntity.ok().body("Successfully change password "+expert.getEmail());
     }
 
     @GetMapping("/view_performance")

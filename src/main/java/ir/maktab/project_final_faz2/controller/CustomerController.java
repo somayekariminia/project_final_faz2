@@ -1,12 +1,14 @@
 package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AccountDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.ChangePasswordDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.OrderRegistryDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.*;
 import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.StatusSort;
 import ir.maktab.project_final_faz2.mapper.*;
 import ir.maktab.project_final_faz2.service.serviceImpl.*;
+import ir.maktab.project_final_faz2.service.serviceInterface.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -45,12 +47,11 @@ public class CustomerController {
         return ResponseEntity.ok().body("customer save ok");
     }
 
-    @PutMapping("/changing_password")
-    public ResponseEntity<CustomerDto> changePassword(@Valid @RequestParam("userName") String userName,
-                                                      @RequestParam("oldPassword") String oldPassword,
-                                                      @RequestParam("newPassword") String newPassword) {
-        Customer customer = customerService.changePassword(userName, oldPassword, newPassword);
-        return ResponseEntity.ok().body(MapperUsers.INSTANCE.customerToCustomerDto(customer));
+
+    @PostMapping("/changing_password")
+    public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto) {
+        Customer customer = customerService.changePassword(changePasswordDto.getAccountDto().getUserName(), changePasswordDto.getAccountDto().getPassword(), changePasswordDto.getNewPassword());
+        return ResponseEntity.ok().body("Successfully change password "+customer.getEmail());
     }
 
     @PostMapping("/login_customer")
