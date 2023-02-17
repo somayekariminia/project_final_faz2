@@ -17,6 +17,7 @@ public class InfoCardDto {
     @Pattern(regexp = "[0-9]{3,4}", message = "numberCard must number and length 3 or 4 !!!")
     private String cvv2;
 
+    @Pattern(regexp = "[0-9]{4}/[0-9]{2}" ,message= "date enter to form yyyy-MM")
     private String dateExpired;
 
     private String captcha;

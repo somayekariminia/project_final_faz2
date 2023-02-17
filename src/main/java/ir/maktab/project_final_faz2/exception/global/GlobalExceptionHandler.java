@@ -96,17 +96,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
-    @ExceptionHandler(BindException.class)
-    ResponseEntity<ResponseDTO<Object>> handleException(BindException exception) {
-        ResponseDTO<Object> responseDTO = new ResponseDTO<>();
-        for (FieldError fieldError : exception.getFieldErrors()) {
-            String message = fieldError.getDefaultMessage();
-            assert message != null;
-            responseDTO.setResMessage(("errors.message.dto_not_valid"));
-        }
-        return ResponseEntity.badRequest().header(HttpHeaders.CONTENT_TYPE, CHARSET).body(responseDTO);
-    }
-
     @ExceptionHandler(DataIntegrityViolationException.class)
     ResponseEntity<?> handleException(DataIntegrityViolationException e) {
         CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

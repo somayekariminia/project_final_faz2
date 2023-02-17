@@ -17,14 +17,9 @@ public class UtilDate {
 
     }
 
-    public static LocalDateTime getLocalDateTime(Date date) {
-        LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
-        return ldt.toLocalDate().atStartOfDay();
-    }
-
     public static LocalDate getDate(String time) {
         DateTimeFormatter fmt = new DateTimeFormatterBuilder()
-                .appendPattern("yyyy-MM")
+                .appendPattern("yyyy/MM")
                 .parseDefaulting(ChronoField.DAY_OF_MONTH, 30)
                 .toFormatter();
         return LocalDate.parse(time, fmt);
