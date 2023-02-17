@@ -1,12 +1,8 @@
 package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
-import ir.maktab.project_final_faz2.data.model.dto.request.BasicJobDto;
-import ir.maktab.project_final_faz2.data.model.dto.request.SubJobDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.SubJobUpdateDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.PersonDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseDTO;
+import ir.maktab.project_final_faz2.data.model.dto.respons.*;
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
@@ -57,7 +53,7 @@ public class AdminController {
         return ResponseEntity.ok().body(responseDto);
     }
 
-    @PutMapping("/update_subService")
+    @PostMapping("/update_subService")
     public ResponseEntity<ResponseDTO<SubJobDto>> updateSubJob(@RequestBody SubJobUpdateDto subJobDto) {
         SubJob subJob = subJobService.updateSubJob(MapperServices.INSTANCE.subJobUpdateDtoToSubJob(subJobDto));
         ResponseDTO<SubJobDto> responseDto = new ResponseDTO<>();
@@ -101,7 +97,7 @@ public class AdminController {
         return ResponseEntity.ok().body("ok.Successfully confirm expert " + userName + "!!!");
     }
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ResponseEntity<List<PersonDto>> search(@Valid @RequestBody AdminRequestDto requestAdmin) {
         List<PersonDto> allPerson = adminService.search(requestAdmin);
         return ResponseEntity.ok().body(allPerson);

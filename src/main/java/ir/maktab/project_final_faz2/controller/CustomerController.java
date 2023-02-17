@@ -1,13 +1,8 @@
 package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AccountDto;
-import ir.maktab.project_final_faz2.data.model.dto.request.BasicJobDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.OrderRegistry;
-import ir.maktab.project_final_faz2.data.model.dto.request.SubJobDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.CustomerDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.OffersDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.ReviewDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.*;
 import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.StatusSort;
 import ir.maktab.project_final_faz2.mapper.*;
@@ -18,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,16 +135,23 @@ public class CustomerController {
         return ResponseEntity.ok().body("payment of your credit");
     }
 
-    @GetMapping("/submit_comment")
+    @PostMapping("/submit_comment")
     public ResponseEntity<String> giveScore(@RequestParam Long orderId, @Valid @RequestBody ReviewDto reviewDto) {
         OrderCustomer order = orderCustomerService.findById(orderId);
         reviewService.giveScoreToExpert(order, MapStructMapper.INSTANCE.reviewDtoToReview(reviewDto));
         return ResponseEntity.ok().body("your comment submit for desired expert");
     }
+
     @GetMapping("/view_all_order_customer")
-    public ResponseEntity<List<OrderCustomerDto>> viewAllOrder(@RequestParam String userName){
-       Customer customer=customerService.findByUserName(userName);
-       List<OrderCustomer> orderCustomers=orderCustomerService.findOrdersCustomer(customer);
-       return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
+    public ResponseEntity<List<OrderCustomerDto>> viewAllOrder(@RequestParam String userName) {
+        Customer customer = customerService.findByUserName(userName);
+        List<OrderCustomer> orderCustomers = orderCustomerService.findOrdersCustomer(customer);
+        return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
+    }
+
+    @GetMapping("/view_credit")
+    public ResponseEntity<BigDecimal> viewCredit(@RequestParam String userName) {
+        Customer customer = customerService.findByUserName(userName);
+        return ResponseEntity.ok().body(customer.getCredit().getBalance());
     }
 }

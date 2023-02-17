@@ -58,8 +58,8 @@ public class CreditServiceImpl implements CreditService {
             throw new NotAcceptedException(messageSource.getMessage("errors.message.done_work"));
         }
 
-        if (orderCustomer.getOfferPrice().compareTo(customer.getCredit().getBalance()) > 0)
-        {log.error("errors.message.dont_insufficient");
+        if (orderCustomer.getOfferPrice().compareTo(customer.getCredit().getBalance()) > 0) {
+            log.error("errors.message.dont_insufficient");
             throw new Insufficient(messageSource.getMessage("errors.message.dont_insufficient"));
         }
 

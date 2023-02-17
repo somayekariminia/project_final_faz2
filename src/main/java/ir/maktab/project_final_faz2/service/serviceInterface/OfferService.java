@@ -5,7 +5,6 @@ import ir.maktab.project_final_faz2.data.model.entity.Offers;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OfferService {
@@ -34,5 +33,6 @@ public interface OfferService {
     List<Offers> viewAllOffersOrderByPriceDesc(Long id);
 
     void subtractOfScore(OrderCustomer orderCustomer);
-     void updateOffer(Offers offers);
+
+    void updateOffer(Offers offers);
 }

@@ -18,7 +18,6 @@ import ir.maktab.project_final_faz2.mapper.MapperServices;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.serviceInterface.AdminService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +32,18 @@ public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
     private final PersonRepository personRepository;
     private final MessageSourceConfiguration messageSource;
+
+    private static List<PersonDto> getPersonDtos(List<Person> personList) {
+        List<PersonDto> personDtoS = MapperUsers.INSTANCE.listPersonToPersonDto(personList);
+        for (int i = 0; i < personList.size(); i++) {
+            if (personList.get(i) instanceof Expert) {
+                List<SubJob> servicesList = ((Expert) personList.get(i)).getServicesList();
+                personDtoS.get(i).getSubJob().addAll(MapperServices.INSTANCE.listSubJobToSubJobDtoRes(servicesList));
+                personDtoS.get(i).setPerformance(((Expert) personList.get(i)).getPerformance());
+            }
+        }
+        return personDtoS;
+    }
 
     @Override
     public void addExpertToSubJob(Expert expert, SubJob subJob) {
@@ -117,16 +128,5 @@ public class AdminServiceImpl implements AdminService {
             adminRequestDto.setPerformance(expertService.findMax());
         else
             adminRequestDto.setPerformance(expertService.findMin());
-    }
-    private static List<PersonDto> getPersonDtos(List<Person> personList) {
-        List<PersonDto> personDtoS = MapperUsers.INSTANCE.listPersonToPersonDto(personList);
-        for (int i = 0; i < personList.size(); i++) {
-            if (personList.get(i) instanceof Expert) {
-                List<SubJob> servicesList = ((Expert) personList.get(i)).getServicesList();
-                personDtoS.get(i).getSubJob().addAll(MapperServices.INSTANCE.listSubJobToSubJobDtoRes(servicesList));
-                personDtoS.get(i).setPerformance(((Expert) personList.get(i)).getPerformance());
-            }
-        }
-        return personDtoS;
     }
 }

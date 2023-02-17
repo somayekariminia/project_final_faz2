@@ -11,14 +11,12 @@ import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
 import ir.maktab.project_final_faz2.exception.*;
 import ir.maktab.project_final_faz2.service.serviceInterface.OfferService;
-import ir.maktab.project_final_faz2.util.util.UtilDate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -171,7 +169,7 @@ public class OfferServiceImpl implements OfferService {
             throw new TimeOutException(messageSource.getMessage("errors.message.order_isn't_done"));
         Offers offers = findOffersIsAccept(orderCustomerDb);
         LocalDateTime timeEndExpert = offers.getStartTime().plus(offers.getDurationWork());
-        if (orderCustomerDb.getEndDateDoWork().isAfter(timeEndExpert) ) {
+        if (orderCustomerDb.getEndDateDoWork().isAfter(timeEndExpert)) {
             int diffHours = (int) Duration.between(orderCustomerDb.getEndDateDoWork(), offers.getStartTime()).plus(offers.getDurationWork()).toHours();
             offers.getExpert().setPerformance((offers.getExpert().getPerformance() - Math.abs(diffHours)));
         }

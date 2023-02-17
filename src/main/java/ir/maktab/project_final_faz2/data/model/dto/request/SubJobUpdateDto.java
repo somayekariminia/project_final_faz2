@@ -4,13 +4,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
+
 @Setter
 @Getter
 public class SubJobUpdateDto {
-   @NotNull
+    @NotNull
     @NotBlank
     private String subJobName;
     private BigDecimal price;

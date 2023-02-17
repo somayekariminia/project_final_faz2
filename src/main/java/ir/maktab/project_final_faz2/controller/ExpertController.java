@@ -7,7 +7,6 @@ import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseDTO;
 import ir.maktab.project_final_faz2.data.model.entity.*;
-import ir.maktab.project_final_faz2.data.model.repository.CustomerRepository;
 import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
@@ -35,16 +34,13 @@ public class ExpertController {
     private final SubJobServiceImpl subJobService;
 
     private final ReviewServiceImpl reviewService;
-    private final CustomerRepository customerRepository;
 
-    public ExpertController(ExpertServiceImpl expertService, OfferServiceImpl offerService, OrderCustomerServiceImpl orderCustomerService, SubJobServiceImpl subJobService, ReviewServiceImpl reviewService,
-                            CustomerRepository customerRepository) {
+    public ExpertController(ExpertServiceImpl expertService, OfferServiceImpl offerService, OrderCustomerServiceImpl orderCustomerService, SubJobServiceImpl subJobService, ReviewServiceImpl reviewService) {
         this.expertService = expertService;
         this.offerService = offerService;
         this.orderCustomerService = orderCustomerService;
         this.subJobService = subJobService;
         this.reviewService = reviewService;
-        this.customerRepository = customerRepository;
     }
 
 

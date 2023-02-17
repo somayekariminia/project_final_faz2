@@ -1,9 +1,7 @@
 package ir.maktab.project_final_faz2.util.util;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public class Main {
     public static void main(String[] args) {

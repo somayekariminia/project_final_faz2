@@ -44,7 +44,7 @@ public class SubJobServiceImpl implements SubJobService {
 
     @Override
     public SubJob updateSubJob(SubJob subJob) {
-        if(Objects.isNull(subJob))
+        if (Objects.isNull(subJob))
             throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         SubJob subJobDb = findSubJobByName(subJob.getSubJobName());
         subJobDb.setDescription(subJob.getDescription());

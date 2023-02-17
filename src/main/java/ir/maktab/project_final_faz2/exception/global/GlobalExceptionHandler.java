@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateException.class)
     public ResponseEntity<?> duplicateExceptionHandler(DuplicateException e) {
-        CustomException exception = new CustomException(HttpStatus.FOUND,e.getMessage()) ;
+        CustomException exception = new CustomException(HttpStatus.FOUND, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
