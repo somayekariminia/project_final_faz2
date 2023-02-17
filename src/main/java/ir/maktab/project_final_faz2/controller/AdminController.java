@@ -89,6 +89,17 @@ public class AdminController {
         List<ExpertDto> expertDto = MapperUsers.INSTANCE.listExpertToExpertDto(expertList);
         return ResponseEntity.ok().body(expertDto);
     }
+    @GetMapping("/view_basicJob")
+    public ResponseEntity<List<BasicJobDto>> findAllBAsicJob() {
+        List<BasicJob> listBasicJobs = basicJubService.findAllBasicJobs();
+        return ResponseEntity.ok().body(MapperServices.INSTANCE.ListBasicJobToBasicJobDto(listBasicJobs));
+    }
+
+    @GetMapping("/view_subServices")
+    public ResponseEntity<List<SubJobDto>> findAllSubJobs() {
+        List<SubJob> listSubJob = subJobService.findAllSubJob();
+        return ResponseEntity.ok().body(MapperServices.INSTANCE.subJobListToSubJobDto(listSubJob));
+    }
 
     @PutMapping("/confirm_Expert")
     public ResponseEntity<String> confirmExpert(@RequestParam String userName) {
