@@ -8,7 +8,6 @@ import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.StatusSort;
 import ir.maktab.project_final_faz2.mapper.*;
 import ir.maktab.project_final_faz2.service.serviceImpl.*;
-import ir.maktab.project_final_faz2.service.serviceInterface.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +28,7 @@ public class CustomerController {
 
     private final SubJobServiceImpl subJobService;
 
-    private final BasicJubServiceImpl basicJubService;
+    private final BasicJubServiceImpl basicJobService;
 
     private final OrderCustomerServiceImpl orderCustomerService;
 
@@ -51,7 +50,7 @@ public class CustomerController {
     @PostMapping("/changing_password")
     public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto) {
         Customer customer = customerService.changePassword(changePasswordDto.getAccountDto().getUserName(), changePasswordDto.getAccountDto().getPassword(), changePasswordDto.getNewPassword());
-        return ResponseEntity.ok().body("Successfully change password "+customer.getEmail());
+        return ResponseEntity.ok().body("Successfully change password " + customer.getEmail());
     }
 
     @PostMapping("/login_customer")
@@ -61,21 +60,28 @@ public class CustomerController {
     }
 
     @GetMapping("/view_basicJob")
-    public ResponseEntity<List<BasicJobDto>> findAllBAsicJob() {
-        List<BasicJob> listBasicJobs = basicJubService.findAllBasicJobs();
-        return ResponseEntity.ok().body(MapperServices.INSTANCE.ListBasicJobToBasicJobDto(listBasicJobs));
+    public ResponseEntity<?> findAllBAsicJob() {
+        List<BasicJob> listBasicJobs = basicJobService.findAllBasicJobs();
+        ResponseListDto<BasicJobDto> response=new ResponseListDto<>();
+        response.setData(MapperServices.INSTANCE.ListBasicJobToBasicJobDto(listBasicJobs));
+        return ResponseEntity.ok(response);
+
     }
 
     @GetMapping("/view_subServices")
-    public ResponseEntity<List<SubJobDto>> findAllSubJobs() {
+    public ResponseEntity<?> findAllSubJobs() {
         List<SubJob> listSubJob = subJobService.findAllSubJob();
-        return ResponseEntity.ok().body(MapperServices.INSTANCE.subJobListToSubJobDto(listSubJob));
+        ResponseListDto<SubJobDto> response=new ResponseListDto<>();
+        response.setData(MapperServices.INSTANCE.subJobListToSubJobDto(listSubJob));
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/view_subServices_basic")
-    public ResponseEntity<List<SubJobDto>> findSubJobABasic(@RequestParam("nameBasic") String nameBasic) {
-        List<SubJob> basicJobList = basicJubService.findAllSubJobsABasicJob(nameBasic);
-        return ResponseEntity.ok().body(MapperServices.INSTANCE.subJobListToSubJobDto(basicJobList));
+    @GetMapping("/view_subJob_a_basicJob")
+    public ResponseEntity<?> findSubJobABasic(@RequestParam("nameBasic") String nameBasic) {
+        List<SubJob> subJobList = basicJobService.findAllSubJobsABasicJob(nameBasic);
+        ResponseListDto<SubJobDto> response=new ResponseListDto<>();
+        response.setData(MapperServices.INSTANCE.subJobListToSubJobDto(subJobList));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register_order")
@@ -90,7 +96,7 @@ public class CustomerController {
     }
 
     @GetMapping("/view_Offers")
-    public ResponseEntity<List<OffersDto>> findAllOffers(@RequestParam("orderId") Long orderId, @RequestParam("numberSelect") int numberSelect) {
+    public ResponseEntity<?> findAllOffers(@RequestParam("orderId") Long orderId, @RequestParam("numberSelect") int numberSelect) {
         List<Offers> offers = new ArrayList<>();
         StatusSort statusSort = StatusSort.values()[numberSelect];
         switch (statusSort) {
@@ -102,7 +108,9 @@ public class CustomerController {
 
             case SCORE_DESC -> offers = offerService.viewAllOrdersOrderByScoreExpertDesc(orderId);
         }
-        return ResponseEntity.ok().body(MapperOffer.INSTANCE.listOfferToOfferDto(offers));
+        ResponseListDto<OffersDto> response = new ResponseListDto<>();
+        response.setData(MapperOffer.INSTANCE.listOfferToOfferDto(offers));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/select_offer")
@@ -144,10 +152,12 @@ public class CustomerController {
     }
 
     @GetMapping("/view_all_order_customer")
-    public ResponseEntity<List<OrderCustomerDto>> viewAllOrder(@RequestParam String userName) {
+    public ResponseEntity<?> viewAllOrder(@RequestParam String userName) {
         Customer customer = customerService.findByUserName(userName);
         List<OrderCustomer> orderCustomers = orderCustomerService.findOrdersCustomer(customer);
-        return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
+        ResponseListDto<OrderCustomerDto> response = new ResponseListDto<>();
+        response.setData(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/view_credit")

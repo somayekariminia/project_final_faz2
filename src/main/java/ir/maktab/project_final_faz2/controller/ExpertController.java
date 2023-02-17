@@ -7,6 +7,7 @@ import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistryDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseDTO;
+import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseListDto;
 import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;
@@ -63,10 +64,12 @@ public class ExpertController {
     }
 
     @GetMapping("/view_orders_subJob")
-    public ResponseEntity<List<OrderCustomerDto>> findAllOrder(@RequestParam("nameSubService") String nameSubService) {
+    public ResponseEntity<?> findAllOrder(@RequestParam("nameSubService") String nameSubService) {
         SubJob subJob = subJobService.findSubJobByName(nameSubService);
         List<OrderCustomer> orderCustomers = orderCustomerService.findAllOrdersBySubJob(subJob);
-        return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
+        ResponseListDto<OrderCustomerDto> response = new ResponseListDto<>();
+        response.setData(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/view_credit")
@@ -98,7 +101,7 @@ public class ExpertController {
     @PostMapping("/changing_password")
     public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto) {
         Expert expert = expertService.changePassword(changePasswordDto.getAccountDto().getUserName(), changePasswordDto.getAccountDto().getPassword(), changePasswordDto.getNewPassword());
-        return ResponseEntity.ok().body("Successfully change password "+expert.getEmail());
+        return ResponseEntity.ok().body("Successfully change password " + expert.getEmail());
     }
 
     @GetMapping("/view_performance")
@@ -108,10 +111,12 @@ public class ExpertController {
     }
 
     @GetMapping("/all-Orders-for-expert")
-    public ResponseEntity<List<OrderCustomerDto>> viewAllOrdersForAnExpert(@RequestParam String userName) {
+    public ResponseEntity<?> viewAllOrdersForAnExpert(@RequestParam String userName) {
         Expert expert = expertService.findByUserName(userName);
         List<OrderCustomer> orderCustomers = orderCustomerService.viewAllOrder(expert);
-        return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
+        ResponseListDto<OrderCustomerDto> response = new ResponseListDto<>();
+        response.setData(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/view_image")

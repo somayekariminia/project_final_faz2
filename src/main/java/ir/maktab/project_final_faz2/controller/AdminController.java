@@ -46,11 +46,11 @@ public class AdminController {
     }
 
     @PostMapping("/save_basicJob")
-    public ResponseEntity<ResponseDTO<BasicJobDto>> saveBasicJob(@Valid @RequestBody BasicJobDto basicJobDto) {
+    public ResponseEntity<String> saveBasicJob(@Valid @RequestBody BasicJobDto basicJobDto) {
         BasicJob basicJob = basicJubService.save(MapperServices.INSTANCE.basicJobDtoToBasicJob(basicJobDto));
         ResponseDTO<BasicJobDto> responseDto = new ResponseDTO<>();
         responseDto.setInfo(MapperServices.INSTANCE.basicJobToBasicJobDto(basicJob));
-        return ResponseEntity.ok().body(responseDto);
+        return ResponseEntity.ok().body("save " + basicJob.getNameBase() + " ok");
     }
 
     @PostMapping("/update_subService")
@@ -78,40 +78,48 @@ public class AdminController {
     }
 
     @GetMapping("/view_all_unapproved_specialists")
-    public ResponseEntity<List<ExpertDto>> findAllUnapprovedExpert() {
+    public ResponseEntity<?> findAllUnapprovedExpert() {
         List<Expert> expertUnapproved = expertService.findAllExpertsIsNotConfirm();
-        return ResponseEntity.ok().body(MapperUsers.INSTANCE.listExpertToExpertDto(expertUnapproved));
+        ResponseListDto<ExpertDto> response=new ResponseListDto<>();
+        response.setData(MapperUsers.INSTANCE.listExpertToExpertDto(expertUnapproved));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/view_all_approved_specialists")
-    public ResponseEntity<List<ExpertDto>> findAllApprovedExpert() {
+    public ResponseEntity<?> findAllApprovedExpert() {
         List<Expert> expertList = expertService.findAllExpertsApproved();
-        List<ExpertDto> expertDto = MapperUsers.INSTANCE.listExpertToExpertDto(expertList);
-        return ResponseEntity.ok().body(expertDto);
+        ResponseListDto<ExpertDto> response=new ResponseListDto<>();
+        response.setData(MapperUsers.INSTANCE.listExpertToExpertDto(expertList));
+        return ResponseEntity.ok(response);
     }
     @GetMapping("/view_basicJob")
-    public ResponseEntity<List<BasicJobDto>> findAllBAsicJob() {
+    public ResponseEntity<?> findAllBAsicJob() {
         List<BasicJob> listBasicJobs = basicJubService.findAllBasicJobs();
-        return ResponseEntity.ok().body(MapperServices.INSTANCE.ListBasicJobToBasicJobDto(listBasicJobs));
+        ResponseListDto<BasicJobDto> response=new ResponseListDto<>();
+        response.setData(MapperServices.INSTANCE.ListBasicJobToBasicJobDto(listBasicJobs));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/view_subServices")
-    public ResponseEntity<List<SubJobDto>> findAllSubJobs() {
+    public ResponseEntity<?> findAllSubJobs() {
         List<SubJob> listSubJob = subJobService.findAllSubJob();
-        return ResponseEntity.ok().body(MapperServices.INSTANCE.subJobListToSubJobDto(listSubJob));
+        ResponseListDto<SubJobDto> response=new ResponseListDto<>();
+        response.setData(MapperServices.INSTANCE.subJobListToSubJobDto(listSubJob));
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/confirm_Expert")
     public ResponseEntity<String> confirmExpert(@RequestParam String userName) {
         adminService.isConfirmExpertByAdmin(userName);
-
         return ResponseEntity.ok().body("ok.Successfully confirm expert " + userName + "!!!");
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<PersonDto>> search(@Valid @RequestBody AdminRequestDto requestAdmin) {
+    public ResponseEntity<?> search(@Valid @RequestBody AdminRequestDto requestAdmin) {
         List<PersonDto> allPerson = adminService.search(requestAdmin);
-        return ResponseEntity.ok().body(allPerson);
+        ResponseListDto<PersonDto> responseListDto =new ResponseListDto<>();
+        responseListDto.setData(allPerson);
+        return ResponseEntity.ok(responseListDto);
     }
 
 }
