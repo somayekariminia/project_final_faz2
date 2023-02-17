@@ -1,8 +1,8 @@
 package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AccountDto;
-import ir.maktab.project_final_faz2.data.model.dto.request.ExpertAndFile;
-import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistry;
+import ir.maktab.project_final_faz2.data.model.dto.request.ExpertAndFileDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistryDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseDTO;
@@ -45,19 +45,19 @@ public class ExpertController {
 
 
     @PostMapping("/save_expert")
-    public ResponseEntity<String> saveExpert(@RequestBody ExpertAndFile expertAndFile) {
-        Expert expert = expertService.save(MapperUsers.INSTANCE.expertDtoToExpert(expertAndFile.getExpertDto()), new File(expertAndFile.getPath()));
+    public ResponseEntity<String> saveExpert(@RequestBody ExpertAndFileDto expertAndFileDto) {
+        Expert expert = expertService.save(MapperUsers.INSTANCE.expertDtoToExpert(expertAndFileDto.getExpertDto()), new File(expertAndFileDto.getPath()));
         return ResponseEntity.ok().body("save " + expert.getEmail() + " ok");
     }
 
     @PostMapping("/register_offer")
-    public ResponseEntity<String> saveOffer(@RequestBody OfferRegistry offerRegistry) {
-        Offers offers = MapperOffer.INSTANCE.offerDtoToOffer(offerRegistry.getOffersDto());
-        Expert expert = expertService.findByUserName(offerRegistry.getUserName());
-        OrderCustomer orderCustomer = orderCustomerService.findById(offerRegistry.getId());
+    public ResponseEntity<String> saveOffer(@RequestBody OfferRegistryDto offerRegistryDto) {
+        Offers offers = MapperOffer.INSTANCE.offerDtoToOffer(offerRegistryDto.getOffersDto());
+        Expert expert = expertService.findByUserName(offerRegistryDto.getUserName());
+        OrderCustomer orderCustomer = orderCustomerService.findById(offerRegistryDto.getId());
         offers.setExpert(expert);
         offers.setOrderCustomer(orderCustomer);
-        Offers offerSave = offerService.save(offers, offerRegistry.getId());
+        Offers offerSave = offerService.save(offers, offerRegistryDto.getId());
         return ResponseEntity.ok().body("save " + offerSave.getId());
     }
 

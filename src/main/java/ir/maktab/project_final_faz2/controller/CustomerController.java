@@ -1,7 +1,7 @@
 package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AccountDto;
-import ir.maktab.project_final_faz2.data.model.dto.request.OrderRegistry;
+import ir.maktab.project_final_faz2.data.model.dto.request.OrderRegistryDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.*;
 import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.StatusSort;
@@ -78,10 +78,10 @@ public class CustomerController {
     }
 
     @PostMapping("/register_order")
-    public ResponseEntity<String> saveOrder(@Valid @RequestBody OrderRegistry orderRegistry) {
-        Customer customer = customerService.findByUserName(orderRegistry.getUserName());
-        SubJob subJob = subJobService.findSubJobByName(orderRegistry.getNameSubJob());
-        OrderCustomer orderCustomer = MapperOrder.INSTANCE.orderCustomerDtoToOrderCustomer(orderRegistry.getOrderCustomerDto());
+    public ResponseEntity<String> saveOrder(@Valid @RequestBody OrderRegistryDto orderRegistryDto) {
+        Customer customer = customerService.findByUserName(orderRegistryDto.getUserName());
+        SubJob subJob = subJobService.findSubJobByName(orderRegistryDto.getNameSubJob());
+        OrderCustomer orderCustomer = MapperOrder.INSTANCE.orderCustomerDtoToOrderCustomer(orderRegistryDto.getOrderCustomerDto());
         orderCustomer.setSubJob(subJob);
         orderCustomer.setCustomer(customer);
         OrderCustomer orderCustomer1 = orderCustomerService.saveOrder(orderCustomer);

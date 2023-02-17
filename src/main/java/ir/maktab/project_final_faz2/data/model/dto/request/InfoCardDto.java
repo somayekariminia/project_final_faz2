@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class InfoCard {
+public class InfoCardDto {
     @NotNull
     @Pattern(regexp = "[0-9]{16}", message = "numberCard must number and length 16 !!!")
     private String numberCard;

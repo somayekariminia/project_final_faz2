@@ -4,7 +4,8 @@ import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
 import lombok.Data;
 
 @Data
-public class ExpertAndFile {
+public class ExpertAndFileDto {
     private ExpertDto expertDto;
+
     private String path;
 }

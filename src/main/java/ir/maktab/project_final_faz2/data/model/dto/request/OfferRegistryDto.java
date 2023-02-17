@@ -6,8 +6,10 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class OfferRegistry {
+public class OfferRegistryDto {
     private OffersDto offersDto;
+
     private Long id;
+
     private String userName;
 }

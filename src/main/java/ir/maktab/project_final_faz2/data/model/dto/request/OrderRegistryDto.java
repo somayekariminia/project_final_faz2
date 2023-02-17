@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderRegistry {
+public class OrderRegistryDto {
 
     private OrderCustomerDto orderCustomerDto;
 

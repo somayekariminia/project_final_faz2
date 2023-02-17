@@ -13,6 +13,8 @@ public class SubJobUpdateDto {
     @NotNull
     @NotBlank
     private String subJobName;
+
     private BigDecimal price;
+
     private String description;
 }

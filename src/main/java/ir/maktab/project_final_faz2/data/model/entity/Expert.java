@@ -20,6 +20,7 @@ import java.util.List;
 public class Expert extends Person {
     @ManyToMany(fetch = FetchType.EAGER)
     List<SubJob> servicesList = new ArrayList<>();
+
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Credit credit;
     private double performance;

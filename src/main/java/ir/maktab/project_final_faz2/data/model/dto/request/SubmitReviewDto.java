@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class SubmitReview {
+public class SubmitReviewDto {
     private Long orderId;
 
     private ReviewDto reviewDto;
