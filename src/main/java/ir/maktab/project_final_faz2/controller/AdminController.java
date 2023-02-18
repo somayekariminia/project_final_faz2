@@ -80,7 +80,7 @@ public class AdminController {
     @GetMapping("/view_all_unapproved_specialists")
     public ResponseEntity<?> findAllUnapprovedExpert() {
         List<Expert> expertUnapproved = expertService.findAllExpertsIsNotConfirm();
-        ResponseListDto<ExpertDto> response=new ResponseListDto<>();
+        ResponseListDto<ExpertDto> response = new ResponseListDto<>();
         response.setData(MapperUsers.INSTANCE.listExpertToExpertDto(expertUnapproved));
         return ResponseEntity.ok(response);
     }
@@ -88,14 +88,15 @@ public class AdminController {
     @GetMapping("/view_all_approved_specialists")
     public ResponseEntity<?> findAllApprovedExpert() {
         List<Expert> expertList = expertService.findAllExpertsApproved();
-        ResponseListDto<ExpertDto> response=new ResponseListDto<>();
+        ResponseListDto<ExpertDto> response = new ResponseListDto<>();
         response.setData(MapperUsers.INSTANCE.listExpertToExpertDto(expertList));
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/view_basicJob")
     public ResponseEntity<?> findAllBAsicJob() {
         List<BasicJob> listBasicJobs = basicJubService.findAllBasicJobs();
-        ResponseListDto<BasicJobDto> response=new ResponseListDto<>();
+        ResponseListDto<BasicJobDto> response = new ResponseListDto<>();
         response.setData(MapperServices.INSTANCE.ListBasicJobToBasicJobDto(listBasicJobs));
         return ResponseEntity.ok(response);
     }
@@ -103,7 +104,7 @@ public class AdminController {
     @GetMapping("/view_subServices")
     public ResponseEntity<?> findAllSubJobs() {
         List<SubJob> listSubJob = subJobService.findAllSubJob();
-        ResponseListDto<SubJobDto> response=new ResponseListDto<>();
+        ResponseListDto<SubJobDto> response = new ResponseListDto<>();
         response.setData(MapperServices.INSTANCE.subJobListToSubJobDto(listSubJob));
         return ResponseEntity.ok(response);
     }
@@ -117,7 +118,7 @@ public class AdminController {
     @PostMapping("/search")
     public ResponseEntity<?> search(@Valid @RequestBody AdminRequestDto requestAdmin) {
         List<PersonDto> allPerson = adminService.search(requestAdmin);
-        ResponseListDto<PersonDto> responseListDto =new ResponseListDto<>();
+        ResponseListDto<PersonDto> responseListDto = new ResponseListDto<>();
         responseListDto.setData(allPerson);
         return ResponseEntity.ok(responseListDto);
     }

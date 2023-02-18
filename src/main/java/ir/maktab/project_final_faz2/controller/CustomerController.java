@@ -62,7 +62,7 @@ public class CustomerController {
     @GetMapping("/view_basicJob")
     public ResponseEntity<?> findAllBAsicJob() {
         List<BasicJob> listBasicJobs = basicJobService.findAllBasicJobs();
-        ResponseListDto<BasicJobDto> response=new ResponseListDto<>();
+        ResponseListDto<BasicJobDto> response = new ResponseListDto<>();
         response.setData(MapperServices.INSTANCE.ListBasicJobToBasicJobDto(listBasicJobs));
         return ResponseEntity.ok(response);
 
@@ -71,7 +71,7 @@ public class CustomerController {
     @GetMapping("/view_subServices")
     public ResponseEntity<?> findAllSubJobs() {
         List<SubJob> listSubJob = subJobService.findAllSubJob();
-        ResponseListDto<SubJobDto> response=new ResponseListDto<>();
+        ResponseListDto<SubJobDto> response = new ResponseListDto<>();
         response.setData(MapperServices.INSTANCE.subJobListToSubJobDto(listSubJob));
         return ResponseEntity.ok(response);
     }
@@ -79,7 +79,7 @@ public class CustomerController {
     @GetMapping("/view_subJob_a_basicJob")
     public ResponseEntity<?> findSubJobABasic(@RequestParam("nameBasic") String nameBasic) {
         List<SubJob> subJobList = basicJobService.findAllSubJobsABasicJob(nameBasic);
-        ResponseListDto<SubJobDto> response=new ResponseListDto<>();
+        ResponseListDto<SubJobDto> response = new ResponseListDto<>();
         response.setData(MapperServices.INSTANCE.subJobListToSubJobDto(subJobList));
         return ResponseEntity.ok(response);
     }

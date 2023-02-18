@@ -2,17 +2,13 @@ package ir.maktab.project_final_faz2.exception.global;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import ir.maktab.project_final_faz2.config.MessageSourceConfiguration;
-import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseDTO;
 import ir.maktab.project_final_faz2.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.transaction.UnexpectedRollbackException;
-import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,8 +16,6 @@ import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
-
-import static org.apache.catalina.manager.Constants.CHARSET;
 
 
 @ControllerAdvice
