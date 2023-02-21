@@ -142,8 +142,7 @@ public class OfferServiceImpl implements OfferService {
         if (!orderCustomer.getOrderStatus().equals(OrderStatus.Started))
             throw new ValidationException(messageSource.getMessage("errors.message.order_state_start"));
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
-        Offers offers=findOffersIsAccept(orderCustomerDb);
-        if(LocalDateTime.now().isBefore(orderCustomerDb.getStartDateDoWork()) && LocalDateTime.now().isBefore(offers.getStartTime()))
+        if(LocalDateTime.now().isBefore(orderCustomerDb.getStartDateDoWork()))
              throw new TimeOutException("date end before start time and order and offer");
         orderCustomerDb.setEndDateDoWork(LocalDateTime.now());
         orderCustomerDb.setOrderStatus(OrderStatus.DoItsBeen);

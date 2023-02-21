@@ -12,7 +12,7 @@ import ir.maktab.project_final_faz2.service.serviceInterface.CustomerService;
 import ir.maktab.project_final_faz2.util.util.ValidationInput;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -21,8 +21,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
-    @Autowired
-    MessageSourceConfiguration messageSource;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    private final MessageSourceConfiguration messageSource;
 
     @Transactional
     @Override
@@ -32,6 +33,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerRepository.findByEmail(customer.getEmail()).isPresent())
             throw new DuplicateException(messageSource.getMessage("errors.message.duplicate-object"));
         validateInfoPerson(customer);
+        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         customer.setRole(Role.CUSTOMER);
         return customerRepository.save(customer);
     }

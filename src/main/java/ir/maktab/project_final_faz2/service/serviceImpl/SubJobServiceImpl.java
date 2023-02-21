@@ -46,9 +46,13 @@ public class SubJobServiceImpl implements SubJobService {
     public SubJob updateSubJob(SubJob subJob) {
         if (Objects.isNull(subJob))
             throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
+        if (subJob.getSubJobName() == null)
+            throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         SubJob subJobDb = findSubJobByName(subJob.getSubJobName());
-        subJobDb.setDescription(subJob.getDescription());
-        subJobDb.setPrice(subJob.getPrice());
+        if (subJob.getDescription() != null)
+            subJobDb.setDescription(subJob.getDescription());
+        if (subJob.getPrice() != null)
+            subJobDb.setPrice(subJob.getPrice());
         return subJobRepository.save(subJobDb);
     }
 

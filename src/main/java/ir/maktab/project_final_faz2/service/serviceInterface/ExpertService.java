@@ -3,10 +3,11 @@ package ir.maktab.project_final_faz2.service.serviceInterface;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 public interface ExpertService {
-    Expert save(Expert expert, File file);
+    Expert save(Expert expert);
 
     Expert login(String userName, String password);
 

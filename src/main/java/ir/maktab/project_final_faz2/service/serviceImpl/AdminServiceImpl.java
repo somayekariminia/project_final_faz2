@@ -7,6 +7,7 @@ import ir.maktab.project_final_faz2.data.model.entity.Admin;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.Person;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.enums.Role;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.AdminRepository;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
@@ -17,8 +18,10 @@ import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.mapper.MapperServices;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.serviceInterface.AdminService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +35,16 @@ public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
     private final PersonRepository personRepository;
     private final MessageSourceConfiguration messageSource;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    @PostConstruct
+    public void init(){
+        Admin admin = new Admin();
+        admin.setEmail("admin@yahoo.com");
+        admin.setPassword(passwordEncoder.encode("Admin123"));
+        admin.setRole(Role.ADMIN);
+        adminRepository.save(admin);
+    }
 
     private static List<PersonDto> getPersonDtos(List<Person> personList) {
         List<PersonDto> personDtoS = MapperUsers.INSTANCE.listPersonToPersonDto(personList);
@@ -72,17 +85,17 @@ public class AdminServiceImpl implements AdminService {
     public Admin changePassword(String userName, String passwordOld, String newPassword) {
         if (passwordOld.equals(newPassword))
             throw new ValidationException(messageSource.getMessage("errors.message.duplicate_password"));
-        Admin admin = adminRepository.findAdminByUserName(userName).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-subJob")));
+        Admin admin = adminRepository.findAdminByEmail(userName).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-subJob")));
         admin.setPassword(newPassword);
         adminRepository.save(admin);
-        Admin newAdmin = adminRepository.findAdminByUserName(userName).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-subJob")));
+        Admin newAdmin = adminRepository.findAdminByEmail(userName).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-subJob")));
         if (!newAdmin.getPassword().equals(newPassword))
             throw new NotFoundException(messageSource.getMessage("errors.message.duplicate_password"));
         return newAdmin;
     }
 
     public Admin findByUserName(String userName) {
-        return adminRepository.findAdminByUserName(userName).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-subJob")));
+        return adminRepository.findAdminByEmail(userName).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-subJob")));
     }
 
     @Override

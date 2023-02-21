@@ -2,30 +2,41 @@ package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AccountDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.ChangePasswordDto;
-import ir.maktab.project_final_faz2.data.model.dto.request.ExpertAndFileDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistryDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseDTO;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseListDto;
 import ir.maktab.project_final_faz2.data.model.entity.*;
+import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
 import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.serviceImpl.*;
+import ir.maktab.project_final_faz2.util.util.UtilImage;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartResolver;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/expert")
 @Validated
+@Slf4j
 public class ExpertController {
+    private final ExpertRepository expertRepository;
 
     private final ExpertServiceImpl expertService;
 
@@ -37,19 +48,24 @@ public class ExpertController {
 
     private final ReviewServiceImpl reviewService;
 
-    public ExpertController(ExpertServiceImpl expertService, OfferServiceImpl offerService, OrderCustomerServiceImpl orderCustomerService, SubJobServiceImpl subJobService, ReviewServiceImpl reviewService) {
+    public ExpertController(MultipartResolver multipartResolver, ExpertServiceImpl expertService, OfferServiceImpl offerService, OrderCustomerServiceImpl orderCustomerService, SubJobServiceImpl subJobService, ReviewServiceImpl reviewService,
+                            ExpertRepository expertRepository) {
         this.expertService = expertService;
         this.offerService = offerService;
         this.orderCustomerService = orderCustomerService;
         this.subJobService = subJobService;
         this.reviewService = reviewService;
+        this.expertRepository = expertRepository;
     }
-
-
-    @PostMapping("/save_expert")
-    public ResponseEntity<String> saveExpert(@RequestBody ExpertAndFileDto expertAndFileDto) {
-        Expert expert = expertService.save(MapperUsers.INSTANCE.expertDtoToExpert(expertAndFileDto.getExpertDto()), new File(expertAndFileDto.getPath()));
-        return ResponseEntity.ok().body("save " + expert.getEmail() + " ok");
+    @PostMapping(value = "/save_expert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String saveExpert(@ModelAttribute ExpertDto expertDto) throws IOException {
+        log.info("log_expert_pathFile ");
+        System.out.println(expertDto);
+        Expert expert = MapperUsers.INSTANCE.expertDtoToExpert(expertDto);
+        expert.setExpertImage(UtilImage.validationImage(expertDto.getMultipartFile().getBytes()));
+        expert.setCredit(new Credit());
+        expertService.save(expert);
+        return "ok";
     }
 
     @PostMapping("/register_offer")
@@ -120,9 +136,10 @@ public class ExpertController {
     }
 
     @GetMapping("/view_image")
-    public ResponseEntity<File> viewImage(@RequestParam String userName) {
+    public ResponseEntity<File> viewImage(@AuthenticationPrincipal Expert expert) {
+        System.out.println(expert.getEmail());
         File file = new File("C:\\Users\\Lenovo\\Desktop\\OIF.jpg");
-        File file1 = expertService.viewImage(userName, file);
+        File file1 = expertService.viewImage(expert.getEmail(), file);
         return ResponseEntity.ok().body(file1);
     }
 

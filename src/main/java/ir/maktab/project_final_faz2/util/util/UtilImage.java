@@ -2,25 +2,29 @@ package ir.maktab.project_final_faz2.util.util;
 
 
 import ir.maktab.project_final_faz2.exception.PhotoValidationException;
+import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.Iterator;
 
 public class UtilImage {
     private static final int KILOBYTE = 1024;
     private static final int SIZE_IMAGE = 300;
 
-    private static void checkFormatImage(File file) {
-        ImageInputStream imageInputStream;
+    public static byte[] validationImage(byte[] image) {
+
+        if ((image.length/ KILOBYTE )> SIZE_IMAGE)
+            throw new PhotoValidationException("format image bigger of 300Kb");
+
         try {
-            imageInputStream = ImageIO.createImageInputStream(file);
+            File file=new File("/path/file");
+            FileUtils.writeByteArrayToFile(file, image);
+          ImageInputStream imageInputStream = ImageIO.createImageInputStream(file);
             Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(imageInputStream);
             if (!imageReaders.hasNext()) {
                 throw new PhotoValidationException("Image Readers Not Found!!!");
@@ -32,23 +36,9 @@ public class UtilImage {
         } catch (IOException e) {
             throw new PhotoValidationException(e.getMessage());
         }
+        return image;
 
     }
-
-    public static byte[] validateImage(File file) {
-        try {
-            checkFormatImage(file);
-            BufferedImage originalImage = ImageIO.read(file);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ImageIO.write(originalImage, "jpg", bos);
-            if (bos.size() / KILOBYTE > SIZE_IMAGE)
-                throw new PhotoValidationException("format image bigger of 300Kb");
-            return bos.toByteArray();
-        } catch (IOException e) {
-            throw new PhotoValidationException(e.getMessage());
-        }
-    }
-
     public static File getFileImage(byte[] imageData, File outPutFile) {
         ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
         BufferedImage read;

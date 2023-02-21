@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class Expert extends Person {
 
     @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Credit credit;
+
     private double performance;
 
     @Enumerated(value = EnumType.STRING)
@@ -30,5 +32,8 @@ public class Expert extends Person {
 
     @Lob
     private byte[] expertImage;
+
+    @Transient
+    private MultipartFile multipartFile;
 
 }

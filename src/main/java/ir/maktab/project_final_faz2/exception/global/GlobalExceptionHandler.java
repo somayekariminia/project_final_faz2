@@ -16,6 +16,8 @@ import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import java.time.format.DateTimeParseException;
+
 
 
 @ControllerAdvice
@@ -80,13 +82,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<?> NullExceptionHandler() {
-        CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "object is null");
+        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, "object is null");
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
     @ExceptionHandler(NullObjects.class)
     public ResponseEntity<?> NullObjectExceptionHandler(NullObjects e) {
-        CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
@@ -102,6 +104,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
+    @ExceptionHandler(DateTimeParseException.class)
+    ResponseEntity<?> dateParsHandleException( DateTimeParseException e) {
+        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, e.getMessage());
+        return new ResponseEntity<>(exception, exception.httpStatus());
+    }
+
     @ExceptionHandler(StringIndexOutOfBoundsException.class)
     ResponseEntity<?> handleException(StringIndexOutOfBoundsException e) {
         CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -110,7 +118,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MismatchedInputException.class)
     ResponseEntity<?> handleException(MismatchedInputException e) {
-        CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 

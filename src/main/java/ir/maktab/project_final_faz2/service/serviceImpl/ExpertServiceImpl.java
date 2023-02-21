@@ -11,10 +11,11 @@ import ir.maktab.project_final_faz2.util.util.UtilImage;
 import ir.maktab.project_final_faz2.util.util.ValidationInput;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
@@ -24,18 +25,20 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ExpertServiceImpl implements ExpertService {
     private final ExpertRepository expertRepository;
-    @Autowired
-    MessageSourceConfiguration messageSource;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    private final MessageSourceConfiguration messageSource;
 
     @Transactional
     @Override
-    public Expert save(Expert expert, File file) {
+    public Expert save(Expert expert) {
         if (Objects.isNull(expert))
             throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         if (expertRepository.findByEmail(expert.getEmail()).isPresent())
             throw new DuplicateException(messageSource.getMessage("errors.message.duplicate-object"));
         validateInfoPerson(expert);
-        expert.setExpertImage(UtilImage.validateImage(file));
+        expert.setPassword(passwordEncoder.encode(expert.getPassword()));
+      /*  expert.setExpertImage(UtilImage.validateImage(file));*/
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);
         expert.setPerformance(0);
         expert.setRole(Role.EXPERT);

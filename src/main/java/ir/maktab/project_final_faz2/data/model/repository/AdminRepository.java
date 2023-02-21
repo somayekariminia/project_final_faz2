@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Transactional
 public interface AdminRepository extends JpaRepository<Admin, Long>, JpaSpecificationExecutor<Admin> {
-    Optional<Admin> findAdminByUserName(String userName);
+    Optional<Admin> findAdminByEmail(String userName);
 
 }
