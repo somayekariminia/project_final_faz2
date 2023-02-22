@@ -9,41 +9,77 @@ import ir.maktab.project_final_faz2.exception.*;
 import ir.maktab.project_final_faz2.service.serviceInterface.ExpertService;
 import ir.maktab.project_final_faz2.util.util.UtilImage;
 import ir.maktab.project_final_faz2.util.util.ValidationInput;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.utility.RandomString;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-
 @Service
-
 @RequiredArgsConstructor
+@Transactional
 public class ExpertServiceImpl implements ExpertService {
     private final ExpertRepository expertRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     private final MessageSourceConfiguration messageSource;
+    private final JavaMailSender mailSender;
 
     @Transactional
     @Override
-    public Expert save(Expert expert) {
+    public Expert save(Expert expert) throws MessagingException, UnsupportedEncodingException {
         if (Objects.isNull(expert))
             throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         if (expertRepository.findByEmail(expert.getEmail()).isPresent())
             throw new DuplicateException(messageSource.getMessage("errors.message.duplicate-object"));
         validateInfoPerson(expert);
         expert.setPassword(passwordEncoder.encode(expert.getPassword()));
-      /*  expert.setExpertImage(UtilImage.validateImage(file));*/
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);
         expert.setPerformance(0);
         expert.setRole(Role.EXPERT);
-        return expertRepository.save(expert);
+        String randomCode = RandomString.make(20);
+        expert.setCodeValidate(randomCode);
+        Expert expertSave = expertRepository.save(expert);
+        sendVerificationEmail(expert);
+        return expertSave;
+    }
 
+    private void sendVerificationEmail(Expert expert) throws MessagingException, UnsupportedEncodingException {
+       String siteURL="http://localhost:6565/expert";
+        String toAddress = expert.getEmail();
+        String fromAddress = "somayekariminia6868@gmail.com";
+        String senderName = "team maktab";
+        String subject = "Please verify your registration";
+        String content = "Dear [[name]],<br>"
+                + "Please click the link below to verify your registration:<br>"
+                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
+                + "Thank you,<br>"
+                + "team maktab.";
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom(fromAddress, senderName);
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+
+        content = content.replace("[[name]]", expert.getFirstName());
+        String verifyURL = siteURL + "/verify?code=" + expert.getCodeValidate();
+
+        content = content.replace("[[URL]]", verifyURL);
+
+        helper.setText(content, true);
+
+        mailSender.send(message);
     }
 
     private void validateInfoPerson(Expert person) {
@@ -136,5 +172,13 @@ public class ExpertServiceImpl implements ExpertService {
 
     public double findMin() {
         return expertRepository.minPerformance();
+    }
+    public Expert verify(String verificationCode) {
+        Expert expert=expertRepository.findByCodeValidate(verificationCode).orElseThrow(() -> new NotFoundException("This email has already been registry"));
+            expert.setCodeValidate(null);
+            expert.setSpecialtyStatus(SpecialtyStatus.WaitingForConfirm);
+            expert.setEnable(true);
+            expertRepository.save(expert);
+         return expert;
     }
 }

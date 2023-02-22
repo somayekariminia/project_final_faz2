@@ -183,7 +183,7 @@ public class OfferServiceImpl implements OfferService {
     private void disableExpert(Expert expert) {
         if (expert.getPerformance() >= 0)
             throw new ValidationException(messageSource.getMessage("error.message.active_expert"));
-        expert.setSpecialtyStatus(SpecialtyStatus.NewState);
+        expert.setSpecialtyStatus(SpecialtyStatus.WaitingForConfirm);
         expertService.updateExpert(expert);
     }
 

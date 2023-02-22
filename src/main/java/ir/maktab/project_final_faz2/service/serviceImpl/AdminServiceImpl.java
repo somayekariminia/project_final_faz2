@@ -62,7 +62,7 @@ public class AdminServiceImpl implements AdminService {
     public void addExpertToSubJob(Expert expert, SubJob subJob) {
         Expert expertDb = expertService.findByUserName(expert.getEmail());
         SubJob subJobDb = subJobService.findSubJobByName(subJob.getSubJobName());
-        if (expertDb.getSpecialtyStatus().equals(SpecialtyStatus.NewState))
+        if (!expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
             throw new ValidationException(messageSource.getMessage("errors.message.isn't_confirm"));
         if (expertDb.getServicesList().stream().anyMatch(subJob1 -> subJob1.getSubJobName().equals(subJobDb.getSubJobName())))
             throw new DuplicateException(messageSource.getMessage("errors.message.duplicate-object"));

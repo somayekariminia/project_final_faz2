@@ -33,7 +33,15 @@ public class Expert extends Person {
     @Lob
     private byte[] expertImage;
 
+    private String codeValidate;
+
     @Transient
     private MultipartFile multipartFile;
 
+    private boolean isEnable;
+
+    @Override
+    public boolean isEnabled() {
+        return isEnable() && getSpecialtyStatus().equals(SpecialtyStatus.Confirmed);
+    }
 }

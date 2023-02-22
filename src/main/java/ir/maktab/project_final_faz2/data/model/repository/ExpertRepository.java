@@ -25,4 +25,7 @@ public interface ExpertRepository extends JpaRepository<Expert, Long>, JpaSpecif
 
     @Query("select Min(e.performance) from Expert e ")
     double minPerformance();
+
+    Optional<Expert> findByCodeValidate(String codeValidation);
 }
+

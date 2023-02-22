@@ -14,6 +14,6 @@ import java.util.List;
 public interface OrderCustomerRepository extends JpaRepository<OrderCustomer, Long> {
     @Query("select  o from OrderCustomer o where o.subJob=:subJob and (o.orderStatus='WaitingSelectTheExpert' or  o.orderStatus='WaitingForOfferTheExperts')")
     List<OrderCustomer> findAllBySubJobForAExpert(@Param("subJob") SubJob subJob);
-
     List<OrderCustomer> findAllByCustomer(Customer customer);
+
 }

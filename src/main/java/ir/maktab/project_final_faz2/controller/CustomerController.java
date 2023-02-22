@@ -11,6 +11,7 @@ import ir.maktab.project_final_faz2.service.serviceImpl.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,11 +54,6 @@ public class CustomerController {
         return ResponseEntity.ok().body("Successfully change password " + customer.getEmail());
     }
 
-    @PostMapping("/login_customer")
-    public ResponseEntity<CustomerDto> findCustomerBy(@Valid @RequestBody AccountDto accountDto) {
-        Customer customer = customerService.login(accountDto.getUserName(), accountDto.getPassword());
-        return ResponseEntity.ok().body(MapperUsers.INSTANCE.customerToCustomerDto(customer));
-    }
 
     @GetMapping("/view_basicJob")
     public ResponseEntity<?> findAllBAsicJob() {
@@ -152,8 +148,7 @@ public class CustomerController {
     }
 
     @GetMapping("/view_all_order_customer")
-    public ResponseEntity<?> viewAllOrder(@RequestParam String userName) {
-        Customer customer = customerService.findByUserName(userName);
+    public ResponseEntity<?> viewAllOrder(@AuthenticationPrincipal Customer customer) {
         List<OrderCustomer> orderCustomers = orderCustomerService.findOrdersCustomer(customer);
         ResponseListDto<OrderCustomerDto> response = new ResponseListDto<>();
         response.setData(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
@@ -161,8 +156,7 @@ public class CustomerController {
     }
 
     @GetMapping("/view_credit")
-    public ResponseEntity<BigDecimal> viewCredit(@RequestParam String userName) {
-        Customer customer = customerService.findByUserName(userName);
+    public ResponseEntity<BigDecimal> viewCredit(@AuthenticationPrincipal Customer customer) {
         return ResponseEntity.ok().body(customer.getCredit().getBalance());
     }
 }
