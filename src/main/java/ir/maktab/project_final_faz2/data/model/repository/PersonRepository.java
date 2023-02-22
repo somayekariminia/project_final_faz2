@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +35,11 @@ public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecif
 
             if (request.getMinOrMax().equals("min") || request.getMinOrMax().equals("max"))
                 predicates.add(builder.equal(root.get("performance"), request.getPerformance()));
-
+            if(request.getRegistrationDate()!=null && !request.getRegistrationDate().isEmpty())
+            {
+                LocalDateTime localDateTime=LocalDateTime.parse(request.getRegistrationDate());
+                predicates.add(builder.greaterThanOrEqualTo(root.get("registrationDate"),localDateTime));
+            }
             return builder.and(predicates.toArray(new Predicate[0]));
         };
     }

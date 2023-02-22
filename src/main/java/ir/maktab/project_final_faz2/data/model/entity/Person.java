@@ -10,7 +10,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Collection;
 import java.util.Date;
@@ -41,7 +40,7 @@ public class Person implements UserDetails {
 
     @Temporal(value = TemporalType.DATE)
     @CreationTimestamp
-    protected Date RegistrationDate;
+    protected Date registrationDate;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -186,5 +186,11 @@ public class OfferServiceImpl implements OfferService {
         expert.setSpecialtyStatus(SpecialtyStatus.WaitingForConfirm);
         expertService.updateExpert(expert);
     }
+    public List<OrderCustomer> findAllOrderDoneExpert(Expert expert){
+        List<OrderCustomer> list=offerRepository.findOrdersAExpert(expert);
+        if(list.isEmpty())
+            throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
+        return list;
+    }
 
 }

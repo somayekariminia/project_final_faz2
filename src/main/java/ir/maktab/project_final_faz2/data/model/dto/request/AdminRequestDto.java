@@ -24,6 +24,8 @@ public class AdminRequestDto {
 
     private String minOrMax;
 
+    private String registrationDate;
+
     private double performance;
 
 }
