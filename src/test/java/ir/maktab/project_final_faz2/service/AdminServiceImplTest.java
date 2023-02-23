@@ -53,7 +53,7 @@ class AdminServiceImplTest {
         Expert expert = expertService.findById(101L);
         SubJob subJob = subJobService.findById(3333L);
         int size = expert.getServicesList().size();
-        adminService.addExpertToSubJob(expert, subJob);
+        adminService.addExpertToSubJob("expert", "subJob");
         Expert expertNew = expertService.findById(101L);
         Assertions.assertEquals(size + 1, expertNew.getServicesList().size());
     }
@@ -62,9 +62,9 @@ class AdminServiceImplTest {
     @Test
     void deleteExpertOfSubJob() {
         Expert expert = expertService.findById(101L);
-        SubJob subJob = subJobService.findById(3333L);
+        SubJob subJob = subJobService.findById(101L);
         int size = expert.getServicesList().size();
-        adminService.deleteExpertOfSubJob(expert, subJob);
+        adminService.deleteExpertOfSubJob("ali@yahoo.com", "101L");
         Expert expertNew = expertService.findById(101L);
         Assertions.assertEquals(size - 1, expertNew.getServicesList().size());
     }

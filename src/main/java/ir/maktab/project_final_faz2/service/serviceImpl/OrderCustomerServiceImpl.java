@@ -44,6 +44,7 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
         if (orderCustomer.getStartDateDoWork().isBefore(LocalDateTime.now()))
             throw new TimeOutException(messageSource.getMessage("errors.message.isBefore_date_now"));
         orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
+        orderCustomer.setCommented(false);
         orderCustomer.getCustomer().setNumberOrdersRegister(orderCustomer.getCustomer().getNumberOrdersRegister() + 1);
         customerService.updateCustomer(orderCustomer.getCustomer());
         return orderCustomerRepository.save(orderCustomer);
@@ -88,12 +89,13 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
         }
         return customerList;
     }
-    public List<OrderCustomer> filterOrders(AdminRequestOrderDto request){
-       Specification<OrderCustomer> orderCustomerSpecification = CreateSpecificationOrder.searchOrderCustomerByCriteria(request);
-       List<OrderCustomer> orderCustomers=orderCustomerRepository.findAll(orderCustomerSpecification);
-       if(orderCustomers.isEmpty())
-           throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
-       return orderCustomers;
+
+    public List<OrderCustomer> filterOrders(AdminRequestOrderDto request) {
+        Specification<OrderCustomer> orderCustomerSpecification = CreateSpecificationOrder.searchOrderCustomerByCriteria(request);
+        List<OrderCustomer> orderCustomers = orderCustomerRepository.findAll(orderCustomerSpecification);
+        if (orderCustomers.isEmpty())
+            throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
+        return orderCustomers;
 
 
     }

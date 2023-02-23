@@ -1,17 +1,18 @@
 package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestOrderDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.SubJobUpdateDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.*;
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
+import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.mapper.MapperOrder;
 import ir.maktab.project_final_faz2.mapper.MapperServices;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
-import ir.maktab.project_final_faz2.service.serviceImpl.AdminServiceImpl;
-import ir.maktab.project_final_faz2.service.serviceImpl.BasicJubServiceImpl;
-import ir.maktab.project_final_faz2.service.serviceImpl.ExpertServiceImpl;
-import ir.maktab.project_final_faz2.service.serviceImpl.SubJobServiceImpl;
+import ir.maktab.project_final_faz2.service.serviceImpl.*;
+import ir.maktab.project_final_faz2.service.serviceInterface.OrderCustomerService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -31,12 +32,14 @@ public class AdminController {
     private final ExpertServiceImpl expertService;
 
     private final AdminServiceImpl adminService;
+    private final OrderCustomerServiceImpl orderCustomerService;
 
-    public AdminController(SubJobServiceImpl subJobService, BasicJubServiceImpl basicJubService, ExpertServiceImpl expertService, AdminServiceImpl adminService) {
+    public AdminController(SubJobServiceImpl subJobService, BasicJubServiceImpl basicJubService, ExpertServiceImpl expertService, AdminServiceImpl adminService, OrderCustomerServiceImpl customerService) {
         this.subJobService = subJobService;
         this.basicJubService = basicJubService;
         this.expertService = expertService;
         this.adminService = adminService;
+        this.orderCustomerService = customerService;
     }
 
     @PostMapping("/save_subJobServices")
@@ -63,17 +66,13 @@ public class AdminController {
 
     @PutMapping("/add_expert_to_subService")
     public ResponseEntity<String> addExpertToSubService(@RequestParam String userName, @RequestParam String subJobName) {
-        Expert expert = expertService.findByUserName(userName);
-        SubJob subJob = subJobService.findSubJobByName(subJobName);
-        adminService.addExpertToSubJob(expert, subJob);
+        adminService.addExpertToSubJob(userName, subJobName);
         return ResponseEntity.ok().body(subJobName + " Successfully added" + " to " + userName);
     }
 
     @PutMapping("/delete_expert_Of_subService")
     public ResponseEntity<String> deleteExpertToSubService(@RequestParam String userName, @RequestParam String subJobName) {
-        Expert expert = expertService.findByUserName(userName);
-        SubJob subJob = subJobService.findSubJobByName(subJobName);
-        adminService.deleteExpertOfSubJob(expert, subJob);
+        adminService.deleteExpertOfSubJob(userName, subJobName);
         return ResponseEntity.ok().body(subJobName + " Successfully delete" + " of " + userName);
     }
 
@@ -115,11 +114,18 @@ public class AdminController {
         return ResponseEntity.ok().body("ok.Successfully confirm expert " + userName + "!!!");
     }
 
-    @PostMapping("/search")
+    @PostMapping("/search_person")
     public ResponseEntity<?> search(@Valid @RequestBody AdminRequestDto requestAdmin) {
         List<PersonDto> allPerson = adminService.search(requestAdmin);
         ResponseListDto<PersonDto> responseListDto = new ResponseListDto<>();
         responseListDto.setData(allPerson);
+        return ResponseEntity.ok(responseListDto);
+    }
+    @PostMapping("/search_orders")
+    public ResponseEntity<?> filterOrders(@RequestBody AdminRequestOrderDto requestOrderDto){
+        List<OrderCustomer> orderCustomers =orderCustomerService.filterOrders(requestOrderDto);
+        ResponseListDto<OrderCustomerDto> responseListDto = new ResponseListDto<>();
+        responseListDto.setData(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
         return ResponseEntity.ok(responseListDto);
     }
 

@@ -2,7 +2,6 @@ package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.ChangePasswordDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistryDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.CustomerDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseListDto;

@@ -7,6 +7,6 @@ import java.time.LocalDate;
 public interface CreditService {
     void checkCredit(LocalDate expiredDate, OrderCustomer orderCustomer);
 
-    void payOfCredit(OrderCustomer orderCustomer);
+    void payOfCredit(Long orderCustomer);
 
 }

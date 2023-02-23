@@ -30,7 +30,4 @@ public class AdminRequestOrderDto {
 
     private String basicService;
 
-    private SubJob subJob;
-
-    private BasicJob basicJob;
 }

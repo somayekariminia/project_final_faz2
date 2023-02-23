@@ -20,8 +20,6 @@ public class AdminRequestDto {
 
     private String subService;
 
-    private SubJob subSubject;
-
     private String minOrMax;
 
     private String registrationDate;

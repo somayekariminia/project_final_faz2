@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class CreditCardController {
 
 
     @PostMapping("/paymentOfCard")
+    @PreAuthorize("hasAuthority('CuSTOMER')")
     public void paymentOfCard(@Valid @ModelAttribute("infoCard") InfoCardDto infoCardDto, HttpServletRequest request) {
         if (!infoCardDto.getCaptcha().equalsIgnoreCase((String) request.getSession().getAttribute("captcha")))
             throw new ValidationException("captcha not is  valid");

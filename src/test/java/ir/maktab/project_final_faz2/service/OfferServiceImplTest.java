@@ -71,7 +71,7 @@ class OfferServiceImplTest {
     void selectAnOfferByCustomer() {
         Offers offerExist = offerService.findById(2L);
         OrderCustomer orderCustomer = orderCustomerService.findByCode("order27");
-        Offers offers = offerService.selectAnOfferByCustomer(offerExist, orderCustomer);
+        Offers offers = offerService.selectAnOfferByCustomer(offerExist.getId(), orderCustomer.getId());
         Assertions.assertTrue(offers.isAccept());
 
     }
@@ -81,7 +81,7 @@ class OfferServiceImplTest {
     void changeOrderToStartByCustomer() {
         Offers offerExist = offerService.findById(2L);
         OrderCustomer orderCustomer = orderCustomerService.findByCode("order27");
-        offerService.changeOrderToStartByCustomer(offerExist, orderCustomer);
+        offerService.changeOrderToStartByCustomer(offerExist.getId(), orderCustomer.getId());
         OrderCustomer orderCustomerNew = orderCustomerService.findByCode("order27");
         Assertions.assertEquals(orderCustomerNew.getOrderStatus(), OrderStatus.Started);
     }

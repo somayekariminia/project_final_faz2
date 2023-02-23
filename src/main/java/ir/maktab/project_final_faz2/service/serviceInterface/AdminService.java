@@ -9,9 +9,9 @@ import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import java.util.List;
 
 public interface AdminService {
-    void addExpertToSubJob(Expert expert, SubJob subJob);
+    void addExpertToSubJob(String userName, String subJob);
 
-    void deleteExpertOfSubJob(Expert expert, SubJob subJob);
+    void deleteExpertOfSubJob(String userName, String subJob);
 
     void isConfirmExpertByAdmin(String userName);
 

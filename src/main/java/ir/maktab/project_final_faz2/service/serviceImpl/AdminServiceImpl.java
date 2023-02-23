@@ -60,8 +60,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void addExpertToSubJob(Expert expert, SubJob subJob) {
-        Expert expertDb = expertService.findByUserName(expert.getEmail());
+    public void addExpertToSubJob(String  userName, String subJobName) {
+        Expert expertDb = expertService.findByUserName(userName);
+        SubJob subJob=subJobService.findSubJobByName(subJobName);
         SubJob subJobDb = subJobService.findSubJobByName(subJob.getSubJobName());
         if (!expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
             throw new ValidationException(messageSource.getMessage("errors.message.isn't_confirm"));
@@ -72,8 +73,10 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void deleteExpertOfSubJob(Expert expert, SubJob subJob) {
-        Expert expertDb = expertService.findByUserName(expert.getEmail());
+    public void deleteExpertOfSubJob(String userName, String subJobName) {
+
+        Expert expertDb = expertService.findByUserName(userName);
+        SubJob subJob=subJobService.findSubJobByName(subJobName);
         if (expertDb.getServicesList().stream().noneMatch(subJob1 -> subJob1.getSubJobName().equals(subJob.getSubJobName())))
             throw new NotFoundException(messageSource.getMessage("errors.message.notFound-subJob"));
         if (expertDb.getServicesList().isEmpty())
@@ -102,8 +105,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void isConfirmExpertByAdmin(String userName) {
         Expert expertDb = expertService.findByUserName(userName);
-        if (expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
-            throw new ValidationException(String.format("Expert To %s Username Is Confirm", userName));
+        if (!expertDb.getSpecialtyStatus().equals(SpecialtyStatus.WaitingForConfirm))
+            throw new ValidationException(String.format("Expert To %s Username can not Confirm", userName));
         expertDb.setSpecialtyStatus(SpecialtyStatus.Confirmed);
         expertRepository.save(expertDb);
     }
@@ -120,8 +123,6 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<PersonDto> search(AdminRequestDto adminRequestDto) {
-        if (adminRequestDto.getSubService() != null && !adminRequestDto.getSubService().isEmpty())
-            subService(adminRequestDto);
         if (adminRequestDto.getMinOrMax() != null && !adminRequestDto.getMinOrMax().isEmpty())
             maxMin(adminRequestDto);
         Specification<Person> personSpecification = CreateSpecificationAdmin.withDynamicQuery(adminRequestDto);
@@ -132,10 +133,6 @@ public class AdminServiceImpl implements AdminService {
         return personDtoS;
     }
 
-    private void subService(AdminRequestDto adminRequestDto) {
-        SubJob subJob = subJobService.findSubJobByName(adminRequestDto.getSubService());
-        adminRequestDto.setSubSubject(subJob);
-    }
 
     private void maxMin(AdminRequestDto adminRequestDto) {
         if (adminRequestDto.getMinOrMax().equals("max"))

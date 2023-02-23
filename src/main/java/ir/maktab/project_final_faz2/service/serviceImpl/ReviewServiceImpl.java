@@ -6,6 +6,7 @@ import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.Review;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.repository.ReviewRepository;
+import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.NullObjects;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
@@ -35,14 +36,18 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public void giveScoreToExpert(OrderCustomer orderCustomer, Review review) {
-        OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomer.getId());
+    public void giveScoreToExpert(Long orderCustomerId, Review review) {
+        OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomerId);
+        if((orderCustomerDb.isCommented()))
+            throw new DuplicateException("for desired order a command submitt");
         if (!(orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen) || orderCustomerDb.getOrderStatus().equals(OrderStatus.Paid)))
             throw new TimeOutException(messageSource.getMessage("errors.message.order_isn't_done"));
         Expert expert = offerService.findOffersIsAccept(orderCustomerDb).getExpert();
         double performance = review.getRating() + expert.getPerformance() / 2;
         expert.setPerformance(performance);
         review.setExpert(expert);
+        orderCustomerDb.setCommented(true);
+        orderCustomerService.updateOrder(orderCustomerDb);
         expertService.updateExpert(expert);
         reviewRepository.save(review);
     }

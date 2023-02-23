@@ -1,7 +1,10 @@
 package ir.maktab.project_final_faz2.service.serviceImpl.specification;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestOrderDto;
+import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
+import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -21,7 +24,7 @@ public class CreateSpecificationOrder {
                 predicates.add(builder.equal(root.get("orderStatus"), request.getOrderStatus()));
 
             if (request.getPrice() != null && request.getPrice().doubleValue() != 0)
-                predicates.add(builder.equal(root.get("price"), request.getPrice()));
+                predicates.add(builder.equal(root.get("offerPrice"), request.getPrice()));
 
             if ((request.getLowDateStarter() != null && !request.getLowDateStarter().isEmpty()) && request.getBigDateStater() != null && !request.getBigDateStater().isEmpty()) {
                 LocalDateTime localDateTimeLow = LocalDateTime.parse(request.getLowDateStarter(), DATE_FORMATTER);
@@ -60,8 +63,16 @@ public class CreateSpecificationOrder {
                 predicates.add(builder.between(root.get("endDateDoWork"), localDateTimeLow, localDateTimeBig));
             }
 
-            if (request.getSubJob() != null)
-                predicates.add(builder.equal(root.get("subJob"), request.getSubJob()));
+            if (request.getSubService() != null && !request.getSubService().isEmpty()) {
+                Join<OrderCustomer, SubJob> joinSubJob = root.join("subJob");
+                predicates.add(builder.equal(joinSubJob.<String>get("subJobName"), request.getSubService()));
+            }
+            if (request.getBasicService() != null && !request.getBasicService().isEmpty()) {
+                Join<OrderCustomer, SubJob> joinSubJob = root.join("subJob");
+                Join<SubJob, BasicJob> joinBasicJob = joinSubJob.join("basicJob");
+                predicates.add(builder.equal(joinBasicJob.get("nameBase"), request.getBasicService()));
+            }
+
             return builder.and(predicates.toArray(new Predicate[0]));
         };
     }

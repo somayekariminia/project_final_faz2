@@ -9,7 +9,7 @@ import java.util.List;
 public interface ReviewService {
     Review save(Review review);
 
-    void giveScoreToExpert(OrderCustomer orderCustomer, Review review);
+    void giveScoreToExpert(Long orderCustomerId, Review review);
 
     List<Review> findAllReviewForExpert(Expert expert);
 }

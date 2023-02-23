@@ -26,7 +26,10 @@ public class OrderCustomer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private BigDecimal offerPrice;
+
+    private boolean isCommented;
 
     private String aboutWork;
 

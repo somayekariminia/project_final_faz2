@@ -14,11 +14,11 @@ public interface OfferService {
 
     List<Offers> viewAllOffersOrderByPriceAsc(Long id);
 
-    Offers selectAnOfferByCustomer(Offers offers, OrderCustomer orderCustomer);
+    Offers selectAnOfferByCustomer(Long offersId, Long orderCustomerId);
 
-    OrderCustomer changeOrderToStartByCustomer(Offers offers, OrderCustomer orderCustomer);
+    OrderCustomer changeOrderToStartByCustomer(Long offersId, Long orderCustomerId);
 
-    void endDoWork(OrderCustomer orderCustomer);
+    void endDoWork(Long orderCustomer);
 
     Offers findById(Long id);
 

@@ -110,24 +110,25 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     @Transactional
-    public Offers selectAnOfferByCustomer(Offers offers, OrderCustomer orderCustomer) {
-        OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
-        Offers offersDb = findById(offers.getId());
+    public Offers selectAnOfferByCustomer(Long offersId, Long orderCustomerId) {
+        OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomerId);
+        Offers offersDb = findById(offersId);
         if (!Objects.equals(offersDb.getOrderCustomer().getId(), orderCustomerDb.getId()))
             throw new NotAcceptedException(messageSource.getMessage("errors.message.is_not_exist_offer_for_order"));
         if (!(orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingForOfferTheExperts) || orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingSelectTheExpert)))
             throw new NotAcceptedException(messageSource.getMessage("errors.message.exist_accept_offer_order"));
         orderCustomerDb.setOrderStatus(OrderStatus.WaitingForTheExpertToComeToYourLocation);
         orderCustomerService.updateOrder(orderCustomerDb);
-        offers.setAccept(true);
-        offers.getExpert().setNumberOrderDone(offers.getExpert().getNumberOrderDone()+1);
-        expertService.updateExpert(offers.getExpert());
-        return offerRepository.save(offers);
+        offersDb.setAccept(true);
+        offersDb.getExpert().setNumberOrderDone(offersDb.getExpert().getNumberOrderDone()+1);
+        expertService.updateExpert(offersDb.getExpert());
+        return offerRepository.save(offersDb);
     }
 
     @Override
-    public OrderCustomer changeOrderToStartByCustomer(Offers offers, OrderCustomer orderCustomer) {
-        OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
+    public OrderCustomer changeOrderToStartByCustomer(Long offersId, Long orderCustomerId) {
+        OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomerId);
+        Offers offers=findById(offersId);
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingForTheExpertToComeToYourLocation))
             throw new ValidationException(messageSource.getMessage("errors.message.state_order_must_waiting_come_expert"));
         Offers offersDb = findById(offers.getId());
@@ -140,7 +141,8 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public void endDoWork(OrderCustomer orderCustomer) {
+    public void endDoWork(Long orderCustomerId) {
+        OrderCustomer orderCustomer=orderCustomerService.findById(orderCustomerId);
         if (!orderCustomer.getOrderStatus().equals(OrderStatus.Started))
             throw new ValidationException(messageSource.getMessage("errors.message.order_state_start"));
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
