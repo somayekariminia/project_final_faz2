@@ -120,6 +120,8 @@ public class OfferServiceImpl implements OfferService {
         orderCustomerDb.setOrderStatus(OrderStatus.WaitingForTheExpertToComeToYourLocation);
         orderCustomerService.updateOrder(orderCustomerDb);
         offers.setAccept(true);
+        offers.getExpert().setNumberOrderDone(offers.getExpert().getNumberOrderDone()+1);
+        expertService.updateExpert(offers.getExpert());
         return offerRepository.save(offers);
     }
 

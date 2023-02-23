@@ -11,11 +11,16 @@ import java.math.BigDecimal;
 @Setter
 @Getter
 public class AdminRequestOrderDto {
+
     private String lowDateStarter;
+
     private String bigDateStater;
 
     private String lowDateEnd;
+
     private String bigDateEnd;
+
+    private String lowOrEqualOrBig;
 
     private BigDecimal price;
 

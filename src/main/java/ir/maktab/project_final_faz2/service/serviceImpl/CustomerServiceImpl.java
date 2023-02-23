@@ -29,7 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer save(Customer customer) {
         if (Objects.isNull(customer))
-            throw new NullObjects("errors.message.null-object");
+            throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         if (customerRepository.findByEmail(customer.getEmail()).isPresent())
             throw new DuplicateException(messageSource.getMessage("errors.message.duplicate-object"));
         validateInfoPerson(customer);
@@ -72,5 +72,10 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-object")));
     }
 
+    public void updateCustomer(Customer customer) {
+        if(Objects.isNull(customer))
+            throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
+        customerRepository.save(customer);
+    }
 
 }

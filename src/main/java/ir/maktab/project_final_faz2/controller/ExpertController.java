@@ -2,6 +2,7 @@ package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.ChangePasswordDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistryDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.CustomerDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseListDto;
@@ -134,6 +135,11 @@ public class ExpertController {
         File file = new File("C:\\Users\\Lenovo\\Desktop\\OIF.jpg");
         File file1 = expertService.viewImage(expert.getEmail(), file);
         return ResponseEntity.ok().body(file1);
+    }
+    @GetMapping("/view_orderDone_expert")
+    public ResponseEntity< List<OrderCustomerDto>> findAllOrderDoneExpert(@AuthenticationPrincipal Expert expert){
+        List<OrderCustomer> list=offerService.findAllOrderDoneExpert(expert);
+        return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(list));
     }
 
 }

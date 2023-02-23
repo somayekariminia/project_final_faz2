@@ -1,6 +1,7 @@
 package ir.maktab.project_final_faz2.service.serviceImpl;
 
 import ir.maktab.project_final_faz2.config.MessageSourceConfiguration;
+import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestOrderDto;
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
@@ -11,10 +12,12 @@ import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.NullObjects;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.service.serviceImpl.specification.CreateSpecificationOrder;
 import ir.maktab.project_final_faz2.service.serviceInterface.OrderCustomerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -41,6 +44,8 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
         if (orderCustomer.getStartDateDoWork().isBefore(LocalDateTime.now()))
             throw new TimeOutException(messageSource.getMessage("errors.message.isBefore_date_now"));
         orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
+        orderCustomer.getCustomer().setNumberOrdersRegister(orderCustomer.getCustomer().getNumberOrdersRegister() + 1);
+        customerService.updateCustomer(orderCustomer.getCustomer());
         return orderCustomerRepository.save(orderCustomer);
     }
 
@@ -82,5 +87,14 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
             customerList.addAll(findAllOrdersBySubJob(subJob));
         }
         return customerList;
+    }
+    public List<OrderCustomer> filterOrders(AdminRequestOrderDto request){
+       Specification<OrderCustomer> orderCustomerSpecification = CreateSpecificationOrder.searchOrderCustomerByCriteria(request);
+       List<OrderCustomer> orderCustomers=orderCustomerRepository.findAll(orderCustomerSpecification);
+       if(orderCustomers.isEmpty())
+           throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
+       return orderCustomers;
+
+
     }
 }

@@ -17,6 +17,7 @@ import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.mapper.MapperServices;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
+import ir.maktab.project_final_faz2.service.serviceImpl.specification.CreateSpecificationAdmin;
 import ir.maktab.project_final_faz2.service.serviceInterface.AdminService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -123,7 +124,7 @@ public class AdminServiceImpl implements AdminService {
             subService(adminRequestDto);
         if (adminRequestDto.getMinOrMax() != null && !adminRequestDto.getMinOrMax().isEmpty())
             maxMin(adminRequestDto);
-        Specification<Person> personSpecification = PersonRepository.withDynamicQuery(adminRequestDto);
+        Specification<Person> personSpecification = CreateSpecificationAdmin.withDynamicQuery(adminRequestDto);
         List<Person> personList = personRepository.findAll(personSpecification);
         List<PersonDto> personDtoS = getPersonDtos(personList);
         if (personDtoS.isEmpty())

@@ -26,6 +26,14 @@ public class AdminRequestDto {
 
     private String registrationDate;
 
+    private String registrationDateTwo;
+
+    private String numberOrderCustomer;
+
+    private String lowOrBigOrEqual;
+
+    private String numberOrderDone;
+
     private double performance;
 
 }

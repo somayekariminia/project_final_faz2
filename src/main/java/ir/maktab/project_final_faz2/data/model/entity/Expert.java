@@ -37,6 +37,7 @@ public class Expert extends Person {
 
     @Transient
     private MultipartFile multipartFile;
+    private int numberOrderDone;
 
     private boolean isEnable;
 
