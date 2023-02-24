@@ -32,17 +32,9 @@ public class CustomerServiceImpl implements CustomerService {
             throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         if (customerRepository.findByEmail(customer.getEmail()).isPresent())
             throw new DuplicateException(messageSource.getMessage("errors.message.duplicate-object"));
-        validateInfoPerson(customer);
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         customer.setRole(Role.CUSTOMER);
         return customerRepository.save(customer);
-    }
-
-    private void validateInfoPerson(Customer person) {
-        ValidationInput.validateName(person.getFirstName());
-        ValidationInput.validateName(person.getLastName());
-        ValidationInput.validateEmail(person.getEmail());
-        ValidationInput.validatePassword(person.getPassword());
     }
 
     @Override
