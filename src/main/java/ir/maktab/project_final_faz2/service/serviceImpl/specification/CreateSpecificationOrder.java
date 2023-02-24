@@ -23,15 +23,23 @@ public class CreateSpecificationOrder {
             if (request.getOrderStatus() != null && !request.getOrderStatus().toString().isEmpty())
                 predicates.add(builder.equal(root.get("orderStatus"), request.getOrderStatus()));
 
-            if (request.getPrice() != null && request.getPrice().doubleValue() != 0)
-                predicates.add(builder.equal(root.get("offerPrice"), request.getPrice()));
+            if (request.getPrice() != null && request.getPrice().doubleValue() != 0 &&(request.getLowDateStarter() != null && !request.getLowDateStarter().isEmpty()) )
+            {
+                if (request.getLowOrEqualOrBig().equals("low"))
+                    predicates.add(builder.lessThanOrEqualTo(root.get("offerPrice"), request.getPrice()));
+                if (request.getLowOrEqualOrBig().equals("big"))
+                    predicates.add(builder.greaterThanOrEqualTo(root.get("offerPrice"), request.getPrice()));
+                if (request.getLowOrEqualOrBig().equals("equal"))
+                    predicates.add(builder.equal(root.get("offerPrice"), request.getPrice()));
+            }
+
 
             if ((request.getLowDateStarter() != null && !request.getLowDateStarter().isEmpty()) && request.getBigDateStater() != null && !request.getBigDateStater().isEmpty()) {
                 LocalDateTime localDateTimeLow = LocalDateTime.parse(request.getLowDateStarter(), DATE_FORMATTER);
                 LocalDateTime localDateTimeBig = LocalDateTime.parse(request.getBigDateStater(), DATE_FORMATTER);
-
                 predicates.add(builder.between(root.get("startDateDoWork"), localDateTimeLow, localDateTimeBig));
             }
+
             if ((request.getLowOrEqualOrBig() != null && !request.getLowOrEqualOrBig().isEmpty())
                     && (request.getLowDateStarter() != null && !request.getLowDateStarter().isEmpty())) {
                 LocalDateTime localDateTimeLow = LocalDateTime.parse(request.getLowDateStarter(), DATE_FORMATTER);
@@ -41,7 +49,6 @@ public class CreateSpecificationOrder {
                     predicates.add(builder.greaterThanOrEqualTo(root.get("startDateDoWork"), localDateTimeLow));
                 if (request.getLowOrEqualOrBig().equals("equal"))
                     predicates.add(builder.equal(root.get("startDateDoWork"), localDateTimeLow));
-
             }
 
             if ((request.getLowOrEqualOrBig() != null && !request.getLowOrEqualOrBig().isEmpty())
