@@ -2,14 +2,13 @@ package ir.maktab.project_final_faz2.service.serviceImpl;
 
 import com.google.common.collect.Lists;
 import ir.maktab.project_final_faz2.config.MessageSourceConfiguration;
-import ir.maktab.project_final_faz2.data.model.entity.Expert;
-import ir.maktab.project_final_faz2.data.model.entity.Offers;
-import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
-import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistryDto;
+import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
 import ir.maktab.project_final_faz2.exception.*;
+import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.service.serviceInterface.OfferService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,13 +54,16 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     @Transactional
-    public Offers save(Offers offers, Long id) {
+    public Offers save(OfferRegistryDto offerRegistryDto) {
+        Offers offers = MapperOffer.INSTANCE.offerDtoToOffer(offerRegistryDto.getOffersDto());
+        Expert expert = expertService.findByUserName(offerRegistryDto.getUserName());
+        OrderCustomer orderCustomer = orderCustomerService.findById(offerRegistryDto.getId());
+        offers.setExpert(expert);
+        offers.setOrderCustomer(orderCustomer);
         if (Objects.isNull(offers))
             throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         if (!offers.getExpert().getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
             throw new NotAcceptedException(messageSource.getMessage("errors.message.isn't_confirm"));
-
-        OrderCustomer orderCustomer = orderCustomerService.findById(id);
         if (offers.getExpert().getServicesList().stream().noneMatch(subJob -> subJob.getSubJobName().equals(orderCustomer.getSubJob().getSubJobName())))
             throw new NotFoundException(messageSource.getMessage("errors.message.notFound-subJob"));
         if (offers.getOfferPriceByExpert().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
@@ -149,7 +152,7 @@ public class OfferServiceImpl implements OfferService {
         if(LocalDateTime.now().isBefore(orderCustomerDb.getStartDateDoWork()))
              throw new TimeOutException("date end before start time and order and offer");
         orderCustomerDb.setEndDateDoWork(LocalDateTime.now());
-        orderCustomerDb.setOrderStatus(OrderStatus.DoItsBeen);
+        orderCustomerDb.setOrderStatus(OrderStatus.Done);
         orderCustomerService.updateOrder(orderCustomerDb);
         subtractOfScore(orderCustomerDb);
     }
@@ -171,7 +174,7 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public void subtractOfScore(OrderCustomer orderCustomer) {
         OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomer.getId());
-        if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen))
+        if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.Done))
             throw new TimeOutException(messageSource.getMessage("errors.message.order_isn't_done"));
         Offers offers = findOffersIsAccept(orderCustomerDb);
         LocalDateTime timeEndExpert = offers.getStartTime().plus(offers.getDurationWork());
@@ -191,10 +194,22 @@ public class OfferServiceImpl implements OfferService {
         expertService.updateExpert(expert);
     }
     public List<OrderCustomer> findAllOrderDoneExpert(Expert expert){
-        List<OrderCustomer> list=offerRepository.findOrdersAExpert(expert);
+        List<Offers> list=offerRepository.findOfferIsAcceptAExpert(expert);
         if(list.isEmpty())
             throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
-        return list;
+        return list.stream().map(Offers::getOrderCustomer).collect(Collectors.toList());
+    }
+    public List<Offers> findAllOffersIsAcceptedAExpert(Expert expert){
+        if(offerRepository.findOfferIsAcceptAExpert(expert).isEmpty())
+            throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
+        return offerRepository.findOfferIsAcceptAExpert(expert);
+
+    }
+    public List<Offers> findAllOffersIsAcceptedACustomer(Customer customer){
+        if(offerRepository.findAllOffersIsAcceptedCustomer(customer).isEmpty())
+            throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
+        return offerRepository.findAllOffersIsAcceptedCustomer(customer);
+
     }
 
 }

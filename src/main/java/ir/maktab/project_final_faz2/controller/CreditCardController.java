@@ -31,7 +31,7 @@ public class CreditCardController {
 
     @PostMapping("/paymentOfCard")
     @PreAuthorize("hasAuthority('CuSTOMER')")
-    public void paymentOfCard(@Valid @ModelAttribute("infoCard") InfoCardDto infoCardDto, HttpServletRequest request) {
+    public void paymentOfCard(@Valid @ModelAttribute("infoCardDto") InfoCardDto infoCardDto, HttpServletRequest request) {
         if (!infoCardDto.getCaptcha().equalsIgnoreCase((String) request.getSession().getAttribute("captcha")))
             throw new ValidationException("captcha not is  valid");
         log.info("start method payment");

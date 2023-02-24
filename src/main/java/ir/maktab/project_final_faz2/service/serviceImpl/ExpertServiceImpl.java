@@ -1,11 +1,14 @@
 package ir.maktab.project_final_faz2.service.serviceImpl;
 
 import ir.maktab.project_final_faz2.config.MessageSourceConfiguration;
+import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
+import ir.maktab.project_final_faz2.data.model.entity.Credit;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.enums.Role;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
 import ir.maktab.project_final_faz2.exception.*;
+import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.serviceInterface.ExpertService;
 import ir.maktab.project_final_faz2.util.util.UtilImage;
 import ir.maktab.project_final_faz2.util.util.ValidationInput;
@@ -20,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -36,12 +40,13 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Transactional
     @Override
-    public Expert save(Expert expert) throws MessagingException, UnsupportedEncodingException {
-        if (Objects.isNull(expert))
-            throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
+    public Expert save(ExpertDto  expertDto) throws MessagingException, IOException {
+        Expert expert = MapperUsers.INSTANCE.expertDtoToExpert(expertDto);
         if (expertRepository.findByEmail(expert.getEmail()).isPresent())
             throw new DuplicateException(messageSource.getMessage("errors.message.duplicate-object"));
-        validateInfoPerson(expert);
+        expert.setExpertImage(UtilImage.validationImage(expertDto.getMultipartFile().getBytes()));
+        Credit credit= Credit.builder().balance(new BigDecimal("0.0")).build();
+        expert.setCredit(credit);
         expert.setPassword(passwordEncoder.encode(expert.getPassword()));
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);
         expert.setPerformance(0);
@@ -80,13 +85,6 @@ public class ExpertServiceImpl implements ExpertService {
         helper.setText(content, true);
 
         mailSender.send(message);
-    }
-
-    private void validateInfoPerson(Expert person) {
-        ValidationInput.validateName(person.getFirstName());
-        ValidationInput.validateName(person.getLastName());
-        ValidationInput.validateEmail(person.getEmail());
-        ValidationInput.validatePassword(person.getPassword());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package ir.maktab.project_final_faz2.mapper;
 
-import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.OrderCustomerDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerResponseDto;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,5 +20,7 @@ public interface MapperOrder {
     OrderCustomer orderCustomerDtoToOrderCustomer(OrderCustomerDto orderCustomerDto);
 
     List<OrderCustomerDto> listOrderCustomerTOrderCustomerDto(List<OrderCustomer> list);
+    OrderCustomerResponseDto orderCustomerToOrderCustomerResponseDto(OrderCustomer orderCustomer);
+    List<OrderCustomerResponseDto> listOrderCustomerToOrderCustomerResponseDto(List<OrderCustomer> list);
 
 }

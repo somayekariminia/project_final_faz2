@@ -2,6 +2,7 @@ package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestOrderDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.OrderCustomerDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.SubJobUpdateDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.*;
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
@@ -12,7 +13,6 @@ import ir.maktab.project_final_faz2.mapper.MapperOrder;
 import ir.maktab.project_final_faz2.mapper.MapperServices;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.serviceImpl.*;
-import ir.maktab.project_final_faz2.service.serviceInterface.OrderCustomerService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -124,9 +124,13 @@ public class AdminController {
     @PostMapping("/search_orders")
     public ResponseEntity<?> filterOrders(@RequestBody AdminRequestOrderDto requestOrderDto){
         List<OrderCustomer> orderCustomers =orderCustomerService.filterOrders(requestOrderDto);
-        ResponseListDto<OrderCustomerDto> responseListDto = new ResponseListDto<>();
-        responseListDto.setData(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
+        ResponseListDto<OrderCustomerResponseDto> responseListDto = new ResponseListDto<>();
+        responseListDto.setData(MapperOrder.INSTANCE.listOrderCustomerToOrderCustomerResponseDto(orderCustomers));
         return ResponseEntity.ok(responseListDto);
+    }
+    @GetMapping("/view_subService_employee")
+    public ResponseEntity<List<ServiceDateDto>>findAllSubServiceEmployee(@RequestParam("userName") String userName){
+        return ResponseEntity.ok().body(adminService.findSubServicesEmployed(userName));
     }
 
 }

@@ -19,7 +19,7 @@ public class UtilImage {
     public static byte[] validationImage(byte[] image) {
 
         if ((image.length/ KILOBYTE )> SIZE_IMAGE)
-            throw new PhotoValidationException("format image bigger of 300Kb");
+            throw new PhotoValidationException("size image bigger of 300Kb");
 
         try {
             File file=new File("/path/file");

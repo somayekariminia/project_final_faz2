@@ -1,6 +1,7 @@
 package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.ChangePasswordDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.OrderCustomerDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.OrderRegistryDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.*;
 import ir.maktab.project_final_faz2.data.model.entity.*;
@@ -15,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,7 @@ public class CustomerController {
     private final CreditServiceImpl creditService;
 
     private final ReviewServiceImpl reviewService;
+
 
 
     @PostMapping("/register")
@@ -81,14 +84,10 @@ public class CustomerController {
     }
 
     @PostMapping("/register_order")
-    public ResponseEntity<String> saveOrder(@Valid @RequestBody OrderRegistryDto orderRegistryDto) {
-        Customer customer = customerService.findByUserName(orderRegistryDto.getUserName());
-        SubJob subJob = subJobService.findSubJobByName(orderRegistryDto.getNameSubJob());
-        OrderCustomer orderCustomer = MapperOrder.INSTANCE.orderCustomerDtoToOrderCustomer(orderRegistryDto.getOrderCustomerDto());
-        orderCustomer.setSubJob(subJob);
-        orderCustomer.setCustomer(customer);
-        OrderCustomer orderCustomer1 = orderCustomerService.saveOrder(orderCustomer);
-        return ResponseEntity.ok().body("save order id : " + orderCustomer1.getId() + " ok");
+    public ResponseEntity<String> saveOrder(@Valid @RequestBody OrderRegistryDto orderRegistryDto, Principal principal) {
+        orderRegistryDto.setUserName(principal.getName());
+        orderCustomerService.saveOrder(orderRegistryDto);
+        return ResponseEntity.ok().body("save order ok");
     }
 
     @GetMapping("/view_Offers")
@@ -143,8 +142,8 @@ public class CustomerController {
     @GetMapping("/view_all_order_customer")
     public ResponseEntity<?> viewAllOrder(@AuthenticationPrincipal Customer customer) {
         List<OrderCustomer> orderCustomers = orderCustomerService.findOrdersCustomer(customer);
-        ResponseListDto<OrderCustomerDto> response = new ResponseListDto<>();
-        response.setData(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
+        ResponseListDto<OrderCustomerResponseDto> response = new ResponseListDto<>();
+        response.setData(MapperOrder.INSTANCE.listOrderCustomerToOrderCustomerResponseDto(orderCustomers));
         return ResponseEntity.ok().body(response);
     }
 

@@ -34,7 +34,7 @@ public class CreditServiceImpl implements CreditService {
     @Transactional
     public void checkCredit(LocalDate expiredDate, OrderCustomer orderCustomer) {
         log.debug("start method CheckCredit");
-        if (!orderCustomer.getOrderStatus().equals(OrderStatus.DoItsBeen)) {
+        if (!orderCustomer.getOrderStatus().equals(OrderStatus.Done)) {
             log.error("this order  %s  already isNot end");
             throw new ValidationException(messageSource.getMessage("errors.message.order_isn't_done"));
         }
@@ -54,7 +54,7 @@ public class CreditServiceImpl implements CreditService {
     public void payOfCredit(Long orderId) {
         OrderCustomer orderCustomer=orderCustomerService.findById(orderId);
         Customer customer = orderCustomer.getCustomer();
-        if (!orderCustomer.getOrderStatus().equals(OrderStatus.DoItsBeen)) {
+        if (!orderCustomer.getOrderStatus().equals(OrderStatus.Done)) {
             log.error("errors.message.done_work");
             throw new NotAcceptedException(messageSource.getMessage("errors.message.done_work"));
         }

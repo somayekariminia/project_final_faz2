@@ -3,14 +3,12 @@ package ir.maktab.project_final_faz2.controller;
 import ir.maktab.project_final_faz2.data.model.dto.request.ChangePasswordDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistryDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.OrderCustomerDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerResponseDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseListDto;
 import ir.maktab.project_final_faz2.data.model.entity.*;
-import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;
-import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.serviceImpl.*;
-import ir.maktab.project_final_faz2.util.util.UtilImage;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -54,14 +52,10 @@ public class ExpertController {
     }
 
     @PostMapping(value = "/save_expert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String saveExpert(@ModelAttribute ExpertDto expertDto) throws IOException, MessagingException {
-        log.info("log_expert_pathFile ");
-        System.out.println(expertDto);
-        Expert expert = MapperUsers.INSTANCE.expertDtoToExpert(expertDto);
-        expert.setExpertImage(UtilImage.validationImage(expertDto.getMultipartFile().getBytes()));
-        Credit credit= Credit.builder().balance(new BigDecimal("0.0")).build();
-        expert.setCredit(credit);
-        expertService.save(expert);
+    public String saveExpert( @Valid @ModelAttribute ExpertDto expertDto) throws IOException, MessagingException {
+        log.info("registry_expert ");
+        expertService.save(expertDto);
+        log.info("end registry_expert");
         return "ok";
     }
 
@@ -75,13 +69,9 @@ public class ExpertController {
     }
 
     @PostMapping("/register_offer")
-    public ResponseEntity<String> saveOffer(@RequestBody OfferRegistryDto offerRegistryDto) {
-        Offers offers = MapperOffer.INSTANCE.offerDtoToOffer(offerRegistryDto.getOffersDto());
-        Expert expert = expertService.findByUserName(offerRegistryDto.getUserName());
-        OrderCustomer orderCustomer = orderCustomerService.findById(offerRegistryDto.getId());
-        offers.setExpert(expert);
-        offers.setOrderCustomer(orderCustomer);
-        Offers offerSave = offerService.save(offers, offerRegistryDto.getId());
+    public ResponseEntity<String> saveOffer(@RequestBody OfferRegistryDto offerRegistryDto, Principal principal) {
+        offerRegistryDto.setUserName(principal.getName());
+        Offers offerSave = offerService.save(offerRegistryDto);
         return ResponseEntity.ok().body("save " + offerSave.getId());
     }
 
@@ -136,9 +126,9 @@ public class ExpertController {
         return ResponseEntity.ok().body(file1);
     }
     @GetMapping("/view_orderDone_expert")
-    public ResponseEntity< List<OrderCustomerDto>> findAllOrderDoneExpert(@AuthenticationPrincipal Expert expert){
+    public ResponseEntity< List<OrderCustomerResponseDto>> findAllOrderDoneExpert(@AuthenticationPrincipal Expert expert){
         List<OrderCustomer> list=offerService.findAllOrderDoneExpert(expert);
-        return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(list));
+        return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerToOrderCustomerResponseDto(list));
     }
 
 }

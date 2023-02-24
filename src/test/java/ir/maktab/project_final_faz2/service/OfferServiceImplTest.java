@@ -92,7 +92,7 @@ class OfferServiceImplTest {
         OrderCustomer orderCustomer = orderCustomerService.findByCode("order16");
         offerService.endDoWork(orderCustomer);
         OrderCustomer newOrderCustomer = orderCustomerService.findByCode("order16");
-        Assertions.assertEquals(newOrderCustomer.getOrderStatus(), OrderStatus.DoItsBeen);
+        Assertions.assertEquals(newOrderCustomer.getOrderStatus(), OrderStatus.Done);
     }
 
     @Order(7)

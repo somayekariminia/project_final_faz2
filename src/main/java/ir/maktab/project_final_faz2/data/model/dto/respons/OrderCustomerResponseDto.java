@@ -1,16 +1,16 @@
 package ir.maktab.project_final_faz2.data.model.dto.respons;
 
 import ir.maktab.project_final_faz2.data.model.entity.Address;
+import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Getter
 @Setter
-public class OrderCustomerDto {
-    private Address address;
-
+@Getter
+public class OrderCustomerResponseDto {
     private Long id;
 
     private BigDecimal offerPrice;
@@ -19,4 +19,9 @@ public class OrderCustomerDto {
 
     private String startDateDoWork;
 
+    private SubJob subJob;
+
+    private String endDateDoWork;
+
+    private OrderStatus orderStatus;
 }

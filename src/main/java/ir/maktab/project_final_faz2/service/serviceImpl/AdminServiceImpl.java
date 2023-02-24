@@ -3,10 +3,8 @@ package ir.maktab.project_final_faz2.service.serviceImpl;
 import ir.maktab.project_final_faz2.config.MessageSourceConfiguration;
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.PersonDto;
-import ir.maktab.project_final_faz2.data.model.entity.Admin;
-import ir.maktab.project_final_faz2.data.model.entity.Expert;
-import ir.maktab.project_final_faz2.data.model.entity.Person;
-import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.dto.respons.ServiceDateDto;
+import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.Role;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.AdminRepository;
@@ -25,6 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,11 +34,13 @@ public class AdminServiceImpl implements AdminService {
     private final ExpertRepository expertRepository;
     private final AdminRepository adminRepository;
     private final PersonRepository personRepository;
+    private final OfferServiceImpl offerService;
+    private final OrderCustomerServiceImpl orderCustomerService;
     private final MessageSourceConfiguration messageSource;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         Admin admin = new Admin();
         admin.setEmail("admin@yahoo.com");
         admin.setPassword(passwordEncoder.encode("Admin123"));
@@ -60,9 +61,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void addExpertToSubJob(String  userName, String subJobName) {
+    public void addExpertToSubJob(String userName, String subJobName) {
         Expert expertDb = expertService.findByUserName(userName);
-        SubJob subJob=subJobService.findSubJobByName(subJobName);
+        SubJob subJob = subJobService.findSubJobByName(subJobName);
         SubJob subJobDb = subJobService.findSubJobByName(subJob.getSubJobName());
         if (!expertDb.getSpecialtyStatus().equals(SpecialtyStatus.Confirmed))
             throw new ValidationException(messageSource.getMessage("errors.message.isn't_confirm"));
@@ -76,7 +77,7 @@ public class AdminServiceImpl implements AdminService {
     public void deleteExpertOfSubJob(String userName, String subJobName) {
 
         Expert expertDb = expertService.findByUserName(userName);
-        SubJob subJob=subJobService.findSubJobByName(subJobName);
+        SubJob subJob = subJobService.findSubJobByName(subJobName);
         if (expertDb.getServicesList().stream().noneMatch(subJob1 -> subJob1.getSubJobName().equals(subJob.getSubJobName())))
             throw new NotFoundException(messageSource.getMessage("errors.message.notFound-subJob"));
         if (expertDb.getServicesList().isEmpty())
@@ -139,5 +140,19 @@ public class AdminServiceImpl implements AdminService {
             adminRequestDto.setPerformance(expertService.findMax());
         else
             adminRequestDto.setPerformance(expertService.findMin());
+    }
+
+    public List<ServiceDateDto> findSubServicesEmployed(String userName) {
+        Person person = personRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-object")));
+        List<ServiceDateDto> list = new ArrayList<>();
+        List<Offers> orderCustomers ;
+        if (person instanceof Expert)
+            orderCustomers = offerService.findAllOffersIsAcceptedAExpert((Expert) person);
+        else
+            orderCustomers = offerService.findAllOffersIsAcceptedACustomer((Customer) person);
+        for (Offers offers :orderCustomers) {
+            list.add(new ServiceDateDto(offers.getOrderCustomer().getSubJob().getSubJobName(),offers.getStartTime(),offers.getOfferPriceByExpert()));
+        }
+        return list;
     }
 }

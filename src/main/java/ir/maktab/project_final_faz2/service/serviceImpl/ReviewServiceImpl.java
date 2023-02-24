@@ -40,7 +40,7 @@ public class ReviewServiceImpl implements ReviewService {
         OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomerId);
         if((orderCustomerDb.isCommented()))
             throw new DuplicateException("for desired order a command submitt");
-        if (!(orderCustomerDb.getOrderStatus().equals(OrderStatus.DoItsBeen) || orderCustomerDb.getOrderStatus().equals(OrderStatus.Paid)))
+        if (!(orderCustomerDb.getOrderStatus().equals(OrderStatus.Done) || orderCustomerDb.getOrderStatus().equals(OrderStatus.Paid)))
             throw new TimeOutException(messageSource.getMessage("errors.message.order_isn't_done"));
         Expert expert = offerService.findOffersIsAccept(orderCustomerDb).getExpert();
         double performance = review.getRating() + expert.getPerformance() / 2;

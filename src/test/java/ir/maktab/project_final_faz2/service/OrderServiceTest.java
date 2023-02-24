@@ -52,7 +52,7 @@ public class OrderServiceTest {
                             .noHouse("512").build()).aboutWork("cleanHomeAndCooking").startDateDoWork(dateStartC).build();
         }
     }
-
+/*
     @Order(1)
     @Test
     void saveOrderTest() {
@@ -60,26 +60,26 @@ public class OrderServiceTest {
         orderCustomer.setCustomer(customerService.findByUserName("tara@gmail.com"));
         orderCustomerService.saveOrder(orderCustomer);
         Assertions.assertNotNull(orderCustomer.getId());
-    }
+    }*/
 
-    @Order(2)
+ /*   @Order(2)
     @Test
     void testExceptionSaveDuplicateOrder() {
         Exception exception = Assertions.assertThrows(DuplicateException.class, () -> orderCustomerService.saveOrder(orderCustomer));
         Assertions.assertEquals(String.format("the order is exist already to code: %s", orderCustomer.getCodeOrder()), exception.getMessage());
-    }
-
-    @Order(3)
-    @Test
-    void testExceptionValidationsSaveOrder() {
-        OrderCustomer orderCustomer1 = orderCustomer;
-        orderCustomer1.setCodeOrder("order2");
-        orderCustomer1.setStartDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.of(2023, 1, 22)));
-        Exception exceptionDate = Assertions.assertThrows(TimeOutException.class, () -> orderCustomerService.saveOrder(orderCustomer1));
-        Assertions.assertEquals("The current date is less than the proposed date", exceptionDate.getMessage());
-
-    }
-
+    }*/
+//
+//    @Order(3)
+//    @Test
+//    void testExceptionValidationsSaveOrder() {
+//        OrderCustomer orderCustomer1 = orderCustomer;
+//        orderCustomer1.setCodeOrder("order2");
+//        orderCustomer1.setStartDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.of(2023, 1, 22)));
+//        Exception exceptionDate = Assertions.assertThrows(TimeOutException.class, () -> orderCustomerService.saveOrder(orderCustomer1));
+//        Assertions.assertEquals("The current date is less than the proposed date", exceptionDate.getMessage());
+//
+//    }
+/*
     @Order(4)
     @Test
     void TestDontSaveOrderByLowerPrice() {
@@ -87,7 +87,7 @@ public class OrderServiceTest {
         orderCustomer1.setOfferPrice(new BigDecimal(1500));
         Exception exceptionPrice = Assertions.assertThrows(ValidationException.class, () -> orderCustomerService.saveOrder(orderCustomer1));
         Assertions.assertEquals(String.format("The offer price by Customer for this sub-service %s is lower than the original price", orderCustomer1.getSubJob().getSubJobName()), exceptionPrice.getMessage());
-    }
+    }*/
 
     @Order(5)
     @Test

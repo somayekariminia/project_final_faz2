@@ -3,12 +3,14 @@ package ir.maktab.project_final_faz2.exception.global;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import ir.maktab.project_final_faz2.config.MessageSourceConfiguration;
 import ir.maktab.project_final_faz2.exception.*;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.transaction.UnexpectedRollbackException;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -76,25 +78,25 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> boundedExceptionHandler(MethodArgumentNotValidException e) {
         String[] error = e.getMessage().split(";");
-        CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, error[error.length - 1]);
+        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, error[error.length - 1]);
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<?> NullExceptionHandler() {
-        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, "object is null");
+        CustomException exception = new CustomException(HttpStatus.NOT_FOUND, "object is null");
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
     @ExceptionHandler(NullObjects.class)
     public ResponseEntity<?> NullObjectExceptionHandler(NullObjects e) {
-        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, e.getMessage());
+        CustomException exception = new CustomException(HttpStatus.NOT_FOUND, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     ResponseEntity<?> handleException(DataIntegrityViolationException e) {
-        CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
@@ -112,7 +114,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(StringIndexOutOfBoundsException.class)
     ResponseEntity<?> handleException(StringIndexOutOfBoundsException e) {
-        CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        CustomException exception = new CustomException(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
@@ -124,14 +126,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     ResponseEntity<?> handleException(HttpRequestMethodNotSupportedException e) {
-        CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        CustomException exception = new CustomException(HttpStatus.UNSUPPORTED_MEDIA_TYPE, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
     // if media is not json, for example it is xml or text
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     ResponseEntity<?> handleException(HttpMediaTypeNotSupportedException e) {
-        CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        CustomException exception = new CustomException(HttpStatus.UNSUPPORTED_MEDIA_TYPE, e.getMessage());
+        return new ResponseEntity<>(exception, exception.httpStatus());
+    }
+    @ExceptionHandler(FileSizeLimitExceededException.class)
+    ResponseEntity<?> handleExceptionFileSize(FileSizeLimitExceededException e) {
+        CustomException exception = new CustomException(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
@@ -143,17 +150,23 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     ResponseEntity<?> handleException(NoHandlerFoundException e) {
-        CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
+        CustomException exception = new CustomException(HttpStatus.EXPECTATION_FAILED, e.getLocalizedMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
     // miss RequestAttribute
     @ExceptionHandler(ServletRequestBindingException.class)
     ResponseEntity<?> handleException(ServletRequestBindingException e) {
-        CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        CustomException exception = new CustomException(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
+    @ExceptionHandler(BindException.class)
+    ResponseEntity<?> handleException(BindException e) {
+        String[] error = e.getMessage().split(";");
+        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, error[error.length-1]);
+        return new ResponseEntity<>(exception, exception.httpStatus());
+    }
 
 }
 

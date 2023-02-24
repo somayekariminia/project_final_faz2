@@ -2,6 +2,7 @@ package ir.maktab.project_final_faz2.service.serviceImpl;
 
 import ir.maktab.project_final_faz2.config.MessageSourceConfiguration;
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestOrderDto;
+import ir.maktab.project_final_faz2.data.model.dto.request.OrderRegistryDto;
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
@@ -12,6 +13,7 @@ import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.NullObjects;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.mapper.MapperOrder;
 import ir.maktab.project_final_faz2.service.serviceImpl.specification.CreateSpecificationOrder;
 import ir.maktab.project_final_faz2.service.serviceInterface.OrderCustomerService;
 import jakarta.transaction.Transactional;
@@ -36,15 +38,20 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     MessageSourceConfiguration messageSource;
 
     @Override
-    public OrderCustomer saveOrder(OrderCustomer orderCustomer) {
+    public OrderCustomer saveOrder(OrderRegistryDto orderRegistryDto) {
+        SubJob subJob = subJobService.findSubJobByName(orderRegistryDto.getNameSubJob());
+        Customer customer=customerService.findByUserName(orderRegistryDto.getUserName());
+        OrderCustomer orderCustomer = MapperOrder.INSTANCE.orderCustomerDtoToOrderCustomer(orderRegistryDto.getOrderCustomerDto());
         if (Objects.isNull(orderCustomer))
             throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
-        if (orderCustomer.getOfferPrice().compareTo(orderCustomer.getSubJob().getPrice()) < 0)
+        if (orderCustomer.getOfferPrice().compareTo(subJob.getPrice()) < 0)
             throw new ValidationException(messageSource.getMessage("errors.message.low_price"));
         if (orderCustomer.getStartDateDoWork().isBefore(LocalDateTime.now()))
             throw new TimeOutException(messageSource.getMessage("errors.message.isBefore_date_now"));
         orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
         orderCustomer.setCommented(false);
+        orderCustomer.setSubJob(subJob);
+        orderCustomer.setCustomer(customer);
         orderCustomer.getCustomer().setNumberOrdersRegister(orderCustomer.getCustomer().getNumberOrdersRegister() + 1);
         customerService.updateCustomer(orderCustomer.getCustomer());
         return orderCustomerRepository.save(orderCustomer);

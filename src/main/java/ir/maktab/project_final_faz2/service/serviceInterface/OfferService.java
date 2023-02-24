@@ -1,5 +1,6 @@
 package ir.maktab.project_final_faz2.service.serviceInterface;
 
+import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistryDto;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.Offers;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
@@ -10,7 +11,7 @@ import java.util.List;
 public interface OfferService {
     List<OrderCustomer> findAllOrdersForAnSubJobOfExpert(Expert expert, SubJob subJob);
 
-    Offers save(Offers offers, Long id);
+    Offers save(OfferRegistryDto offerRegistryDto);
 
     List<Offers> viewAllOffersOrderByPriceAsc(Long id);
 
