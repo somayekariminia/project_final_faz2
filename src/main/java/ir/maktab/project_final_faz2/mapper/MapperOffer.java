@@ -1,6 +1,7 @@
 package ir.maktab.project_final_faz2.mapper;
 
 import ir.maktab.project_final_faz2.data.model.dto.respons.OffersDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.OffersResponseDto;
 import ir.maktab.project_final_faz2.data.model.entity.Offers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,4 +20,5 @@ public interface MapperOffer {
     Offers offerDtoToOffer(OffersDto offersDto);
 
     List<OffersDto> listOfferToOfferDto(List<Offers> list);
+    OffersResponseDto offersToOffersResponseDto(Offers offers);
 }

@@ -5,6 +5,7 @@ import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.PersonDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ServiceDateDto;
 import ir.maktab.project_final_faz2.data.model.entity.*;
+import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.Role;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.AdminRepository;
@@ -13,6 +14,7 @@ import ir.maktab.project_final_faz2.data.model.repository.PersonRepository;
 import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
+import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.mapper.MapperServices;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.serviceImpl.specification.CreateSpecificationAdmin;
@@ -38,6 +40,7 @@ public class AdminServiceImpl implements AdminService {
     private final OrderCustomerServiceImpl orderCustomerService;
     private final MessageSourceConfiguration messageSource;
     private final BCryptPasswordEncoder passwordEncoder;
+
 
     @PostConstruct
     public void init() {
@@ -143,16 +146,35 @@ public class AdminServiceImpl implements AdminService {
     }
 
     public List<ServiceDateDto> findSubServicesEmployed(String userName) {
+
         Person person = personRepository.findByEmail(userName).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.notFound-object")));
         List<ServiceDateDto> list = new ArrayList<>();
-        List<Offers> orderCustomers ;
-        if (person instanceof Expert)
-            orderCustomers = offerService.findAllOffersIsAcceptedAExpert((Expert) person);
-        else
-            orderCustomers = offerService.findAllOffersIsAcceptedACustomer((Customer) person);
-        for (Offers offers :orderCustomers) {
-            list.add(new ServiceDateDto(offers.getOrderCustomer().getSubJob().getSubJobName(),offers.getStartTime(),offers.getOfferPriceByExpert()));
+        List<Offers> offerList;
+        List<OrderCustomer> orderCustomers;
+        if (person instanceof Expert) {
+            offerList = offerService.findAllOffersIsAcceptedAExpert((Expert) person);
+            for (Offers offers : offerList) {
+                list.add(setServiceDto(offers));
+            }
+        } else if (person instanceof Customer) {
+            orderCustomers = orderCustomerService.findOrdersCustomer((Customer) person);
+            for (OrderCustomer orderCustomer : orderCustomers) {
+                Offers offers;
+                if (!(orderCustomer.getOrderStatus().equals(OrderStatus.WaitingSelectTheExpert) || orderCustomer.getOrderStatus().equals(OrderStatus.WaitingForOfferTheExperts))) {
+                    offers = offerService.findOffersIsAccept(orderCustomer);
+                    list.add(setServiceDto(offers));
+                } else {
+                    list.add(new ServiceDateDto(MapperServices.INSTANCE.subJobToSubJobDtoRes(orderCustomer.getSubJob()),
+                            null));
+                }
+            }
         }
+
         return list;
+    }
+
+    private static ServiceDateDto setServiceDto(Offers offers) {
+       return new ServiceDateDto(MapperServices.INSTANCE.subJobToSubJobDtoRes(offers.getOrderCustomer().getSubJob()),
+                (MapperOffer.INSTANCE.offersToOffersResponseDto(offers)));
     }
 }

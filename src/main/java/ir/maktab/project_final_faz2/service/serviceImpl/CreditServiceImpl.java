@@ -35,7 +35,7 @@ public class CreditServiceImpl implements CreditService {
     public void checkCredit(LocalDate expiredDate, OrderCustomer orderCustomer) {
         log.debug("start method CheckCredit");
         if (!orderCustomer.getOrderStatus().equals(OrderStatus.Done)) {
-            log.error("this order  %s  already isNot end");
+            log.error("desired order already isNot Done");
             throw new ValidationException(messageSource.getMessage("errors.message.order_isn't_done"));
         }
         if (expiredDate.isBefore((LocalDate.now()))) {
