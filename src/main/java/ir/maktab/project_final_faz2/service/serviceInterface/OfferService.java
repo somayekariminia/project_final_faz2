@@ -1,10 +1,7 @@
 package ir.maktab.project_final_faz2.service.serviceInterface;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistryDto;
-import ir.maktab.project_final_faz2.data.model.entity.Expert;
-import ir.maktab.project_final_faz2.data.model.entity.Offers;
-import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
-import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.entity.*;
 
 import java.util.List;
 
@@ -36,4 +33,10 @@ public interface OfferService {
     void subtractOfScore(OrderCustomer orderCustomer);
 
     void updateOffer(Offers offers);
+
+    List<OrderCustomer> findAllOrderDoneExpert(Expert expert);
+
+    List<Offers> findAllOffersIsAcceptedAExpert(Expert expert);
+
+    List<Offers> findAllOffersIsAcceptedACustomer(Customer customer);
 }

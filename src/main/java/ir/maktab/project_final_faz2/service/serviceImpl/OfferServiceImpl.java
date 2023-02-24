@@ -12,7 +12,6 @@ import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.service.serviceInterface.OfferService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -28,8 +27,7 @@ public class OfferServiceImpl implements OfferService {
     private final OfferRepository offerRepository;
     private final ExpertServiceImpl expertService;
     private final OrderCustomerServiceImpl orderCustomerService;
-    @Autowired
-    MessageSourceConfiguration messageSource;
+    private final MessageSourceConfiguration messageSource;
 
     @Override
     public List<SubJob> findAllSubJubExpert(Expert expert) {
@@ -193,18 +191,21 @@ public class OfferServiceImpl implements OfferService {
         expert.setSpecialtyStatus(SpecialtyStatus.WaitingForConfirm);
         expertService.updateExpert(expert);
     }
+    @Override
     public List<OrderCustomer> findAllOrderDoneExpert(Expert expert){
         List<Offers> list=offerRepository.findOfferIsAcceptAExpert(expert);
         if(list.isEmpty())
             throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return list.stream().map(Offers::getOrderCustomer).collect(Collectors.toList());
     }
+    @Override
     public List<Offers> findAllOffersIsAcceptedAExpert(Expert expert){
         if(offerRepository.findOfferIsAcceptAExpert(expert).isEmpty())
             throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return offerRepository.findOfferIsAcceptAExpert(expert);
 
     }
+    @Override
     public List<Offers> findAllOffersIsAcceptedACustomer(Customer customer){
         if(offerRepository.findAllOffersIsAcceptedCustomer(customer).isEmpty())
             throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));

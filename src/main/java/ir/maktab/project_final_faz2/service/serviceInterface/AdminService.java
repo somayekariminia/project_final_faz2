@@ -2,9 +2,9 @@ package ir.maktab.project_final_faz2.service.serviceInterface;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.PersonDto;
+import ir.maktab.project_final_faz2.data.model.dto.respons.ServiceDateDto;
 import ir.maktab.project_final_faz2.data.model.entity.Admin;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
-import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 
 import java.util.List;
 
@@ -22,4 +22,6 @@ public interface AdminService {
     List<Expert> findAllIsConfirm();
 
     Admin changePassword(String userName, String passwordOld, String newPassword);
+
+    public List<ServiceDateDto> findSubServicesEmployed(String userName);
 }

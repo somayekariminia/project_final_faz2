@@ -2,7 +2,6 @@ package ir.maktab.project_final_faz2.controller;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestOrderDto;
-import ir.maktab.project_final_faz2.data.model.dto.request.OrderCustomerDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.SubJobUpdateDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.*;
 import ir.maktab.project_final_faz2.data.model.entity.BasicJob;

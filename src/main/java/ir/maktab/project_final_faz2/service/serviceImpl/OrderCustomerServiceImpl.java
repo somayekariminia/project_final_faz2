@@ -18,7 +18,6 @@ import ir.maktab.project_final_faz2.service.serviceImpl.specification.CreateSpec
 import ir.maktab.project_final_faz2.service.serviceInterface.OrderCustomerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -34,13 +33,13 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     private final OrderCustomerRepository orderCustomerRepository;
     private final CustomerServiceImpl customerService;
     private final SubJobServiceImpl subJobService;
-    @Autowired
-    MessageSourceConfiguration messageSource;
+
+    private final MessageSourceConfiguration messageSource;
 
     @Override
     public OrderCustomer saveOrder(OrderRegistryDto orderRegistryDto) {
         SubJob subJob = subJobService.findSubJobByName(orderRegistryDto.getNameSubJob());
-        Customer customer=customerService.findByUserName(orderRegistryDto.getUserName());
+        Customer customer = customerService.findByUserName(orderRegistryDto.getUserName());
         OrderCustomer orderCustomer = MapperOrder.INSTANCE.orderCustomerDtoToOrderCustomer(orderRegistryDto.getOrderCustomerDto());
         if (Objects.isNull(orderCustomer))
             throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
@@ -97,13 +96,12 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
         return customerList;
     }
 
+    @Override
     public List<OrderCustomer> filterOrders(AdminRequestOrderDto request) {
         Specification<OrderCustomer> orderCustomerSpecification = CreateSpecificationOrder.searchOrderCustomerByCriteria(request);
         List<OrderCustomer> orderCustomers = orderCustomerRepository.findAll(orderCustomerSpecification);
         if (orderCustomers.isEmpty())
             throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return orderCustomers;
-
-
     }
 }

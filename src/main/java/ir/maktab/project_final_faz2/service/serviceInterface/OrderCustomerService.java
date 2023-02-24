@@ -1,7 +1,7 @@
 package ir.maktab.project_final_faz2.service.serviceInterface;
 
+import ir.maktab.project_final_faz2.data.model.dto.request.AdminRequestOrderDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.OrderRegistryDto;
-import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerResponseDto;
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
@@ -22,6 +22,6 @@ public interface OrderCustomerService {
 
     List<OrderCustomer> viewAllOrder(Expert expert);
 
-
+    List<OrderCustomer> filterOrders(AdminRequestOrderDto request);
 
 }
