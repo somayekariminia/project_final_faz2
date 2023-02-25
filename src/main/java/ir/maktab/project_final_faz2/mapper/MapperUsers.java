@@ -7,6 +7,7 @@ import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.Person;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -24,6 +25,8 @@ public interface MapperUsers {
     Customer customerDtoToCustomer(CustomerDto customerDto);
 
     List<ExpertDto> listExpertToExpertDto(List<Expert> listExpert);
+    @Mapping(source = "registrationDate", target = "registrationDate", dateFormat = "yyyy-MM-dd")
+    PersonDto personToPersonDto(Person person);
 
     List<PersonDto> listPersonToPersonDto(List<Person> personList);
 }
