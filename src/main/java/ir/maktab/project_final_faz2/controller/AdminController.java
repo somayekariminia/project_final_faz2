@@ -120,15 +120,17 @@ public class AdminController {
         responseListDto.setData(allPerson);
         return ResponseEntity.ok(responseListDto);
     }
+
     @PostMapping("/search_orders")
-    public ResponseEntity<?> filterOrders(@RequestBody AdminRequestOrderDto requestOrderDto){
-        List<OrderCustomer> orderCustomers =orderCustomerService.filterOrders(requestOrderDto);
+    public ResponseEntity<?> filterOrders(@RequestBody AdminRequestOrderDto requestOrderDto) {
+        List<OrderCustomer> orderCustomers = orderCustomerService.filterOrders(requestOrderDto);
         ResponseListDto<OrderCustomerResponseDto> responseListDto = new ResponseListDto<>();
         responseListDto.setData(MapperOrder.INSTANCE.listOrderCustomerToOrderCustomerResponseDto(orderCustomers));
         return ResponseEntity.ok(responseListDto);
     }
+
     @GetMapping("/view_subService_employee")
-    public ResponseEntity<List<ServiceDateDto>>findAllSubServiceEmployee(@RequestParam("userName") String userName){
+    public ResponseEntity<List<ServiceDateDto>> findAllSubServiceEmployee(@RequestParam("userName") String userName) {
         return ResponseEntity.ok().body(adminService.findSubServicesEmployed(userName));
     }
 

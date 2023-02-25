@@ -1,6 +1,5 @@
 package ir.maktab.project_final_faz2.data.model.dto.request;
 
-import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.Role;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;

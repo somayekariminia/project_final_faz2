@@ -20,5 +20,6 @@ public interface MapperOffer {
     Offers offerDtoToOffer(OffersDto offersDto);
 
     List<OffersDto> listOfferToOfferDto(List<Offers> list);
+
     OffersResponseDto offersToOffersResponseDto(Offers offers);
 }

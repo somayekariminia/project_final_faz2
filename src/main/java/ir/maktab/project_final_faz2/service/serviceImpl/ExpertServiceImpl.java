@@ -7,7 +7,10 @@ import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.enums.Role;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.ExpertRepository;
-import ir.maktab.project_final_faz2.exception.*;
+import ir.maktab.project_final_faz2.exception.DuplicateException;
+import ir.maktab.project_final_faz2.exception.NotAcceptedException;
+import ir.maktab.project_final_faz2.exception.NotFoundException;
+import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.mapper.MapperUsers;
 import ir.maktab.project_final_faz2.service.serviceInterface.ExpertService;
 import ir.maktab.project_final_faz2.util.util.UtilImage;
@@ -26,6 +29,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -38,12 +42,12 @@ public class ExpertServiceImpl implements ExpertService {
 
     @Transactional
     @Override
-    public Expert save(ExpertDto  expertDto) throws MessagingException, IOException {
+    public Expert save(ExpertDto expertDto) throws MessagingException, IOException {
         Expert expert = MapperUsers.INSTANCE.expertDtoToExpert(expertDto);
         if (expertRepository.findByEmail(expert.getEmail()).isPresent())
             throw new DuplicateException(messageSource.getMessage("errors.message.duplicate-object"));
         expert.setExpertImage(UtilImage.validationImage(expertDto.getMultipartFile().getBytes()));
-        Credit credit= Credit.builder().balance(new BigDecimal("0.0")).build();
+        Credit credit = Credit.builder().balance(new BigDecimal("0.0")).build();
         expert.setCredit(credit);
         expert.setPassword(passwordEncoder.encode(expert.getPassword()));
         expert.setSpecialtyStatus(SpecialtyStatus.NewState);
@@ -57,7 +61,7 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     private void sendVerificationEmail(Expert expert) throws MessagingException, UnsupportedEncodingException {
-       String siteURL="http://localhost:6565/expert";
+        String siteURL = "http://localhost:6565/expert";
         String toAddress = expert.getEmail();
         String fromAddress = "somayekariminia6868@gmail.com";
         String senderName = "team maktab";
@@ -169,13 +173,14 @@ public class ExpertServiceImpl implements ExpertService {
     public double findMin() {
         return expertRepository.minPerformance();
     }
+
     public Expert verify(String verificationCode) {
-        Expert expert=expertRepository.findByCodeValidate(verificationCode).orElseThrow(() -> new NotFoundException("This email has already been registry"));
-            expert.setCodeValidate(null);
-            expert.setSpecialtyStatus(SpecialtyStatus.WaitingForConfirm);
-            expert.setEnable(true);
-            expertRepository.save(expert);
-         return expert;
+        Expert expert = expertRepository.findByCodeValidate(verificationCode).orElseThrow(() -> new NotFoundException("This email has already been registry"));
+        expert.setCodeValidate(null);
+        expert.setSpecialtyStatus(SpecialtyStatus.WaitingForConfirm);
+        expert.setEnable(true);
+        expertRepository.save(expert);
+        return expert;
     }
 
 }

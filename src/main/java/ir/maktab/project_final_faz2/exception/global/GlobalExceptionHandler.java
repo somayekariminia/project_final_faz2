@@ -18,8 +18,8 @@ import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import java.time.format.DateTimeParseException;
 
+import java.time.format.DateTimeParseException;
 
 
 @ControllerAdvice
@@ -107,7 +107,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DateTimeParseException.class)
-    ResponseEntity<?> dateParsHandleException( DateTimeParseException e) {
+    ResponseEntity<?> dateParsHandleException(DateTimeParseException e) {
         CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
@@ -136,6 +136,7 @@ public class GlobalExceptionHandler {
         CustomException exception = new CustomException(HttpStatus.UNSUPPORTED_MEDIA_TYPE, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
+
     @ExceptionHandler(FileSizeLimitExceededException.class)
     ResponseEntity<?> handleExceptionFileSize(FileSizeLimitExceededException e) {
         CustomException exception = new CustomException(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS, e.getMessage());
@@ -164,7 +165,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BindException.class)
     ResponseEntity<?> handleException(BindException e) {
         String[] error = e.getMessage().split(";");
-        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, error[error.length-1]);
+        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, error[error.length - 1]);
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 

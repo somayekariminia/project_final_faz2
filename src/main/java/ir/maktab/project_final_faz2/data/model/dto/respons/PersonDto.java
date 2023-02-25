@@ -19,7 +19,15 @@ public class PersonDto {
 
     private String role;
 
+    private String registrationDate;
+
+    private int numberOrderDone;
+
+    private int numberOrdersRegister;
+
     private double performance;
 
     private List<SubJobDtoRes> subJob = new ArrayList<>();
+
+
 }

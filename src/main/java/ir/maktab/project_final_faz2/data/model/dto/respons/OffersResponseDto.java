@@ -1,6 +1,5 @@
 package ir.maktab.project_final_faz2.data.model.dto.respons;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 

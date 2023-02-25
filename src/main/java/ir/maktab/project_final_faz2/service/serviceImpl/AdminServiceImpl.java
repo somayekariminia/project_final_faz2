@@ -41,6 +41,24 @@ public class AdminServiceImpl implements AdminService {
     private final MessageSourceConfiguration messageSource;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private static List<PersonDto> getPersonDtos(List<Person> personList) {
+        List<PersonDto> personDtoS = MapperUsers.INSTANCE.listPersonToPersonDto(personList);
+        for (int i = 0; i < personList.size(); i++) {
+            if (personList.get(i) instanceof Expert) {
+                List<SubJob> servicesList = ((Expert) personList.get(i)).getServicesList();
+                personDtoS.get(i).getSubJob().addAll(MapperServices.INSTANCE.listSubJobToSubJobDtoRes(servicesList));
+                personDtoS.get(i).setPerformance(((Expert) personList.get(i)).getPerformance());
+                personDtoS.get(i).setNumberOrderDone(((Expert) personList.get(i)).getNumberOrderDone());
+            } else
+                personDtoS.get(i).setNumberOrdersRegister((((Customer) personList.get(i)).getNumberOrdersRegister()));
+        }
+        return personDtoS;
+    }
+
+    private static ServiceDateDto setServiceDto(Offers offers) {
+        return new ServiceDateDto(MapperServices.INSTANCE.subJobToSubJobDtoRes(offers.getOrderCustomer().getSubJob()),
+                (MapperOffer.INSTANCE.offersToOffersResponseDto(offers)));
+    }
 
     @PostConstruct
     public void init() {
@@ -49,18 +67,6 @@ public class AdminServiceImpl implements AdminService {
         admin.setPassword(passwordEncoder.encode("Admin123"));
         admin.setRole(Role.ADMIN);
         adminRepository.save(admin);
-    }
-
-    private static List<PersonDto> getPersonDtos(List<Person> personList) {
-        List<PersonDto> personDtoS = MapperUsers.INSTANCE.listPersonToPersonDto(personList);
-        for (int i = 0; i < personList.size(); i++) {
-            if (personList.get(i) instanceof Expert) {
-                List<SubJob> servicesList = ((Expert) personList.get(i)).getServicesList();
-                personDtoS.get(i).getSubJob().addAll(MapperServices.INSTANCE.listSubJobToSubJobDtoRes(servicesList));
-                personDtoS.get(i).setPerformance(((Expert) personList.get(i)).getPerformance());
-            }
-        }
-        return personDtoS;
     }
 
     @Override
@@ -137,7 +143,6 @@ public class AdminServiceImpl implements AdminService {
         return personDtoS;
     }
 
-
     private void maxMin(AdminRequestDto adminRequestDto) {
         if (adminRequestDto.getMinOrMax().equals("max"))
             adminRequestDto.setPerformance(expertService.findMax());
@@ -172,10 +177,5 @@ public class AdminServiceImpl implements AdminService {
         }
 
         return list;
-    }
-
-    private static ServiceDateDto setServiceDto(Offers offers) {
-        return new ServiceDateDto(MapperServices.INSTANCE.subJobToSubJobDtoRes(offers.getOrderCustomer().getSubJob()),
-                (MapperOffer.INSTANCE.offersToOffersResponseDto(offers)));
     }
 }

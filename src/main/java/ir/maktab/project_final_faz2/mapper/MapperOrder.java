@@ -20,7 +20,9 @@ public interface MapperOrder {
     OrderCustomer orderCustomerDtoToOrderCustomer(OrderCustomerDto orderCustomerDto);
 
     List<OrderCustomerDto> listOrderCustomerTOrderCustomerDto(List<OrderCustomer> list);
+
     OrderCustomerResponseDto orderCustomerToOrderCustomerResponseDto(OrderCustomer orderCustomer);
+
     List<OrderCustomerResponseDto> listOrderCustomerToOrderCustomerResponseDto(List<OrderCustomer> list);
 
 }

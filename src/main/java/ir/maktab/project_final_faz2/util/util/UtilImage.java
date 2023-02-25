@@ -8,8 +8,9 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.nio.file.Files;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 
 public class UtilImage {
@@ -18,13 +19,13 @@ public class UtilImage {
 
     public static byte[] validationImage(byte[] image) {
 
-        if ((image.length/ KILOBYTE )> SIZE_IMAGE)
+        if ((image.length / KILOBYTE) > SIZE_IMAGE)
             throw new PhotoValidationException("size image bigger of 300Kb");
 
         try {
-            File file=new File("/path/file");
+            File file = new File("/path/file");
             FileUtils.writeByteArrayToFile(file, image);
-          ImageInputStream imageInputStream = ImageIO.createImageInputStream(file);
+            ImageInputStream imageInputStream = ImageIO.createImageInputStream(file);
             Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(imageInputStream);
             if (!imageReaders.hasNext()) {
                 throw new PhotoValidationException("Image Readers Not Found!!!");
@@ -39,6 +40,7 @@ public class UtilImage {
         return image;
 
     }
+
     public static File getFileImage(byte[] imageData, File outPutFile) {
         ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
         BufferedImage read;

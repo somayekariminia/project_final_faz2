@@ -9,7 +9,6 @@ import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.NullObjects;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.serviceInterface.CustomerService;
-import ir.maktab.project_final_faz2.util.util.ValidationInput;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -65,7 +64,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     public void updateCustomer(Customer customer) {
-        if(Objects.isNull(customer))
+        if (Objects.isNull(customer))
             throw new NullObjects(messageSource.getMessage("errors.message.null-object"));
         customerRepository.save(customer);
     }

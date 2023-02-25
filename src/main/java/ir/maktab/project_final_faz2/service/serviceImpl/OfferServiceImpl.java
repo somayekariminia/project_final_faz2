@@ -121,7 +121,7 @@ public class OfferServiceImpl implements OfferService {
         orderCustomerDb.setOrderStatus(OrderStatus.WaitingForTheExpertToComeToYourLocation);
         orderCustomerService.updateOrder(orderCustomerDb);
         offersDb.setAccept(true);
-        offersDb.getExpert().setNumberOrderDone(offersDb.getExpert().getNumberOrderDone()+1);
+        offersDb.getExpert().setNumberOrderDone(offersDb.getExpert().getNumberOrderDone() + 1);
         expertService.updateExpert(offersDb.getExpert());
         return offerRepository.save(offersDb);
     }
@@ -129,7 +129,7 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public OrderCustomer changeOrderToStartByCustomer(Long offersId, Long orderCustomerId) {
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomerId);
-        Offers offers=findById(offersId);
+        Offers offers = findById(offersId);
         if (!orderCustomerDb.getOrderStatus().equals(OrderStatus.WaitingForTheExpertToComeToYourLocation))
             throw new ValidationException(messageSource.getMessage("errors.message.state_order_must_waiting_come_expert"));
         Offers offersDb = findById(offers.getId());
@@ -143,12 +143,12 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public void endDoWork(Long orderCustomerId) {
-        OrderCustomer orderCustomer=orderCustomerService.findById(orderCustomerId);
+        OrderCustomer orderCustomer = orderCustomerService.findById(orderCustomerId);
         if (!orderCustomer.getOrderStatus().equals(OrderStatus.Started))
             throw new ValidationException(messageSource.getMessage("errors.message.order_state_start"));
         OrderCustomer orderCustomerDb = getOrderCustomerById(orderCustomer.getId());
-        if(LocalDateTime.now().isBefore(orderCustomerDb.getStartDateDoWork()))
-             throw new TimeOutException("date end before start time and order and offer");
+        if (LocalDateTime.now().isBefore(orderCustomerDb.getStartDateDoWork()))
+            throw new TimeOutException("date end before start time and order and offer");
         orderCustomerDb.setEndDateDoWork(LocalDateTime.now());
         orderCustomerDb.setOrderStatus(OrderStatus.Done);
         orderCustomerService.updateOrder(orderCustomerDb);
@@ -191,23 +191,26 @@ public class OfferServiceImpl implements OfferService {
         expert.setSpecialtyStatus(SpecialtyStatus.WaitingForConfirm);
         expertService.updateExpert(expert);
     }
+
     @Override
-    public List<OrderCustomer> findAllOrderDoneExpert(Expert expert){
-        List<Offers> list=offerRepository.findOfferIsAcceptAExpert(expert);
-        if(list.isEmpty())
+    public List<OrderCustomer> findAllOrderDoneExpert(Expert expert) {
+        List<Offers> list = offerRepository.findOfferIsAcceptAExpert(expert);
+        if (list.isEmpty())
             throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return list.stream().map(Offers::getOrderCustomer).collect(Collectors.toList());
     }
+
     @Override
-    public List<Offers> findAllOffersIsAcceptedAExpert(Expert expert){
-        if(offerRepository.findOfferIsAcceptAExpert(expert).isEmpty())
+    public List<Offers> findAllOffersIsAcceptedAExpert(Expert expert) {
+        if (offerRepository.findOfferIsAcceptAExpert(expert).isEmpty())
             throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return offerRepository.findOfferIsAcceptAExpert(expert);
 
     }
+
     @Override
-    public List<Offers> findAllOffersIsAcceptedACustomer(Customer customer){
-        if(offerRepository.findAllOffersIsAcceptedCustomer(customer).isEmpty())
+    public List<Offers> findAllOffersIsAcceptedACustomer(Customer customer) {
+        if (offerRepository.findAllOffersIsAcceptedCustomer(customer).isEmpty())
             throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return offerRepository.findAllOffersIsAcceptedCustomer(customer);
 

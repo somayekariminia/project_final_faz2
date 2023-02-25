@@ -23,8 +23,7 @@ public class CreateSpecificationOrder {
             if (request.getOrderStatus() != null && !request.getOrderStatus().toString().isEmpty())
                 predicates.add(builder.equal(root.get("orderStatus"), request.getOrderStatus()));
 
-            if (request.getPrice() != null && request.getPrice().doubleValue() != 0 &&(request.getLowDateStarter() != null && !request.getLowDateStarter().isEmpty()) )
-            {
+            if (request.getPrice() != null && (request.getLowOrEqualOrBig() != null && !request.getLowOrEqualOrBig().isEmpty())) {
                 if (request.getLowOrEqualOrBig().equals("low"))
                     predicates.add(builder.lessThanOrEqualTo(root.get("offerPrice"), request.getPrice()));
                 if (request.getLowOrEqualOrBig().equals("big"))

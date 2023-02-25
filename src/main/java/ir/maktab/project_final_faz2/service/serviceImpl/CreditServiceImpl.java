@@ -52,7 +52,7 @@ public class CreditServiceImpl implements CreditService {
     @Override
     @Transactional
     public void payOfCredit(Long orderId) {
-        OrderCustomer orderCustomer=orderCustomerService.findById(orderId);
+        OrderCustomer orderCustomer = orderCustomerService.findById(orderId);
         Customer customer = orderCustomer.getCustomer();
         if (!orderCustomer.getOrderStatus().equals(OrderStatus.Done)) {
             log.error("errors.message.done_work");

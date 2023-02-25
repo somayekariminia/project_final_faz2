@@ -41,7 +41,6 @@ public class CustomerController {
     private final ReviewServiceImpl reviewService;
 
 
-
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@Valid @RequestBody CustomerDto customerDto) {
         Customer customer = MapperUsers.INSTANCE.customerDtoToCustomer(customerDto);

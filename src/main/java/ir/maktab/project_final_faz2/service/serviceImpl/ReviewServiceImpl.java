@@ -38,7 +38,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public void giveScoreToExpert(Long orderCustomerId, Review review) {
         OrderCustomer orderCustomerDb = orderCustomerService.findById(orderCustomerId);
-        if((orderCustomerDb.isCommented()))
+        if ((orderCustomerDb.isCommented()))
             throw new DuplicateException("for desired order a command submitt");
         if (!(orderCustomerDb.getOrderStatus().equals(OrderStatus.Done) || orderCustomerDb.getOrderStatus().equals(OrderStatus.Paid)))
             throw new TimeOutException(messageSource.getMessage("errors.message.order_isn't_done"));

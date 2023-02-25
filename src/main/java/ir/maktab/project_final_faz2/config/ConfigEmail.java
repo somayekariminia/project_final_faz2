@@ -11,7 +11,7 @@ import java.util.Properties;
 
 public class ConfigEmail {
     @Bean
-    public JavaMailSender javaMailSender(){
+    public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setUsername("somayekariminia6868@gmail.com");
         mailSender.setPassword("twoqnetrdbbvbqpz");

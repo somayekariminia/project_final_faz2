@@ -1,7 +1,5 @@
 package ir.maktab.project_final_faz2.data.model.dto.request;
 
-import ir.maktab.project_final_faz2.data.model.entity.BasicJob;
-import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
