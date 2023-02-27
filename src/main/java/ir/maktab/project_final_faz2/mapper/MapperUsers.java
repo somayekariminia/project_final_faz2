@@ -25,6 +25,7 @@ public interface MapperUsers {
     Customer customerDtoToCustomer(CustomerDto customerDto);
 
     List<ExpertDto> listExpertToExpertDto(List<Expert> listExpert);
+
     @Mapping(source = "registrationDate", target = "registrationDate", dateFormat = "yyyy-MM-dd")
     PersonDto personToPersonDto(Person person);
 

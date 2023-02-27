@@ -49,8 +49,9 @@ public class AdminServiceImpl implements AdminService {
                 personDtoS.get(i).getSubJob().addAll(MapperServices.INSTANCE.listSubJobToSubJobDtoRes(servicesList));
                 personDtoS.get(i).setPerformance(((Expert) personList.get(i)).getPerformance());
                 personDtoS.get(i).setNumberOrderDone(((Expert) personList.get(i)).getNumberOrderDone());
-            } else
+            } else if (personList.get(i) instanceof Customer) {
                 personDtoS.get(i).setNumberOrdersRegister((((Customer) personList.get(i)).getNumberOrdersRegister()));
+            }
         }
         return personDtoS;
     }

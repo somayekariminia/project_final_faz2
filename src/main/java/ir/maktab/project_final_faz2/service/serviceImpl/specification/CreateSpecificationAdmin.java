@@ -50,6 +50,7 @@ public class CreateSpecificationAdmin {
                     predicates.add(builder.greaterThanOrEqualTo(root.get("registrationDate"), localDate));
                 else predicates.add(builder.greaterThanOrEqualTo(root.get("registrationDate"), localDate));
             }
+
             if (request.getRegistrationDate() != null && !request.getRegistrationDate().isEmpty() && request.getRegistrationDateTwo() != null && !request.getRegistrationDateTwo().isEmpty()) {
                 LocalDate localDate = LocalDate.parse(request.getRegistrationDate(), DATE_FORMATTER);
                 LocalDate localDateTwo = LocalDate.parse(request.getRegistrationDateTwo(), DATE_FORMATTER);

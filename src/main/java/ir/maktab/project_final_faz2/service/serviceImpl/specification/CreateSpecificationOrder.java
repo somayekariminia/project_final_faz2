@@ -59,7 +59,6 @@ public class CreateSpecificationOrder {
                     predicates.add(builder.greaterThanOrEqualTo(root.get("endDateDoWork"), localDateTimeLow));
                 if (request.getLowOrEqualOrBig().equals("equal"))
                     predicates.add(builder.equal(root.get("endDateDoWork"), localDateTimeLow));
-
             }
 
             if ((request.getLowDateEnd() != null && !request.getLowDateEnd().isEmpty()) && request.getBigDateEnd() != null && !request.getBigDateEnd().isEmpty()) {
@@ -73,6 +72,7 @@ public class CreateSpecificationOrder {
                 Join<OrderCustomer, SubJob> joinSubJob = root.join("subJob");
                 predicates.add(builder.equal(joinSubJob.<String>get("subJobName"), request.getSubService()));
             }
+
             if (request.getBasicService() != null && !request.getBasicService().isEmpty()) {
                 Join<OrderCustomer, SubJob> joinSubJob = root.join("subJob");
                 Join<SubJob, BasicJob> joinBasicJob = joinSubJob.join("basicJob");
