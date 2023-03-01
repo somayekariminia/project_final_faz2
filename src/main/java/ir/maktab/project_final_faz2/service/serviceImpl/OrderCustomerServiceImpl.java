@@ -9,6 +9,7 @@ import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OrderCustomerRepository;
+import ir.maktab.project_final_faz2.data.model.repository.PersonRepository;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.NullObjects;
 import ir.maktab.project_final_faz2.exception.TimeOutException;
@@ -18,6 +19,7 @@ import ir.maktab.project_final_faz2.service.serviceImpl.specification.CreateSpec
 import ir.maktab.project_final_faz2.service.serviceInterface.OrderCustomerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -29,12 +31,14 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class OrderCustomerServiceImpl implements OrderCustomerService {
     private final OrderCustomerRepository orderCustomerRepository;
     private final CustomerServiceImpl customerService;
     private final SubJobServiceImpl subJobService;
 
     private final MessageSourceConfiguration messageSource;
+    private final PersonRepository personRepository;
 
     @Override
     public OrderCustomer saveOrder(OrderRegistryDto orderRegistryDto) {
@@ -71,13 +75,21 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     }
 
     @Override
-    public List<OrderCustomer> findOrdersCustomer(Customer customer) {
-        Customer customerDb = customerService.findByUserName(customer.getEmail());
-        List<OrderCustomer> allOrdersCustomer = orderCustomerRepository.findAllByCustomer(customerDb);
+    public List<OrderCustomer> findOrdersCustomer(String customer, OrderStatus orderStatus) {
+        Customer customerDb = customerService.findByUserName(customer);
+         log.info("customer"+customerDb.getEmail());
+         log.info("orderStatus"+orderStatus);
+        List<OrderCustomer> allOrdersCustomer = orderCustomerRepository.findAllOrderCustomer(customerDb,orderStatus);
         if (allOrdersCustomer.isEmpty())
             throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return allOrdersCustomer;
 
+    }
+
+    public List<OrderCustomer> findAllByCustomer(Customer customer) {
+        if (orderCustomerRepository.findAllByCustomer(customer).isEmpty())
+            throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
+        return orderCustomerRepository.findAllByCustomer(customer);
     }
 
     @Override

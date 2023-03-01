@@ -2,6 +2,7 @@ package ir.maktab.project_final_faz2.service.serviceInterface;
 
 import ir.maktab.project_final_faz2.data.model.dto.request.OfferRegistryDto;
 import ir.maktab.project_final_faz2.data.model.entity.*;
+import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public interface OfferService {
 
     void updateOffer(Offers offers);
 
-    List<OrderCustomer> findAllOrderDoneExpert(Expert expert);
+    List<OrderCustomer> findAllOrderDoneExpert(Expert expert, OrderStatus orderStatus);
 
     List<Offers> findAllOffersIsAcceptedAExpert(Expert expert);
 

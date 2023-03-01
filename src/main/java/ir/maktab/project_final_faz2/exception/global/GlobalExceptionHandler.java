@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.net.UnknownHostException;
 import java.time.format.DateTimeParseException;
 
 
@@ -145,7 +146,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ResponseEntity<?> handleException(HttpMessageNotReadableException e) {
-        CustomException exception = new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, e.getMessage());
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 
@@ -158,7 +159,13 @@ public class GlobalExceptionHandler {
     // miss RequestAttribute
     @ExceptionHandler(ServletRequestBindingException.class)
     ResponseEntity<?> handleException(ServletRequestBindingException e) {
-        CustomException exception = new CustomException(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED, e.getMessage());
+        CustomException exception = new CustomException(HttpStatus.BAD_REQUEST, e.getMessage());
+        return new ResponseEntity<>(exception, exception.httpStatus());
+    }
+
+    @ExceptionHandler(UnknownHostException.class)
+    ResponseEntity<?> handleException(UnknownHostException e) {
+        CustomException exception = new CustomException(HttpStatus.EXPECTATION_FAILED, "Checking the connection");
         return new ResponseEntity<>(exception, exception.httpStatus());
     }
 

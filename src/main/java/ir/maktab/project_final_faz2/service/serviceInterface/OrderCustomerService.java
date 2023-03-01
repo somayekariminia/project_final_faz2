@@ -6,6 +6,7 @@ import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 
 import java.util.List;
 
@@ -18,10 +19,12 @@ public interface OrderCustomerService {
 
     OrderCustomer updateOrder(OrderCustomer orderCustomer);
 
-    List<OrderCustomer> findOrdersCustomer(Customer customer);
+    List<OrderCustomer> findOrdersCustomer(String customer, OrderStatus orderStatus);
 
     List<OrderCustomer> viewAllOrder(Expert expert);
 
     List<OrderCustomer> filterOrders(AdminRequestOrderDto request);
+
+    List<OrderCustomer> findAllByCustomer(Customer customer);
 
 }

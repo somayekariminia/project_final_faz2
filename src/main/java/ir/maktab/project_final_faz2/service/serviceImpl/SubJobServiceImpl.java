@@ -39,6 +39,9 @@ public class SubJobServiceImpl implements SubJobService {
 
     @Override
     public List<SubJob> findAllSubJob() {
+
+        if (subJobRepository.findAll().isEmpty())
+            throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return subJobRepository.findAll();
     }
 

@@ -48,7 +48,7 @@ public class CreateSpecificationAdmin {
                     predicates.add(builder.lessThanOrEqualTo(root.get("registrationDate"), localDate));
                 else if (request.getLowOrBigOrEqual().equals("big"))
                     predicates.add(builder.greaterThanOrEqualTo(root.get("registrationDate"), localDate));
-                else predicates.add(builder.greaterThanOrEqualTo(root.get("registrationDate"), localDate));
+                else predicates.add(builder.equal(root.get("registrationDate"), localDate));
             }
 
             if (request.getRegistrationDate() != null && !request.getRegistrationDate().isEmpty() && request.getRegistrationDateTwo() != null && !request.getRegistrationDateTwo().isEmpty()) {

@@ -43,6 +43,8 @@ public class BasicJubServiceImpl implements BasicService {
 
     @Override
     public List<BasicJob> findAllBasicJobs() {
+        if(basicJobRepository.findAll().isEmpty())
+            throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return basicJobRepository.findAll();
     }
 

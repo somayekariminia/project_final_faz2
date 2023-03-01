@@ -164,7 +164,7 @@ public class AdminServiceImpl implements AdminService {
                 list.add(setServiceDto(offers));
             }
         } else if (person instanceof Customer) {
-            orderCustomers = orderCustomerService.findOrdersCustomer((Customer) person);
+            orderCustomers = orderCustomerService.findAllByCustomer((Customer) person);
             for (OrderCustomer orderCustomer : orderCustomers) {
                 Offers offers;
                 if (!(orderCustomer.getOrderStatus().equals(OrderStatus.WaitingSelectTheExpert) || orderCustomer.getOrderStatus().equals(OrderStatus.WaitingForOfferTheExperts))) {

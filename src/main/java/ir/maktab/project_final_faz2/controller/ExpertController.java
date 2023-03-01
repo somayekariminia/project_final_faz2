@@ -7,6 +7,7 @@ import ir.maktab.project_final_faz2.data.model.dto.respons.ExpertDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.OrderCustomerResponseDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.ResponseListDto;
 import ir.maktab.project_final_faz2.data.model.entity.*;
+import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.mapper.MapperOrder;
 import ir.maktab.project_final_faz2.service.serviceImpl.*;
 import jakarta.mail.MessagingException;
@@ -84,17 +85,20 @@ public class ExpertController {
     }
 
     @GetMapping("/view_credit")
-    public ResponseEntity<String> viewCreditExpert(@AuthenticationPrincipal Expert expert) {
+    public ResponseEntity<String> viewCreditExpert(Principal principal) {
+      Expert expert = expertService.findByUserName(principal.getName());
         return ResponseEntity.ok().body("your credit is " + expert.getCredit().getBalance());
     }
 
     @GetMapping("/view_rating")
-    public ResponseEntity<List<Integer>> viewRating(@AuthenticationPrincipal Expert expert) {
+    public ResponseEntity<List<Integer>> viewRating(Principal principal) {
+        Expert expert = expertService.findByUserName(principal.getName());
         return ResponseEntity.ok().body(reviewService.findAllReviewForExpert(expert).stream().map(Review::getRating).collect(Collectors.toList()));
     }
 
     @GetMapping("/view_comments")
-    public ResponseEntity<List<String>> viewComments(@AuthenticationPrincipal Expert expert) {
+    public ResponseEntity<List<String>> viewComments(Principal principal) {
+        Expert expert = expertService.findByUserName(principal.getName());
         return ResponseEntity.ok().body(reviewService.findAllReviewForExpert(expert).stream().map(Review::getComment).collect(Collectors.toList()));
     }
 
@@ -106,12 +110,14 @@ public class ExpertController {
     }
 
     @GetMapping("/view_performance")
-    public ResponseEntity<String> viewPerformance(@AuthenticationPrincipal Expert expert) {
+    public ResponseEntity<String> viewPerformance(Principal principal) {
+        Expert expert = expertService.findByUserName(principal.getName());
         return ResponseEntity.ok().body("performance " + expert.getPerformance());
     }
 
     @GetMapping("/all-Orders-for-expert")
-    public ResponseEntity<?> viewAllOrdersForAnExpert(@AuthenticationPrincipal Expert expert) {
+    public ResponseEntity<?> viewAllOrdersForAnExpert(Principal principal) {
+        Expert expert = expertService.findByUserName(principal.getName());
         List<OrderCustomer> orderCustomers = orderCustomerService.viewAllOrder(expert);
         ResponseListDto<OrderCustomerDto> response = new ResponseListDto<>();
         response.setData(MapperOrder.INSTANCE.listOrderCustomerTOrderCustomerDto(orderCustomers));
@@ -119,15 +125,17 @@ public class ExpertController {
     }
 
     @GetMapping("/view_image")
-    public ResponseEntity<File> viewImage(@AuthenticationPrincipal Expert expert) {
+    public ResponseEntity<File> viewImage(Principal principal) {
+        Expert expert = expertService.findByUserName(principal.getName());
         File file = new File("C:\\Users\\Lenovo\\Desktop\\OIF.jpg");
         File file1 = expertService.viewImage(expert.getEmail(), file);
         return ResponseEntity.ok().body(file1);
     }
 
     @GetMapping("/view_orderDone_expert")
-    public ResponseEntity<List<OrderCustomerResponseDto>> findAllOrderDoneExpert(@AuthenticationPrincipal Expert expert) {
-        List<OrderCustomer> list = offerService.findAllOrderDoneExpert(expert);
+    public ResponseEntity<List<OrderCustomerResponseDto>> findAllOrderDoneExpert(Principal principal, @RequestParam OrderStatus orderStatus) {
+        Expert expert = expertService.findByUserName(principal.getName());
+        List<OrderCustomer> list = offerService.findAllOrderDoneExpert(expert,orderStatus);
         return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerToOrderCustomerResponseDto(list));
     }
 

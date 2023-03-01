@@ -4,13 +4,14 @@ import ir.maktab.project_final_faz2.data.model.dto.request.ChangePasswordDto;
 import ir.maktab.project_final_faz2.data.model.dto.request.OrderRegistryDto;
 import ir.maktab.project_final_faz2.data.model.dto.respons.*;
 import ir.maktab.project_final_faz2.data.model.entity.*;
+import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.StatusSort;
 import ir.maktab.project_final_faz2.mapper.*;
 import ir.maktab.project_final_faz2.service.serviceImpl.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -138,15 +139,16 @@ public class CustomerController {
     }
 
     @GetMapping("/view_all_order_customer")
-    public ResponseEntity<?> viewAllOrder(@AuthenticationPrincipal Customer customer) {
-        List<OrderCustomer> orderCustomers = orderCustomerService.findOrdersCustomer(customer);
+    public ResponseEntity<?> viewAllOrder( Principal principal, @RequestParam OrderStatus orderStatus) {
+        List<OrderCustomer> orderCustomers = orderCustomerService.findOrdersCustomer(principal.getName(),orderStatus);
         ResponseListDto<OrderCustomerResponseDto> response = new ResponseListDto<>();
         response.setData(MapperOrder.INSTANCE.listOrderCustomerToOrderCustomerResponseDto(orderCustomers));
         return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/view_credit")
-    public ResponseEntity<BigDecimal> viewCredit(@AuthenticationPrincipal Customer customer) {
+    public ResponseEntity<BigDecimal> viewCredit(Principal principal) {
+        Customer customer=customerService.findByUserName(principal.getName());
         return ResponseEntity.ok().body(customer.getCredit().getBalance());
     }
 }

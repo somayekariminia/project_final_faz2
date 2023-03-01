@@ -193,8 +193,8 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public List<OrderCustomer> findAllOrderDoneExpert(Expert expert) {
-        List<Offers> list = offerRepository.findOfferIsAcceptAExpert(expert);
+    public List<OrderCustomer> findAllOrderDoneExpert(Expert expert,OrderStatus orderStatus) {
+        List<Offers> list = offerRepository.findOfferIsAcceptAExpert(expert,orderStatus);
         if (list.isEmpty())
             throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return list.stream().map(Offers::getOrderCustomer).collect(Collectors.toList());
