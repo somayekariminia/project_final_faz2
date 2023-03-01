@@ -60,6 +60,10 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
         return orderCustomerRepository.save(orderCustomer);
     }
 
+    public OrderCustomer save(OrderCustomer orderCustomer) {
+        return orderCustomerRepository.save(orderCustomer);
+    }
+
     @Override
     public OrderCustomer findById(Long id) {
         return orderCustomerRepository.findById(id).orElseThrow(() -> new NotFoundException(messageSource.getMessage("errors.message.null-object")));
@@ -77,9 +81,9 @@ public class OrderCustomerServiceImpl implements OrderCustomerService {
     @Override
     public List<OrderCustomer> findOrdersCustomer(String customer, OrderStatus orderStatus) {
         Customer customerDb = customerService.findByUserName(customer);
-         log.info("customer"+customerDb.getEmail());
-         log.info("orderStatus"+orderStatus);
-        List<OrderCustomer> allOrdersCustomer = orderCustomerRepository.findAllOrderCustomer(customerDb,orderStatus);
+        log.info("customer" + customerDb.getEmail());
+        log.info("orderStatus" + orderStatus);
+        List<OrderCustomer> allOrdersCustomer = orderCustomerRepository.findAllOrderCustomer(customerDb, orderStatus);
         if (allOrdersCustomer.isEmpty())
             throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return allOrdersCustomer;

@@ -7,7 +7,6 @@ import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.service.serviceImpl.ExpertServiceImpl;
 import ir.maktab.project_final_faz2.service.serviceImpl.OfferServiceImpl;
 import ir.maktab.project_final_faz2.service.serviceImpl.OrderCustomerServiceImpl;
-import ir.maktab.project_final_faz2.util.util.UtilDate;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +18,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -49,14 +48,13 @@ class OfferServiceImplTest {
     @Order(1)
     @TestFactory
     Stream<DynamicTest> setOffer() {
-        LocalDate start = LocalDate.of(2023, 2, 8);
-        LocalDate start1 = LocalDate.of(2023, 2, 9);
-        LocalDate start2 = LocalDate.of(2023, 2, 11);
+        LocalDateTime start = LocalDateTime.of(2023, 2, 8, 0, 0, 0);
+        LocalDateTime start1 = LocalDateTime.of(2023, 2, 9, 0, 0, 0);
+        LocalDateTime start2 = LocalDateTime.of(2023, 2, 11, 0, 0, 0);
         Offers[] arrayOffer = new Offers[3];
-        arrayOffer[0] = Offers.builder().offerPriceByExpert(new BigDecimal(4000)).startTime(UtilDate.changeLocalDateToDate(start)).durationWork(Duration.ZERO.plusHours(2).plusMillis(30)).build();
-        arrayOffer[1] = Offers.builder().offerPriceByExpert(new BigDecimal(4500)).startTime(UtilDate.changeLocalDateToDate(start1)).durationWork(Duration.ZERO.plusHours(2).plusMillis(30)).build();
-        arrayOffer[2] = Offers.builder().offerPriceByExpert(new BigDecimal(3500)).startTime(UtilDate.changeLocalDateToDate(start2)).durationWork(Duration.ZERO.plusHours(2).plusMillis(30)).build();
-
+        arrayOffer[0] = Offers.builder().offerPriceByExpert(new BigDecimal(4000)).startTime(start).durationWork(Duration.ZERO.plusHours(2).plusMillis(30)).build();
+        arrayOffer[1] = Offers.builder().offerPriceByExpert(new BigDecimal(4500)).startTime(start1).durationWork(Duration.ZERO.plusHours(2).plusMillis(30)).build();
+        arrayOffer[2] = Offers.builder().offerPriceByExpert(new BigDecimal(3500)).startTime(start2).durationWork(Duration.ZERO.plusHours(2).plusMillis(30)).build();
         List<Expert> listExpert = expertService.findAllExpertsApproved();
         for (int i = 0; i <= 2; i++) {
             arrayOffer[i].setExpert(listExpert.get(i));
@@ -70,7 +68,7 @@ class OfferServiceImplTest {
     @Test
     void selectAnOfferByCustomer() {
         Offers offerExist = offerService.findById(2L);
-        OrderCustomer orderCustomer = orderCustomerService.findByCode("order27");
+        OrderCustomer orderCustomer = orderCustomerService.findById(77L);
         Offers offers = offerService.selectAnOfferByCustomer(offerExist.getId(), orderCustomer.getId());
         Assertions.assertTrue(offers.isAccept());
 
@@ -80,25 +78,24 @@ class OfferServiceImplTest {
     @Test
     void changeOrderToStartByCustomer() {
         Offers offerExist = offerService.findById(2L);
-        OrderCustomer orderCustomer = orderCustomerService.findByCode("order27");
+        OrderCustomer orderCustomer = orderCustomerService.findById(77L);
         offerService.changeOrderToStartByCustomer(offerExist.getId(), orderCustomer.getId());
-        OrderCustomer orderCustomerNew = orderCustomerService.findByCode("order27");
+        OrderCustomer orderCustomerNew = orderCustomerService.findById(77L);
         Assertions.assertEquals(orderCustomerNew.getOrderStatus(), OrderStatus.Started);
     }
 
     @Order(6)
     @Test
     void endDoWork() {
-        OrderCustomer orderCustomer = orderCustomerService.findByCode("order16");
-        offerService.endDoWork(orderCustomer);
-        OrderCustomer newOrderCustomer = orderCustomerService.findByCode("order16");
+        offerService.endDoWork(7L);
+        OrderCustomer newOrderCustomer = orderCustomerService.findById(7L);
         Assertions.assertEquals(newOrderCustomer.getOrderStatus(), OrderStatus.Done);
     }
 
     @Order(7)
     @Test
     void findOfferIsAccept() {
-        OrderCustomer orderCustomer = orderCustomerService.findByCode("order27");
+        OrderCustomer orderCustomer = orderCustomerService.findById(7L);
         Offers offersIsAccept = offerService.findOffersIsAccept(orderCustomer);
         Assertions.assertTrue(offersIsAccept.isAccept());
     }

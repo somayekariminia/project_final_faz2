@@ -42,11 +42,11 @@ public class CreateSpecificationAdmin {
             if (request.getMinOrMax().equals("min") || request.getMinOrMax().equals("max"))
                 predicates.add(builder.equal(root.get("performance"), request.getPerformance()));
 
-            if (request.getRegistrationDate() != null && !request.getRegistrationDate().isEmpty() && request.getLowOrBigOrEqual() != null && !request.getLowOrBigOrEqual().isEmpty()) {
+            if (request.getRegistrationDate() != null && !request.getRegistrationDate().isEmpty() && request.getLowOrBigOrEqualDate() != null && !request.getLowOrBigOrEqualDate().isEmpty()) {
                 LocalDate localDate = LocalDate.parse(request.getRegistrationDate(), DATE_FORMATTER);
-                if (request.getLowOrBigOrEqual().equals("low"))
+                if (request.getLowOrBigOrEqualDate().equals("low"))
                     predicates.add(builder.lessThanOrEqualTo(root.get("registrationDate"), localDate));
-                else if (request.getLowOrBigOrEqual().equals("big"))
+                else if (request.getLowOrBigOrEqualDate().equals("big"))
                     predicates.add(builder.greaterThanOrEqualTo(root.get("registrationDate"), localDate));
                 else predicates.add(builder.equal(root.get("registrationDate"), localDate));
             }

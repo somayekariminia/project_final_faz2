@@ -4,11 +4,14 @@ import ir.maktab.project_final_faz2.data.model.entity.Address;
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.entity.SubJob;
+import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
+import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
+import ir.maktab.project_final_faz2.exception.TimeOutException;
+import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.serviceImpl.CustomerServiceImpl;
 import ir.maktab.project_final_faz2.service.serviceImpl.OrderCustomerServiceImpl;
 import ir.maktab.project_final_faz2.service.serviceImpl.SubJobServiceImpl;
-import ir.maktab.project_final_faz2.util.util.UtilDate;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,8 +22,7 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -41,50 +43,49 @@ public class OrderServiceTest {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            Date dateStartC = UtilDate.changeLocalDateToDate(LocalDate.of(2023, 2, 9));
+            LocalDateTime localDateTime = (LocalDateTime.of(2023, 2, 9, 0, 0, 0));
             orderCustomer = OrderCustomer.builder().
                     offerPrice(new BigDecimal(3000))
-                    .codeOrder("order1").address(Address.builder()
+                    .address(Address.builder()
                             .city("kerman").street("hashtBehesht")
-                            .noHouse("512").build()).aboutWork("cleanHomeAndCooking").startDateDoWork(dateStartC).build();
+                            .noHouse("512").build()).aboutWork("cleanHomeAndCooking").startDateDoWork(localDateTime).build();
         }
     }
-/*
+
     @Order(1)
     @Test
     void saveOrderTest() {
         orderCustomer.setSubJob(subJobService.findSubJobByName("Washing"));
         orderCustomer.setCustomer(customerService.findByUserName("tara@gmail.com"));
-        orderCustomerService.saveOrder(orderCustomer);
+        orderCustomerService.save(orderCustomer);
         Assertions.assertNotNull(orderCustomer.getId());
-    }*/
+    }
 
- /*   @Order(2)
+    @Order(2)
     @Test
     void testExceptionSaveDuplicateOrder() {
-        Exception exception = Assertions.assertThrows(DuplicateException.class, () -> orderCustomerService.saveOrder(orderCustomer));
-        Assertions.assertEquals(String.format("the order is exist already to code: %s", orderCustomer.getCodeOrder()), exception.getMessage());
-    }*/
-//
-//    @Order(3)
-//    @Test
-//    void testExceptionValidationsSaveOrder() {
-//        OrderCustomer orderCustomer1 = orderCustomer;
-//        orderCustomer1.setCodeOrder("order2");
-//        orderCustomer1.setStartDateDoWork(UtilDate.changeLocalDateToDate(LocalDate.of(2023, 1, 22)));
-//        Exception exceptionDate = Assertions.assertThrows(TimeOutException.class, () -> orderCustomerService.saveOrder(orderCustomer1));
-//        Assertions.assertEquals("The current date is less than the proposed date", exceptionDate.getMessage());
-//
-//    }
-/*
+        Exception exception = Assertions.assertThrows(DuplicateException.class, () -> orderCustomerService.save(orderCustomer));
+        Assertions.assertEquals(String.format("the order is exist already to code: %s"), exception.getMessage());
+    }
+
+    @Order(3)
+    @Test
+    void testExceptionValidationsSaveOrder() {
+        OrderCustomer orderCustomer1 = orderCustomer;
+        orderCustomer1.setStartDateDoWork(LocalDateTime.of(2023, 1, 22, 0, 0, 0));
+        Exception exceptionDate = Assertions.assertThrows(TimeOutException.class, () -> orderCustomerService.save(orderCustomer1));
+        Assertions.assertEquals("The current date is less than the proposed date", exceptionDate.getMessage());
+
+    }
+
     @Order(4)
     @Test
     void TestDontSaveOrderByLowerPrice() {
         OrderCustomer orderCustomer1 = orderCustomer;
         orderCustomer1.setOfferPrice(new BigDecimal(1500));
-        Exception exceptionPrice = Assertions.assertThrows(ValidationException.class, () -> orderCustomerService.saveOrder(orderCustomer1));
+        Exception exceptionPrice = Assertions.assertThrows(ValidationException.class, () -> orderCustomerService.save(orderCustomer1));
         Assertions.assertEquals(String.format("The offer price by Customer for this sub-service %s is lower than the original price", orderCustomer1.getSubJob().getSubJobName()), exceptionPrice.getMessage());
-    }*/
+    }
 
     @Order(5)
     @Test
@@ -111,22 +112,21 @@ public class OrderServiceTest {
     @Order(6)
     @Test
     void findOrderByOrderCode() {
-        OrderCustomer orderCustomerDb = orderCustomerService.findByCode("order1");
+        OrderCustomer orderCustomerDb = orderCustomerService.findById(77L);
         Assertions.assertNotNull(orderCustomerDb.getId());
     }
 
     @Order(7)
     @Test
     void notFindOrderByOrderCode() {
-        Exception exception = Assertions.assertThrows(NotFoundException.class, () -> orderCustomerService.findByCode("order6"));
+        Exception exception = Assertions.assertThrows(NotFoundException.class, () -> orderCustomerService.findById(7L));
         Assertions.assertEquals(String.format("there arent any orderCustomer to code %s ", "order6"), exception.getMessage());
     }
 
     @Order(10)
     @Test
     void findOrdersCustomer() {
-        Customer customer = customerService.findByUserName("tara@gmail.com");
-        List<OrderCustomer> listOrdersCustomer = orderCustomerService.findOrdersCustomer(customer);
+        List<OrderCustomer> listOrdersCustomer = orderCustomerService.findOrdersCustomer("tara@gmail.com", OrderStatus.WaitingSelectTheExpert);
         Assertions.assertTrue(listOrdersCustomer.size() > 0);
     }
 
@@ -134,7 +134,7 @@ public class OrderServiceTest {
     @Test
     void notFoundOrdersCustomer() {
         Customer customer = customerService.findByUserName("shams@gmail.com");
-        Exception exception = Assertions.assertThrows(NotFoundException.class, () -> orderCustomerService.findOrdersCustomer(customer));
+        Exception exception = Assertions.assertThrows(NotFoundException.class, () -> orderCustomerService.findOrdersCustomer("shams@gmail.com", OrderStatus.WaitingSelectTheExpert));
         Assertions.assertEquals(String.format("there aren't order for this Customer %s", customer.getEmail()), exception.getMessage());
     }
 }

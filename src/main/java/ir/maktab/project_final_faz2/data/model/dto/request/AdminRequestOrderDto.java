@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 public class AdminRequestOrderDto {
 
     private String lowDateStarter;
+    private String lowOrBigOrEqualDate;
 
     private String bigDateStater;
 

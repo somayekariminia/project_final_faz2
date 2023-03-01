@@ -5,6 +5,7 @@ import ir.maktab.project_final_faz2.exception.DuplicateException;
 import ir.maktab.project_final_faz2.exception.NotFoundException;
 import ir.maktab.project_final_faz2.exception.ValidationException;
 import ir.maktab.project_final_faz2.service.serviceImpl.ExpertServiceImpl;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
@@ -18,6 +19,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -62,22 +64,24 @@ class ExpertServiceImplTest {
 
     @ParameterizedTest
     @MethodSource(value = "dataExpert")
-    void saveTest(Expert expert) {
-        Expert expertSave = expertService.save(expert, file);
+    void saveTest(Expert expert) throws IOException {
+        byte[] bytes = FileUtils.readFileToByteArray(file);
+        expert.setExpertImage(bytes);
+        Expert expertSave = expertService.save(expert);
         assertNotNull(expertSave.getId());
     }
 
     @Order(2)
     @Test
     void saveDuplicateExpert() {
-        Exception exception = Assertions.assertThrows(DuplicateException.class, () -> expertService.save(expert, file));
+        Exception exception = Assertions.assertThrows(DuplicateException.class, () -> expertService.save(expert));
         Assertions.assertEquals(String.format("already Exist is Expert %s ", expert.getEmail()), exception.getMessage());
     }
 
     @ParameterizedTest
     @MethodSource(value = {"data"})
     void dontSaveTest(Expert expert) {
-        Exception exceptionEmail = Assertions.assertThrows(ValidationException.class, () -> expertService.save(expert, file));
+        Exception exceptionEmail = Assertions.assertThrows(ValidationException.class, () -> expertService.save(expert));
         Assertions.assertEquals("Your informant Is Invalid", exceptionEmail.getMessage());
     }
 

@@ -11,7 +11,6 @@ import ir.maktab.project_final_faz2.service.serviceImpl.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -139,8 +138,8 @@ public class CustomerController {
     }
 
     @GetMapping("/view_all_order_customer")
-    public ResponseEntity<?> viewAllOrder( Principal principal, @RequestParam OrderStatus orderStatus) {
-        List<OrderCustomer> orderCustomers = orderCustomerService.findOrdersCustomer(principal.getName(),orderStatus);
+    public ResponseEntity<?> viewAllOrder(Principal principal, @RequestParam OrderStatus orderStatus) {
+        List<OrderCustomer> orderCustomers = orderCustomerService.findOrdersCustomer(principal.getName(), orderStatus);
         ResponseListDto<OrderCustomerResponseDto> response = new ResponseListDto<>();
         response.setData(MapperOrder.INSTANCE.listOrderCustomerToOrderCustomerResponseDto(orderCustomers));
         return ResponseEntity.ok().body(response);
@@ -148,7 +147,7 @@ public class CustomerController {
 
     @GetMapping("/view_credit")
     public ResponseEntity<BigDecimal> viewCredit(Principal principal) {
-        Customer customer=customerService.findByUserName(principal.getName());
+        Customer customer = customerService.findByUserName(principal.getName());
         return ResponseEntity.ok().body(customer.getCredit().getBalance());
     }
 }

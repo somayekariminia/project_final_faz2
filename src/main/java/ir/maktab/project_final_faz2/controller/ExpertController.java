@@ -15,7 +15,6 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -86,7 +85,7 @@ public class ExpertController {
 
     @GetMapping("/view_credit")
     public ResponseEntity<String> viewCreditExpert(Principal principal) {
-      Expert expert = expertService.findByUserName(principal.getName());
+        Expert expert = expertService.findByUserName(principal.getName());
         return ResponseEntity.ok().body("your credit is " + expert.getCredit().getBalance());
     }
 
@@ -135,7 +134,7 @@ public class ExpertController {
     @GetMapping("/view_orderDone_expert")
     public ResponseEntity<List<OrderCustomerResponseDto>> findAllOrderDoneExpert(Principal principal, @RequestParam OrderStatus orderStatus) {
         Expert expert = expertService.findByUserName(principal.getName());
-        List<OrderCustomer> list = offerService.findAllOrderDoneExpert(expert,orderStatus);
+        List<OrderCustomer> list = offerService.findAllOrderDoneExpert(expert, orderStatus);
         return ResponseEntity.ok().body(MapperOrder.INSTANCE.listOrderCustomerToOrderCustomerResponseDto(list));
     }
 

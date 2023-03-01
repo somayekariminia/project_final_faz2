@@ -43,7 +43,7 @@ class AdminServiceImplTest {
     @Test
     void changePasswordTest() {
         Admin admin = adminService.findByUserName("admin@gmail.com");
-        Admin adminToNewPassword = adminService.changePassword(admin.getUserName(), admin.getPassword(), "Sok61058");
+        Admin adminToNewPassword = adminService.changePassword(admin.getEmail(), admin.getPassword(), "Sok61058");
         assertEquals(adminToNewPassword.getPassword(), "Sok61058");
     }
 

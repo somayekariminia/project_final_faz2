@@ -39,25 +39,25 @@ public class CreateSpecificationOrder {
                 predicates.add(builder.between(root.get("startDateDoWork"), localDateTimeLow, localDateTimeBig));
             }
 
-            if ((request.getLowOrEqualOrBig() != null && !request.getLowOrEqualOrBig().isEmpty())
+            if ((request.getLowOrBigOrEqualDate() != null && !request.getLowOrBigOrEqualDate().isEmpty())
                     && (request.getLowDateStarter() != null && !request.getLowDateStarter().isEmpty())) {
                 LocalDateTime localDateTimeLow = LocalDateTime.parse(request.getLowDateStarter(), DATE_FORMATTER);
-                if (request.getLowOrEqualOrBig().equals("low"))
+                if (request.getLowOrBigOrEqualDate().equals("low"))
                     predicates.add(builder.lessThanOrEqualTo(root.get("startDateDoWork"), localDateTimeLow));
-                if (request.getLowOrEqualOrBig().equals("big"))
+                if (request.getLowOrBigOrEqualDate().equals("big"))
                     predicates.add(builder.greaterThanOrEqualTo(root.get("startDateDoWork"), localDateTimeLow));
-                if (request.getLowOrEqualOrBig().equals("equal"))
+                if (request.getLowOrBigOrEqualDate().equals("equal"))
                     predicates.add(builder.equal(root.get("startDateDoWork"), localDateTimeLow));
             }
 
-            if ((request.getLowOrEqualOrBig() != null && !request.getLowOrEqualOrBig().isEmpty())
+            if ((request.getLowOrBigOrEqualDate() != null && !request.getLowOrBigOrEqualDate().isEmpty())
                     && (request.getLowDateEnd() != null && !request.getLowDateEnd().isEmpty())) {
                 LocalDateTime localDateTimeLow = LocalDateTime.parse(request.getLowDateEnd(), DATE_FORMATTER);
-                if (request.getLowOrEqualOrBig().equals("low"))
+                if (request.getLowOrBigOrEqualDate().equals("low"))
                     predicates.add(builder.lessThanOrEqualTo(root.get("endDateDoWork"), localDateTimeLow));
-                if (request.getLowOrEqualOrBig().equals("big"))
+                if (request.getLowOrBigOrEqualDate().equals("big"))
                     predicates.add(builder.greaterThanOrEqualTo(root.get("endDateDoWork"), localDateTimeLow));
-                if (request.getLowOrEqualOrBig().equals("equal"))
+                if (request.getLowOrBigOrEqualDate().equals("equal"))
                     predicates.add(builder.equal(root.get("endDateDoWork"), localDateTimeLow));
             }
 

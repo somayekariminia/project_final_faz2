@@ -7,6 +7,7 @@ import ir.maktab.project_final_faz2.data.model.entity.*;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import ir.maktab.project_final_faz2.data.model.enums.SpecialtyStatus;
 import ir.maktab.project_final_faz2.data.model.repository.OfferRepository;
+import ir.maktab.project_final_faz2.data.model.repository.OrderCustomerRepository;
 import ir.maktab.project_final_faz2.exception.*;
 import ir.maktab.project_final_faz2.mapper.MapperOffer;
 import ir.maktab.project_final_faz2.service.serviceInterface.OfferService;
@@ -28,6 +29,7 @@ public class OfferServiceImpl implements OfferService {
     private final ExpertServiceImpl expertService;
     private final OrderCustomerServiceImpl orderCustomerService;
     private final MessageSourceConfiguration messageSource;
+    private final OrderCustomerRepository orderCustomerRepository;
 
     @Override
     public List<SubJob> findAllSubJubExpert(Expert expert) {
@@ -71,6 +73,12 @@ public class OfferServiceImpl implements OfferService {
         orderCustomer.setOrderStatus(OrderStatus.WaitingSelectTheExpert);
         orderCustomerService.updateOrder(orderCustomer);
         offers.setAccept(false);
+        offers.setOrderCustomer(orderCustomer);
+        return offerRepository.save(offers);
+    }
+
+    public Offers save(Offers offers, Long orderId) {
+        OrderCustomer orderCustomer = orderCustomerService.findById(orderId);
         offers.setOrderCustomer(orderCustomer);
         return offerRepository.save(offers);
     }
@@ -193,8 +201,8 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public List<OrderCustomer> findAllOrderDoneExpert(Expert expert,OrderStatus orderStatus) {
-        List<Offers> list = offerRepository.findOfferIsAcceptAExpert(expert,orderStatus);
+    public List<OrderCustomer> findAllOrderDoneExpert(Expert expert, OrderStatus orderStatus) {
+        List<Offers> list = offerRepository.findOfferIsAcceptAExpert(expert, orderStatus);
         if (list.isEmpty())
             throw new NotFoundException(messageSource.getMessage("errors.message.list_isEmpty"));
         return list.stream().map(Offers::getOrderCustomer).collect(Collectors.toList());

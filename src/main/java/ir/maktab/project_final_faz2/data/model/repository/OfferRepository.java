@@ -3,7 +3,6 @@ package ir.maktab.project_final_faz2.data.model.repository;
 import ir.maktab.project_final_faz2.data.model.entity.Customer;
 import ir.maktab.project_final_faz2.data.model.entity.Expert;
 import ir.maktab.project_final_faz2.data.model.entity.Offers;
-import ir.maktab.project_final_faz2.data.model.entity.OrderCustomer;
 import ir.maktab.project_final_faz2.data.model.enums.OrderStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,6 +24,7 @@ public interface OfferRepository extends JpaRepository<Offers, Long> {
 
     @Query("select o from Offers o where o.isAccept=true and o.expert=:expert and o.orderCustomer.orderStatus=:orderStatus")
     List<Offers> findOfferIsAcceptAExpert(@Param("expert") Expert expert, @Param("orderStatus") OrderStatus orderStatus);
+
     @Query("select o from Offers o where o.isAccept=true and o.expert=:expert")
     List<Offers> findOfferIsAcceptAExpert(@Param("expert") Expert expert);
 

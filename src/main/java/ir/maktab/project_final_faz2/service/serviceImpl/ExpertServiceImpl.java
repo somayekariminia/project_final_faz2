@@ -60,6 +60,10 @@ public class ExpertServiceImpl implements ExpertService {
         return expertSave;
     }
 
+    public Expert save(Expert expert) {
+        return expertRepository.save(expert);
+    }
+
     private void sendVerificationEmail(Expert expert) throws MessagingException, UnsupportedEncodingException {
         String siteURL = "http://localhost:6565/expert";
         String toAddress = expert.getEmail();

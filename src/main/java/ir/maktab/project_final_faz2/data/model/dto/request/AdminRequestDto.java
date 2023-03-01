@@ -23,6 +23,8 @@ public class AdminRequestDto {
 
     private String registrationDate;
 
+    private String lowOrBigOrEqualDate;
+
     private String registrationDateTwo;
 
     private String numberOrderCustomer;
