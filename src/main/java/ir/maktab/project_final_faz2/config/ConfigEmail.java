@@ -14,7 +14,7 @@ public class ConfigEmail {
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setUsername("somayekariminia6868@gmail.com");
-        mailSender.setPassword("twoqnetrdbbvbqpz");
+        mailSender.setPassword("");
         Properties properties = new Properties();
         properties.setProperty("mail.smtp.auth", "true");
         properties.setProperty("mail.smtp.starttls.enable", "true");
